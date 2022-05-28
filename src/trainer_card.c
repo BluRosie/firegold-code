@@ -3,7 +3,9 @@
 #include "../include/bg.h"
 #include "../include/event_data.h"
 #include "../include/menu.h"
+#include "../include/sound.h"
 #include "../include/string_util.h"
+#include "../include/task.h"
 #include "../include/trainer_card.h"
 
 // check out bytereplacement for the two functions that had their sizeof edited
@@ -24,11 +26,15 @@ void SetDataFromTrainerCard_edits(void)
 }
 
 
+#define BASE_BADGE_TILE 192
+#define BASE_BADGE_TILE_OFFSET_BG_3 0
+
+
 // change the way that the badges are drawn to the screen
 void DrawStarsAndBadgesOnCard(void)
 {
     s16 i, x, y = 14;
-    u16 tileNum = 192; // how do we know
+    u16 tileNum = BASE_BADGE_TILE;
     u8 palNum = 3;
 
     FillBgTilemapBufferRect(3, 143, 15, sStarYOffsets[sTrainerCardDataPtr->cardType], sTrainerCardDataPtr->trainerCard.rse.stars, 1, 4);
@@ -53,6 +59,33 @@ void DrawStarsAndBadgesOnCard(void)
     }
 
     CopyBgTilemapBufferToVram(3);
+}
+
+
+bool8 Task_SetCardFlipped(struct Task* task)
+{
+    sTrainerCardDataPtr->allowDMACopy = FALSE;
+
+    // If on back of card, draw front of card because its being flipped.  also load the badges in again
+    if (sTrainerCardDataPtr->onBack)
+    {
+        DrawTrainerCardWindow(2);
+        DrawCardScreenBackground(sTrainerCardDataPtr->bgTilemap);
+        DrawCardFrontOrBack(sTrainerCardDataPtr->frontTilemap);
+        LoadBgTiles(3, sTrainerCardDataPtr->badgeTiles, 0x80 * NUM_BADGES, 0);
+        DrawStarsAndBadgesOnCard();
+    }
+    else // load in icons before the flip is allowed to happen fully
+    {
+        LoadMonIconGfx();
+    }
+
+    DrawTrainerCardWindow(1);
+    sTrainerCardDataPtr->onBack ^= 1;
+    task->data[0]++; // tflippingstate
+    sTrainerCardDataPtr->allowDMACopy = TRUE;
+    PlaySE(243); // SE_CARD_FLIPPING
+    return FALSE;
 }
 
 

@@ -5,6 +5,12 @@
 /* Trainer Card Defines */
 sTrainerCardDataPtr = 0x020397A4;
 sStarYOffsets = 0x083CD95C;
+LoadBgTiles = 0x080017d0 | 1;
+LoadMonIconGfx = 0x0808ab10 | 1;
+DrawTrainerCardWindow = 0x0808acc8 | 1;
+DrawCardScreenBackground = 0x0808ae94 | 1;
+DrawCardFrontOrBack = 0x0808af04 | 1;
+
 
 /* Party RAM */
 gMultiPartnerParty = 0x2022B58;

@@ -118,6 +118,12 @@ extern struct TrainerCardData *sTrainerCardDataPtr;
 extern const u8 sStarYOffsets[4];
 
 void FillBgTilemapBufferRect(u8 bg, u16 tileNum, u8 x, u8 y, u8 width, u8 height, u8 palette);
+void LoadMonIconGfx(void);
+bool8 LoadCardGfx(void);
+u16 LoadBgTiles(u8 bg, const void *src, u16 size, u16 destOffset);
+void DrawTrainerCardWindow(u8 windowId);
+void DrawCardScreenBackground(const u16 *ptr);
+void DrawCardFrontOrBack(const u16 *ptr);
 
 
 #endif // GUARD_TRAINER_CARD_H
