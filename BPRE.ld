@@ -2,6 +2,10 @@
 ===========RAM==============
 ==========================*/
 
+/* Trainer Card Defines */
+sTrainerCardDataPtr = 0x020397A4;
+sStarYOffsets = 0x083CD95C;
+
 /* Party RAM */
 gMultiPartnerParty = 0x2022B58;
 gPlayerPartyCount = 0x2024029;
@@ -1887,4 +1891,3 @@ AddTextPrinterParameterized4 = 0x0812E5A4|1;
 GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;
 CreateMon = 0x0803DA54|1;
-

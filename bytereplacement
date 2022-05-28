@@ -1,1 +1,16 @@
-##
+##[address] [byte sequence]
+
+# trainer card size adjustment
+0808B6C4 E0 83 00 00
+0808B75C E0 83 00 00
+
+# get offset correct within structure and dump the badge gfx to the new gfx
+08089538 D0 7B 00 00
+0808AD38 D0 7B 00 00
+
+# repoint original badge image to new one, done hackily but it is fine
+# new location is 09C8C260
+08089530 60 C2 C8 09
+
+# change one instruction to double size of badges
+0808AD2E 12 01

@@ -1,2 +1,5 @@
 #examples:
 #SetTradedMonPokedexFlags 080507A0 1
+
+SetDataFromTrainerCard_edits_hook 08089B16 0
+DrawStarsAndBadgesOnCard 0808AF74 0
