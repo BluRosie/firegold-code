@@ -3,3 +3,6 @@
 
 SetDataFromTrainerCard_edits_hook 08089B16 0
 DrawStarsAndBadgesOnCard 0808AF74 0
+
+SaveStatToString_case_badges_hook 080F80A8 1
+PrintBadgeCount 0800CFC4 0
