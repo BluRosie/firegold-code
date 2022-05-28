@@ -10,7 +10,7 @@ import sys
 
 ROM_NAME = "BPRE0.gba"  # The name of your rom
 OFFSET_TO_PUT = 0x1C88650
-SEARCH_FREE_SPACE = False  # Set to True if you want the script to search for free space
+SEARCH_FREE_SPACE = True   # Set to True if you want the script to search for free space
                            # Set to False if you don't want to search for free space as you for example update the engine
 
 #############
@@ -105,7 +105,7 @@ def main():
         with open(ROM_NAME, 'rb+') as rom:
             offset = OFFSET_TO_PUT
             if SEARCH_FREE_SPACE is True:
-                offset = FindOffsetToPut(rom, 0x50000, MakeOffset0x100Aligned(offset))
+                offset = FindOffsetToPut(rom, 0x10000, MakeOffset0x100Aligned(offset))
 
             EditLinker(offset)
             EditInsert(offset)
