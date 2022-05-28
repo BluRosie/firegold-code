@@ -1,0 +1,5 @@
+##example
+#TagTeamExecutionCompleteHook 802E384
+
+atkF1_TrySetCaughtMonDexFlags 895F844
+ItemUseOutOfBattle_UnownReport 83DDF88

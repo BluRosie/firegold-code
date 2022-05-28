@@ -1,0 +1,4 @@
+#examples:
+
+SetTradedMonPokedexFlags 080507A0 1
+GenerateUnownFormSelectively_hook 8082A3C 0

@@ -1,0 +1,4 @@
+##Repoints all pointers found at given location 
+##(Eg. repoints pointer located at 0x8016364 which is 0x81D65A8 in vanilla, does not repoint 0x8016364)
+#gBattleMoves 080001CC
+
