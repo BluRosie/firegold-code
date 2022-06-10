@@ -10,7 +10,7 @@ GetMapSecType:
     sub r0, #0x58
     cmp r0, #0x6d
     bls map_is_valid
-    b invalid_map
+    b invalid_map // c3618
 map_is_valid:
 // add handling for excluding kanto when in johto and vice versa
 // grab gMapHeader.regionMapSectionId
@@ -20,14 +20,14 @@ map_is_valid:
     bge handleJohto // assuming kanto is 0
 
 handleKanto:
-    mov r1, #3 // invalid town map?
-    cmp r0, #(0x8F-0x58)
+    mov r1, #1 // invalid town map?
+    cmp r0, #(0x8E-0x58)
     bge skip_r1_2
     b checkB
 
 handleJohto:
-    mov r1, #3
-    cmp r0, #(0x8F-0x58)
+    mov r1, #1
+    cmp r0, #(0x8E-0x58)
     bls skip_r1_2
     //b checkB
 
@@ -41,7 +41,7 @@ return_to_main:
     ldrh r0, [r0] // load in current flag
     ldr r4, =0xFFFF
     cmp r4, r0
-    beq invalid_map
+    beq invalid_map // c3618
     mov r4, #0
     cmp r0, r4
     beq return_0
