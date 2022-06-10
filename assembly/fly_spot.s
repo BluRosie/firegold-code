@@ -13,26 +13,22 @@ GetMapSecType:
     b invalid_map
 map_is_valid:
 // add handling for excluding kanto when in johto and vice versa
-// grab sRegionMap->playersRegion
-    ldr r1, =0x23E1 // offsetof(struct RegionMap, playersRegion)
-    ldr r2, =0x020399D4 // struct RegionMap *sRegionMap
-    ldr r2, [r2] // struct RegionMap sRegionMap
-    add r2, r1 // r2 = &sRegionMap.playersRegion
-    ldrb r2, [r2] // sRegionMap.playersRegion
-    cmp r2, #1
+// grab gMapHeader.regionMapSectionId
+    ldr r1, =0x02036DFC // gMapHeader
+    ldrb r1, [r1, #0x14] // gMapHeader.regionMapSectionId
+    cmp r1, #0x8F // start of johto maps
     bge handleJohto // assuming kanto is 0
-    nop
 
 handleKanto:
     mov r1, #3 // invalid town map?
-    cmp r0, #(0x8E-0x58)
-    bhi skip_r1_2
+    cmp r0, #(0x8F-0x58)
+    bge skip_r1_2
     b checkB
 
 handleJohto:
     mov r1, #3
-    cmp r0, #(0x8E-0x58)
-    ble skip_r1_2
+    cmp r0, #(0x8F-0x58)
+    bls skip_r1_2
     //b checkB
 
 checkB:
