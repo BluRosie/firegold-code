@@ -5,32 +5,31 @@
 GetMapSecType:
     push {lr}
     push {r2-r4}
-    lsl r0, #0x10
-    lsr r0, #0x10
+    lsl r0, #0x18 // u8 cast
+    lsr r0, #0x18
     sub r0, #0x58
     cmp r0, #0x6d
     bls map_is_valid
     b invalid_map
 map_is_valid:
 // add handling for excluding kanto when in johto and vice versa
-    push {r0}
-    ldr r4, =(0x080c3b00 | 1) // GetPlayerCurrentMapSectionId is in johto
-    bl bx_r4
-    lsl r0, #0x10
-    lsr r0, #0x10
-    cmp r0, #(0x8E-0x58)
-    bhi handleJohto
+// grab sRegionMap->playersRegion
+    ldr r1, =0x23E1 // offsetof(struct RegionMap, playersRegion)
+    ldr r2, =0x020399D4 // struct RegionMap *sRegionMap
+    ldr r2, [r2] // struct RegionMap sRegionMap
+    add r2, r1 // r2 = &sRegionMap.playersRegion
+    ldrb r2, [r2] // sRegionMap.playersRegion
+    cmp r2, #1
+    bge handleJohto // assuming kanto is 0
     nop
 
 handleKanto:
-    pop {r0}
     mov r1, #3 // invalid town map?
     cmp r0, #(0x8E-0x58)
     bhi skip_r1_2
     b checkB
 
 handleJohto:
-    pop {r0}
     mov r1, #3
     cmp r0, #(0x8E-0x58)
     ble skip_r1_2
@@ -50,7 +49,7 @@ return_to_main:
     mov r4, #0
     cmp r0, r4
     beq return_0
-    ldr r4, =(0x806E6D0 | 1)
+    ldr r4, =(0x806E6D0 | 1) // FlagGet
     bl bx_r4
     lsl r0, #0x18
     mov r1, #0x3
