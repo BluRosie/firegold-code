@@ -1,6 +1,12 @@
-## Template
+## Trainer Card
 
-This template currently builds no code, but has many functions declared and ready to use that aren't very specific to any one application.  Each new branch for code that is inserted into Fire Gold will be based on this branch.
+The trainer-card branch specifies the code edits that were made to allow for the existence of 16 badges in Pokémon Fire Gold.
+
+Updated in here is the location of the Badges as they appear on the Trainer Card and the way that both the save screen and the continue screen count the badges to be displayed.
+
+![](/trainercard1.png)
+![](/trainercard2.png)
+![](/trainercard3.png)
 
 ### Build Instructions
 
