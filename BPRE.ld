@@ -1888,3 +1888,13 @@ GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;
 CreateMon = 0x0803DA54|1;
 
+
+/* fly map funcs */
+sMapFlyDestinations = 0x083f2ee0;
+SetUsedFlyQuestLogEvent = 0x08124c1c | 1;
+SetWarpDestinationToMapWarp = 0x080553c8 | 1;
+ReturnToFieldFromFlyMapSelect = 0x080842c8 | 1;
+gDayOfWeek = 0x03005541; /* per prime dialga rtc implementation */
+GetHealLocation = 0x080bfcb0 | 1;
+SetWarpDestination = 0x0805538c | 1;
+/*SetWarpDestinationToHealLocation = 0x0805546c | 1;*/

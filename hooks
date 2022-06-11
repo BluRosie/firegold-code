@@ -2,3 +2,5 @@
 #SetTradedMonPokedexFlags 080507A0 1
 
 GetMapSecType 080C35DC 1
+#SetFlyWarpDestination 080C527C 1
+SetWarpDestinationToHealLocation 0805546c 1
