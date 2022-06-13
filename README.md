@@ -2,7 +2,10 @@
 
 While the native Fire Red has existing solutions for [adding new flight spots](https://www.pokecommunity.com/showthread.php?t=206197), the structure in RAM that actually stores these has a limit of 21 total entries.  Overflowing this causes a crash.
 
-Fire Gold gets around this by selectively loading the flying spots depending on where the player is at.  Instead of adding every city, when the player is in Johto, only the Johto flight destinations will be added.  The same goes for Kanto.  This allows for 21 flight positions per region.
+Fire Gold gets around this by selectively loading the flying spots depending on where the player is at.  Instead of adding every city, when the player is in Johto, only the Johto flight destinations will be added.  The same goes for Kanto.  This allows for 21 flight positions per region, as shown below:
+
+![](https://media.discordapp.net/attachments/976941341005189141/985913234903150673/1.png)
+![](https://media.discordapp.net/attachments/976941341005189141/985913235108683796/2.png)
 
 ### Build Instructions
 
