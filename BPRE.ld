@@ -1888,3 +1888,5 @@ GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;
 CreateMon = 0x0803DA54|1;
 
+sDungeonMapPreview = 0x020399dc;
+CopyMapPreviewTilemapToBgTilemapBuffer = 0x080c1e78 | 1;
