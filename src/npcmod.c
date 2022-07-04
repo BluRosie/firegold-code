@@ -46,12 +46,12 @@ void filter_npc(unsigned int derp, unsigned int offset)
 	offset = 0x020373F8 + (derp * 0x20);
 	void (*cpuset)(int,int,int) = (void(*)(int,int,int))0x81e3b64+1;
     cpuset(offset, 0x203fd00 + derp * 0x20, 16);
-	
+
 	if(bwFilter[0] > 0 && bwFilter[0] < 4)
 	{
 		doBW_npc(bwFilter[0], (derp + 0x10) << 4, 0x10, offset, 0x10);
 		return;
-	}	
+	}
 
 	int time = timeByte[2];
 	if(timeByte[4] != 0)
@@ -75,9 +75,9 @@ void filter_npc(unsigned int derp, unsigned int offset)
 	{
 		if(((mC & 0xFF000000) >> (24)) == 0)
 			break;
-		u16 color = pal[i]; 
+		u16 color = pal[i];
 
-				int r = (color & 0x1F);
+		int r = (color & 0x1F);
 		int g = (color & 0x3E0) >> (0x5);
 		int b = (color & 0x7C00) >> (0xA);
 		int a = 0x1F;
@@ -99,9 +99,9 @@ void filter_npc(unsigned int derp, unsigned int offset)
 
 		unsigned char rem = 0x1F - mA; // Remaining fraction
 
-		short r1 = div((r*rem + mR*mA), 0x1F);
-		short g1 = div((g*rem + mG*mA), 0x1F);
-		short b1 = div((b*rem + mB*mA), 0x1F); 
+		short r1 = (r*rem + mR*mA) / 31;//div((r*rem + mR*mA), 0x1F);
+		short g1 = (g*rem + mG*mA) / 31;//div((g*rem + mG*mA), 0x1F);
+		short b1 = (b*rem + mB*mA) / 31;//div((b*rem + mB*mA), 0x1F);
 
 		color = ((unsigned char)(r1 & 0x1F) + ((unsigned char)(g1 & 0x1F) << 5) + ((unsigned char)(b1 & 0x1F) << 10));
 		pal[i] = color;
@@ -109,7 +109,7 @@ void filter_npc(unsigned int derp, unsigned int offset)
 
 	for(int i = 0; i < 0x200; i++)
 		BG_PaletteMem2[i] = BG_PaletteMem[i];
-	
+
 	if (*(char*)(0x20385F4 + 6) == 1 && *(char*)(0x20385F4 + 10)) cpuset(0x20385F4 + 4, 0x20375f8, 0x200 | 1 << 24);
 }
 

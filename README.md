@@ -1,6 +1,14 @@
-## Template
+## wizard-dn
 
-This template currently builds no code, but has many functions declared and ready to use that aren't very specific to any one application.  Each new branch for code that is inserted into Fire Gold will be based on this branch.
+The Fire Gold ROM originally used a very old RTC implementation which, while innovative for its time, is obviously dated and is very harsh on the eyes.
+
+ShinyQuagsire made a new repo for one called [Wizard-DN](https://github.com/shinyquagsire23/Wizard-DN) that improves on this by using masks and running through the palette buffers.
+
+Ultima-Soul then [developed a branch](https://github.com/ultima-soul/Wizard-DN/tree/dynamic_overworld_palettes) for use with Leon's old ROM base that worked with Navenatox's dynamic Overworld palettes.
+
+This branch looks to implement that in a much more convenient manner using the CFRU toolchain.  No manual assembling, free space management, or anything of the sort.
+
+![](wizard-dn.png)
 
 ### Build Instructions
 
@@ -54,3 +62,5 @@ Research made possible by [pokeemerald](https://github.com/pret/pokeemerald) and
 Spherical Ice initially made the [Unown Report code](https://github.com/sphericalice/bpre-unown-report).  I forked it and ported it to the [CFRU's build system](https://github.com/BluRosie/bpre-unown-report).
 
 Skeli made the [build system used in the CFRU](https://github.com/Skeli789/Complete-Fire-Red-Upgrade) which is used here.
+
+ShinyQuagsire and Ultima-Soul made [Wizard-DN](https://github.com/shinyquagsire23/Wizard-DN) and [its edits](https://github.com/ultima-soul/Wizard-DN/tree/dynamic_overworld_palettes).
