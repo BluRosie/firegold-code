@@ -1888,3 +1888,16 @@ GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;
 CreateMon = 0x0803DA54|1;
 
+
+/* lord help me */
+
+gObjectEvents = 0x02036e38;
+ReloadMapObjectWithOffset = 0x0805ee3c | 1;
+CreateReflectionEffectSprites = 0x0805de8c | 1;
+FieldEffectFreeTilesIfUnused = 0x080836f0 | 1;
+FieldEffectFreePaletteIfUnused = 0x08083754 | 1;
+Weather_SetBlendCoeffs = 0x0807adb0 | 1;
+gPlayerAvatar = 0x02037078;
+
+gObjectEventBaseOam_32x32 = 0x083a3718;
+sAnimTable_Inanimate = 0x083a3314;
