@@ -1,4 +1,4 @@
-#include "../include/gba/types.h"
+/*#include "../include/gba/types.h"
 #include "../include/lighting.h"
 #include "../include/palette.h"
 #include "../include/sprite.h"
@@ -206,4 +206,4 @@ void TrySpawnLightSprites(s16 camX, s16 camY) {
             if (template->graphicsId == OBJ_EVENT_GFX_LIGHT_SPRITE)  // event is light sprite instead
                 SpawnLightSprite(npcX, npcY, camX, camY, template->trainerRange_berryTreeId);
     }
-}
+}*/

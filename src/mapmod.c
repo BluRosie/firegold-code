@@ -4,24 +4,25 @@
 
 
 #define OBJ_PaletteMem        ((u16*)0x020373F8) // Sprite Palette(256/16 colors) (adjusted for FR callback)
-#define BG_PaletteMem          ((u16*)0x020371F8) // Background Palette(256/16 colors) (adjusted for FR callback)
-#define BG_PaletteMem2          ((u16*)0x020375F8) // Background Palette(256/16
-#define OBJ_PaletteMem2        ((u16*)0x020377F8) // Sprite Palette(256/16 colors)
+#define BG_PaletteMem         ((u16*)0x020371F8) // Background Palette(256/16 colors) (adjusted for FR callback)
+#define BG_PaletteMem2        ((u16*)0x020375F8) // Background Palette(256/16
+#define OBJ_PaletteMem2       ((u16*)0x020377F8) // Sprite Palette(256/16 colors)
 
-#define pal        		((u16*)offset) // Sprite Palette(256/16 colors)
-#define palArr        	((u16*)palette) // Sprite Palette(256/16 colors)
-#define palMask		((u16*)(palette+(maskLut[tehTimeByte])))
-#define palMaskStart		(*(u16*)(palette+0x200-(type==0x70?0xE0:0)))
-#define timeByte		((unsigned char*)0x0203C000)
-#define customColor		(*(unsigned int*)0x0203C010)
-#define bwFilter		((unsigned char*)0x02036E28)
-#define blockset0Pal (*(u32*)((*(u32*)((*(u32*)(0x02036DFC))+16))+8))
-#define mapType (*(u8*)(0x02036E13))
+#define pal              ((u16*)offset) // Sprite Palette(256/16 colors)
+#define palArr           ((u16*)palette) // Sprite Palette(256/16 colors)
+#define palMask          ((u16*)(palette+(maskLut[tehTimeByte])))
+#define palMaskStart     (*(u16*)(palette+0x200-(type==0x70?0xE0:0)))
+#define timeByte         ((unsigned char*)0x0203C000)
+#define customColor      (*(unsigned int*)0x0203C010)
+#define bwFilter         ((unsigned char*)0x02036E28)
+#define blockset0Pal     (*(u32*)((*(u32*)((*(u32*)(0x02036DFC))+16))+8))
+#define mapType          (*(u8*)(0x02036E13))
 const unsigned int colors[144];
 const unsigned int maskLut[4];
 const unsigned int nonList[4];
 
 extern int div(int a, int b);
+extern const u16 replace_colors_blend[][2];
 
 //Hook in 080598CC
 //Null out bytes 08059A28-08059A2F
@@ -71,7 +72,9 @@ void filter_map(unsigned int palette, unsigned int dest, unsigned int mode)
 	if(type == 0x70)
 	{
 		for(int i = 0; i < 6 * 0x10; i++)
+        {
 			BG_PaletteMem[0x70 + (i)] = palArr[i];
+        }
 	}
 
 	int offset = 0x020371F8;
@@ -117,7 +120,34 @@ void filter_map(unsigned int palette, unsigned int dest, unsigned int mode)
 		if(((mC & 0xFF000000) >> (24)) == 0)
 			break;
 
-		u16 color = pal[i]; 
+		u16 color = pal[i];
+
+        int j = 0;
+        u32 grabUnblended = 0;
+        
+        if(timeByte[0] == 0 || timeByte[0] == 5)
+        {
+            while (replace_colors_blend[j][0] != 0xFFFF)
+            {
+                if (color == replace_colors_blend[j][0])
+                {
+                    color = replace_colors_blend[j][1];
+                    grabUnblended = 1;
+                    break;
+                }
+                else if (color == replace_colors_blend[j][1])
+                {
+                    grabUnblended = 1;
+                    break;
+                }
+                j++;
+            }
+            if (color != pal[i])
+            {
+                pal[i] = color;
+                continue;
+            }
+        }
 
 		if(color == 0x0)
 			continue;
@@ -131,25 +161,25 @@ void filter_map(unsigned int palette, unsigned int dest, unsigned int mode)
 		//u16 grayscale = ((unsigned char)(gray & 0x1F) + ((unsigned char)(gray & 0x1F) << 5) + ((unsigned char)(gray & 0x1F) << 10));
 
 
+        unsigned int mA = (mC & 0xFF000000) >> (24+3);
+        unsigned int mR = (mC & 0x00FF0000) >> (16+3);
+        unsigned int mG = (mC & 0x0000FF00) >> (8+3);
+        unsigned int mB = (mC & 0x000000FF) >> (0+3);
 
-		unsigned int mA = (mC & 0xFF000000) >> (24+3);
-		unsigned int mR = (mC & 0x00FF0000) >> (16+3);
-		unsigned int mG = (mC & 0x0000FF00) >> (8+3);
-		unsigned int mB = (mC & 0x000000FF) >> (0+3);
+        //Highlights+Shadows diff test
+        /*unsigned int intensityLut[0x20] = { mA, (mA/18)*17, (mA/18)*16, (mA/18)*15, (mA/18)*14, (mA/18)*13, (mA/18)*12, (mA/18)*11, (mA/18)*10, (mA/18)*9, (mA/18)*8, (mA/18)*7, (mA/18)*6, (mA/18)*5, (mA/18)*4, (mA/18)*3, (mA/18)*2, (mA/18)*1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-		//Highlights+Shadows diff test
-		/*unsigned int intensityLut[0x20] = { mA, (mA/18)*17, (mA/18)*16, (mA/18)*15, (mA/18)*14, (mA/18)*13, (mA/18)*12, (mA/18)*11, (mA/18)*10, (mA/18)*9, (mA/18)*8, (mA/18)*7, (mA/18)*6, (mA/18)*5, (mA/18)*4, (mA/18)*3, (mA/18)*2, (mA/18)*1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        mA -= intensityLut[0x1F - gray];*/
 
-		mA -= intensityLut[0x1F - gray];*/
+        unsigned char rem = 0x1F - mA; // Remaining fraction
 
-		unsigned char rem = 0x1F - mA; // Remaining fraction
+        short r1 = div((r*rem + mR*mA), 0x1F);
+        short g1 = div((g*rem + mG*mA), 0x1F);
+        short b1 = div((b*rem + mB*mA), 0x1F); 
 
-		short r1 = div((r*rem + mR*mA), 0x1F);
-		short g1 = div((g*rem + mG*mA), 0x1F);
-		short b1 = div((b*rem + mB*mA), 0x1F); 
-
-		color = ((unsigned char)(r1 & 0x1F) + ((unsigned char)(g1 & 0x1F) << 5) + ((unsigned char)(b1 & 0x1F) << 10));
-		pal[i] = color;
+        color = ((unsigned char)(r1 & 0x1F) + ((unsigned char)(g1 & 0x1F) << 5) + ((unsigned char)(b1 & 0x1F) << 10));
+        
+        pal[i] = grabUnblended ? replace_colors_blend[j][1] : color;
 	}
 	
 	doMasking_map(palette, type, offset, amount);

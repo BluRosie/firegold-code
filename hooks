@@ -6,4 +6,4 @@ filter_map 080598CC 3
 rtc_main 080004B2 0
 
 
-ReloadMapObjectsWithOffset 0805edf0 2
+#ReloadMapObjectsWithOffset 0805edf0 2
