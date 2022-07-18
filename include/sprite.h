@@ -182,6 +182,13 @@ struct SpriteTemplate
     SpriteCallback callback;
 };
 
+// struct defines
+struct Coords16
+{
+    s16 x;
+    s16 y;
+};
+
 struct Sprite
 {
     /*0x00*/ struct OamData oam;

@@ -1,16 +1,19 @@
 #ifndef LIGHTING_H
 #define LIGHTING_H
 
+#include "sprite.h"
+
 // constant defines
 #define OBJECT_EVENTS_COUNT 16
 #define obj_frame_tiles(ptr) {.data = (u8 *)ptr, .size = sizeof ptr}
 
-// struct defines
-struct Coords16
-{
-    s16 x;
-    s16 y;
-};
+#define MAP_OFFSET 7
+#define MAP_OFFSET_W (MAP_OFFSET * 2 + 1)
+#define MAP_OFFSET_H (MAP_OFFSET * 2)
+
+#define OBJ_EVENT_GFX_LIGHT_SPRITE (4) // figure this the fuck out
+
+#define MB_LANTERN_LIGHT (4)
 
 // structure defines
 struct ObjectEvent
@@ -88,10 +91,18 @@ struct ObjectEventTemplate
     /*0x14*/ u16 flagId;
 };  /*size = 0x18*/
 
+struct WarpData
+{
+    s8 mapGroup;
+    s8 mapNum;
+    s8 warpId;
+    s16 x, y;
+};
+
 struct SaveBlock1
 {
     /*0x0000*/ struct Coords16 pos;
-    /*0x0004*/ //struct WarpData location;
+    /*0x0004*/ struct WarpData location;
     /*0x000C*/ //struct WarpData continueGameWarp;
     /*0x0014*/ //struct WarpData dynamicWarp;
     /*0x001C*/ //struct WarpData lastHealLocation;
@@ -118,7 +129,7 @@ struct SaveBlock1
     /*0x0638*/ //u16 trainerRematchStepCounter;
     /*0x063A*/ //u8 ALIGNED(2) trainerRematches[MAX_REMATCH_ENTRIES];
     /*0x06A0*/ //struct ObjectEvent objectEvents[OBJECT_EVENTS_COUNT];
-               u8 padding[0x8E0-4]; // padding to get object event templates where they need to be
+               u8 padding[0x8E0-4-8]; // padding to get object event templates where they need to be
     /*0x08E0*/ struct ObjectEventTemplate objectEventTemplates[16];
     /*0x0EE0*/ //u8 flags[NUM_FLAG_BYTES];
     /*0x1000*/ //u16 vars[VARS_COUNT];
@@ -210,10 +221,52 @@ union AnimCmd
     struct AnimJumpCmd jump;
 };*/
 
+struct MapEvents
+{
+    u8 objectEventCount;
+    u8 warpCount;
+    u8 coordEventCount;
+    u8 bgEventCount;
+    /*struct ObjectEventTemplate*/void *objectEvents;
+    /*struct WarpEvent*/void *warps;
+    /*struct CoordEvent*/void *coordEvents;
+    /*struct BgEvent*/void *bgEvents;
+};
+
+struct MapHeader
+{
+    /* 0x00 */ /*const struct MapLayout*/ void *mapLayout;
+    /* 0x04 */ const struct MapEvents *events;
+    /* 0x08 */ const u8 *mapScripts;
+    /* 0x0C */ /*const struct MapConnections*/ void *connections;
+    /* 0x10 */ u16 music;
+    /* 0x12 */ u16 mapLayoutId;
+    /* 0x14 */ u8 regionMapSectionId;
+    /* 0x15 */ u8 cave;
+    /* 0x16 */ u8 weather;
+    /* 0x17 */ u8 mapType;
+    /* 0x18 */ u8 filler_18[2];
+               // fields correspond to the arguments in the map_header_flags macro
+    /* 0x1A */ bool8 allowCycling:1;
+               bool8 allowEscaping:1; // Escape Rope and Dig
+               bool8 allowRunning:1;
+               bool8 showMapName:5; // the last 4 bits are unused
+                                    // but the 5 bit sized bitfield is required to match
+    /* 0x1B */ u8 battleType;
+};
+
+struct BackupMapLayout
+{
+    s32 width;
+    s32 height;
+    u16 *map;
+};
+
 struct ObjectEvent gObjectEvents[OBJECT_EVENTS_COUNT];
 struct SaveBlock1 *gSaveBlock1;
 struct PlayerAvatar gPlayerAvatar;
-static const union AnimCmd *const sAnimTable_Inanimate[];
+const union AnimCmd *const sAnimTable_Inanimate[];
+//const struct SpritePalette sObjectEventSpritePalettes[];
 
 void ClearPlayerAvatarInfo(void);
 void ReloadMapObjectWithOffset(u32 i, s16 x, s16 y);
@@ -221,5 +274,20 @@ void CreateReflectionEffectSprites(void);
 void FieldEffectFreeTilesIfUnused(u16 sheetTileStart);
 void FieldEffectFreePaletteIfUnused(u32 paletteNum);
 void Weather_SetBlendCoeffs(u32, u32); // tbh idk
+u8 FindObjectEventPaletteIndexByTag(u16 tag);
+void UpdateSpritePaletteWithWeather(u32 paletteNum, u32);
+void GetMapCoordsFromSpritePos(s16 x, s16 y, s16 *destx, s16 *desty);
+u32 MapGridGetMetatileBehaviorAt(s16 x, s16 y);
+void InitMapLayoutData(void *);
+void RunOnLoadMapScript(void);
+void LoadSavedMapView(void);
+void TrySpawnObjectEventTemplate(struct ObjectEventTemplate *templates, u16 mapNum, u16 mapGroup, s16 x, s16 y);
+
+struct MapHeader gMapHeader;
+extern struct BackupMapLayout gBackupMapLayout;
+extern const struct SpritePalette sObjectEventSpritePalettes[];
+
+
+extern const struct OamData gObjectEventBaseOam_32x32;
 
 #endif // LIGHTING_H

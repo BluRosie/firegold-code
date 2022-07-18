@@ -5,5 +5,7 @@ filter_npc 08083598 2
 filter_map 080598CC 3
 rtc_main 080004B2 0
 
-
-#ReloadMapObjectsWithOffset 0805edf0 2
+InitMap 080589d4 0
+InitMapFromSavedGame 080589e8 0
+ReloadMapObjectsWithOffset 0805edf0 2
+TrySpawnObjectEvents 0805ec30 2
