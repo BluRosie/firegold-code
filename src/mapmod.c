@@ -135,11 +135,11 @@ void filter_map(unsigned int palette, unsigned int dest, unsigned int mode)
                     grabUnblended = 1;
                     break;
                 }
-                else if (color == replace_colors_blend[j][1])
-                {
-                    grabUnblended = 1;
-                    break;
-                }
+                //else if (color == replace_colors_blend[j][1])
+                //{
+                //    grabUnblended = 1;
+                //    break;
+                //}
                 j++;
             }
             if (color != pal[i])

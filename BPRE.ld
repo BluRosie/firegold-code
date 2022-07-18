@@ -1899,5 +1899,7 @@ FieldEffectFreePaletteIfUnused = 0x08083754 | 1;
 Weather_SetBlendCoeffs = 0x0807adb0 | 1;
 gPlayerAvatar = 0x02037078;
 
+replace_colors_blend = 0x09CB1370;
+
 gObjectEventBaseOam_32x32 = 0x083a3718;
 sAnimTable_Inanimate = 0x083a3314;

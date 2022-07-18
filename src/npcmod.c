@@ -15,7 +15,7 @@
 #define customColor		(*(unsigned int*)0x0203C010)
 const unsigned int colors_npc[144];
 const unsigned int nonList_npc[4];
-const u16 replace_colors_blend[][2];
+extern const u16 replace_colors_blend[][2];
 
 int div(int a, int b)
 {
@@ -136,9 +136,9 @@ const unsigned int colors_npc[144] __attribute__((aligned(4)))={ 0x502A00A8, 0x5
 
 const unsigned int nonList_npc[4] ={ 0x4, 0x8, 0x9, 0xFF };
 
-const u16 replace_colors_blend[][2] =
-{
-    {0x7F75, 0x7FFF},
-    {0x7ED0, 0x739C},
-    {0xFFFF, 0xFFFF},
-};
+//const u16 replace_colors_blend[][2] =
+//{
+//    {0x7F75, 0x7FFF},
+//    {0x7ED0, 0x739C},
+//    {0xFFFF, 0xFFFF},
+//};
