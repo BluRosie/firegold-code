@@ -21,7 +21,7 @@ void SpawnLightSprite(s16 x, s16 y, s16 camX, s16 camY);
 
 // *holy fuck*
 // all the oam/object things that this file uses
-extern const u8 gFieldEffectObjectPic_BallLight[0x200];// = INCBIN("../graphics/light.4bpp");
+extern const u16 gFieldEffectObjectPic_BallLight[0x200/2];// = INCBIN("../graphics/light.4bpp");
 extern const u16 gFieldEffectObjectPic_BallLightPal[0x10];
 //const u32 gFieldEffectObjectPic_PokeCenterLight[] = INCBIN("../graphics/poke_center_light.4bpp");
 //const u32 gFieldEffectObjectPic_MartLight[] = INCBIN("../graphics/mart_light.4bpp");
