@@ -39,7 +39,7 @@ const struct SpriteFrameImage gFieldEffectObjectPicTable_BallLight[] = {
 //};
 
 const struct SpriteTemplate gFieldEffectObjectTemplate_BallLight = {
-    .tileTag = OBJ_EVENT_PAL_TAG_LIGHT, 
+    .tileTag = 0xFFFF, 
     .paletteTag = OBJ_EVENT_PAL_TAG_LIGHT, 
     .oam = &gObjectEventBaseOam_32x32, 
     .anims = sAnimTable_Inanimate, // fuck
@@ -115,8 +115,12 @@ u8 UpdateSpritePaletteByTemplate(const struct SpriteTemplate * template, struct 
   return UpdateSpritePalette(&sObjectEventSpritePalettes[i], sprite);
 }
 
-
-
+u8 LoadSpritePaletteInSlot(const struct SpritePalette *palette, u8 paletteNum) {
+    paletteNum = paletteNum > 15 ? 15 : paletteNum;
+    sSpritePaletteTags[paletteNum] = palette->tag;
+    DoLoadSpritePalette(palette->data, paletteNum * 16);
+    return paletteNum;
+}
 
 
 
@@ -200,30 +204,34 @@ void UpdateLightSprite(struct Sprite *sprite) {
 
     if (gTimeOfDay != 0 && gTimeOfDay != 5) { // if it is not currently night time
         sprite->invisible = 1;
+        sprite->data[5] = 0;
         return;
     }
+    else if (sprite->data[5] != 0 || sprite->invisible == 1)
+    {
+        LoadSpritePaletteInSlot(&sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(OBJ_EVENT_PAL_TAG_LIGHT)], sprite->oam.paletteNum);
+        sprite->data[5] = 0;
+    }
 
-    switch (sprite->data[5]) { // lightType
-    case 0:
+    UpdateSpritePaletteByTemplate(gFieldEffectLightTemplates[0], sprite);
+
+//    switch (sprite->data[5]) { // lightType
+//    case 0:
         if (gPaletteFade.active) { // if palette fade is active, don't flicker since the timer won't be updated
             Weather_SetBlendCoeffs(7, 12);
             sprite->invisible = 0;
-        } else if (gPlayerAvatar.tileTransitionState) {
-            Weather_SetBlendCoeffs(7, 12); // As long as the second coefficient stays 12, shadows will not change
-            sprite->invisible = 0;
-            //if (GetSpritePaletteTagByPaletteNum(sprite->oam.paletteNum) == OBJ_EVENT_PAL_TAG_LIGHT_2)
-            //    LoadSpritePaletteInSlot(&sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(OBJ_EVENT_PAL_TAG_LIGHT)], sprite->oam.paletteNum);
-        } else if ((sprite->invisible = /*gTimeUpdateCounter & */1)) {
+//        } else if (gPlayerAvatar.tileTransitionState) {
+//            Weather_SetBlendCoeffs(7, 12); // As long as the second coefficient stays 12, shadows will not change
+//            sprite->invisible = 0;
+//            if (GetSpritePaletteTagByPaletteNum(sprite->oam.paletteNum) == OBJ_EVENT_PAL_TAG_LIGHT)
+//                LoadSpritePaletteInSlot(&sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(OBJ_EVENT_PAL_TAG_LIGHT)], sprite->oam.paletteNum);
+        } else if (sprite->invisible = gSaveBlock2->playTimeVBlanks & 1) {
             Weather_SetBlendCoeffs(12, 12);
-            //if (GetSpritePaletteTagByPaletteNum(sprite->oam.paletteNum) == OBJ_EVENT_PAL_TAG_LIGHT)
-            //    LoadSpritePaletteInSlot(&sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(OBJ_EVENT_PAL_TAG_LIGHT_2)], sprite->oam.paletteNum);
+            if (GetSpritePaletteTagByPaletteNum(sprite->oam.paletteNum) == OBJ_EVENT_PAL_TAG_LIGHT)
+                LoadSpritePaletteInSlot(&sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(OBJ_EVENT_PAL_TAG_LIGHT)], sprite->oam.paletteNum);
         }
-        break;
-    case 1 ... 2:
-        Weather_SetBlendCoeffs(12, 12);
-        sprite->invisible = 0;
-        break;
-    }
+//        break;
+//    }
 }
 
 
@@ -231,33 +239,45 @@ void UpdateLightSprite(struct Sprite *sprite) {
 void SpawnLightSprite(s16 x, s16 y, s16 cameraX, s16 cameraY)
 {
     struct Sprite *sprite;
-    u8 spriteId;
+    const struct SpriteTemplate *template;
     u8 i;
-
-    for (i = 0; i < 255; i++)
-    {
+    for (i = 0; i < 64; i++) {
         sprite = &gSprites[i];
         if (sprite->inUse && sprite->callback == UpdateLightSprite && sprite->data[6] == x && sprite->data[7] == y)
             return;
     }
-
-    spriteId = CreateSprite(gFieldEffectLightTemplates[0]/*gFieldEffectObjectTemplatePointers[FLDEFFOBJ_LANTERN_LIGHT]*/, 0, 0, 0);
-    sprite = &gSprites[spriteId];
-    
-    UpdateSpritePaletteByTemplate(gFieldEffectLightTemplates[0]/*gFieldEffectObjectTemplatePointers[FLDEFFOBJ_LANTERN_LIGHT]*/, sprite);
+    u32 lightType = 0;
+    template = gFieldEffectLightTemplates[lightType];
+    LoadSpriteSheetByTemplate(template, 0);
+    sprite = &gSprites[CreateSprite(template, 0, 0, 0)];
+    if (lightType == 0 && (i = IndexOfSpritePaletteTag(template->paletteTag + 1)) < 16)
+        sprite->oam.paletteNum = i;
+    else
+        UpdateSpritePaletteByTemplate(template, sprite);
     GetMapCoordsFromSpritePos(x + cameraX, y + cameraY, &sprite->pos1.x, &sprite->pos1.y);
+    sprite->data[5] = lightType;
     sprite->data[6] = x;
     sprite->data[7] = y;
     sprite->affineAnims = gDummySpriteAffineAnimTable;
     sprite->affineAnimBeginning = 1;
-    sprite->centerToCornerVecX = -(32 >> 1);
-    sprite->centerToCornerVecY = -(32 >> 1);
-    sprite->oam.priority = 1;
-    sprite->oam.objMode = 1;//ST_OAM_OBJ_BLEND;
-    sprite->oam.affineMode = 1;//ST_OAM_AFFINE_NORMAL;
-    sprite->coordOffsetEnabled = 1;//TRUE;
-    sprite->pos1.x += 8;
-    sprite->pos1.y += 22 + sprite->centerToCornerVecY;
+    sprite->coordOffsetEnabled = 1;
+    /*switch (lightType) */{
+    //case 0: // Rustboro lanterns
+        sprite->centerToCornerVecX = -(32 >> 1);
+        sprite->centerToCornerVecY = -(32 >> 1);
+        sprite->oam.priority = 1;
+        sprite->oam.objMode = 1; // BLEND
+        sprite->oam.affineMode = 1;//ST_OAM_AFFINE_NORMAL;
+        sprite->pos1.x += 8;
+        sprite->pos1.y += 22 + sprite->centerToCornerVecY;
+    //    break;
+    //case 1 ... 2: // Pokemon Center & mart
+    //    sprite->centerToCornerVecX = -(16 >> 1);
+    //    sprite->centerToCornerVecY = -(16 >> 1);
+    //    sprite->oam.priority = 2;
+    //    sprite->subpriority = 0xFF;
+    //    sprite->oam.objMode = 1; // BLEND
+    }
 }
 
 void TrySpawnLightSprites(s16 cameraX, s16 cameraY)

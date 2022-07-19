@@ -1914,3 +1914,5 @@ InitMapLayoutData = 0x08058a00 | 1;
 RunOnLoadMapScript = 0x08069c38 | 1;
 LoadSavedMapView = 0x080591c4 | 1;
 TrySpawnObjectEventTemplate = 0x0805e72c | 1;
+sSpritePaletteTags = 0x03000de8;
+DoLoadSpritePalette = 0x080089a0 | 1;

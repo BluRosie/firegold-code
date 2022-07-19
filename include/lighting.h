@@ -165,6 +165,40 @@ struct SaveBlock1
     /*0x3D38*/ //struct TrainerTower trainerTower[NUM_TOWER_CHALLENGE_TYPES];
 }; // size: 0x3D68
 
+struct SaveBlock2
+{
+    /*0x000*/ u8 playerName[7 + 1];
+    /*0x008*/ u8 playerGender; // MALE, FEMALE
+    /*0x009*/ u8 specialSaveWarpFlags;
+    /*0x00A*/ u8 playerTrainerId[4];
+    /*0x00E*/ u16 playTimeHours;
+    /*0x010*/ u8 playTimeMinutes;
+    /*0x011*/ u8 playTimeSeconds;
+    /*0x012*/ u8 playTimeVBlanks;
+//    /*0x013*/ u8 optionsButtonMode;  // OPTIONS_BUTTON_MODE_[NORMAL/LR/L_EQUALS_A]
+//    /*0x014*/ u16 optionsTextSpeed:3; // OPTIONS_TEXT_SPEED_[SLOW/MID/FAST]
+//              u16 optionsWindowFrameType:5; // Specifies one of the 20 decorative borders for text boxes
+//    /*0x15*/  u16 optionsSound:1; // OPTIONS_SOUND_[MONO/STEREO]
+//              u16 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
+//              u16 optionsBattleSceneOff:1; // whether battle animations are disabled
+//              u16 regionMapZoom:1; // whether the map is zoomed in
+//    /*0x018*/ struct Pokedex pokedex;
+//    /*0x090*/ u8 filler_90[0x8+8+8];
+//    /*0x098*/ //struct Time localTimeOffset;
+//    /*0x0A0*/ //struct Time lastBerryTreeUpdate;
+//    /*0x0A8*/ u32 gcnLinkFlags; // Read by Pokemon Colosseum/XD
+//    /*0x0AC*/ bool8 unkFlag1; // Set TRUE, never read
+//    /*0x0AD*/ bool8 unkFlag2; // Set FALSE, never read
+//    /*0x0B0*/ struct BattleTowerData battleTower;
+//    /*0x898*/ u16 mapView[0x100];
+//    /*0xA98*/ struct LinkBattleRecords linkBattleRecords;
+//    /*0xAF0*/ struct BerryCrush berryCrush;
+//    /*0xB00*/ struct PokemonJumpRecords pokeJump;
+//    /*0xB10*/ struct BerryPickingResults berryPick;
+//    /*0xB20*/ u8 filler_B20[0x400];
+//    /*0xF20*/ u32 encryptionKey;
+}; // size: 0xF24
+
 struct PlayerAvatar
 {
     /*0x00*/ u8 flags;
@@ -264,6 +298,7 @@ struct BackupMapLayout
 
 struct ObjectEvent gObjectEvents[OBJECT_EVENTS_COUNT];
 struct SaveBlock1 *gSaveBlock1;
+struct SaveBlock2 *gSaveBlock2;
 struct PlayerAvatar gPlayerAvatar;
 const union AnimCmd *const sAnimTable_Inanimate[];
 //const struct SpritePalette sObjectEventSpritePalettes[];
@@ -282,10 +317,12 @@ void InitMapLayoutData(void *);
 void RunOnLoadMapScript(void);
 void LoadSavedMapView(void);
 void TrySpawnObjectEventTemplate(struct ObjectEventTemplate *templates, u16 mapNum, u16 mapGroup, s16 x, s16 y);
+void DoLoadSpritePalette(u16 *data, u32 size);
 
 struct MapHeader gMapHeader;
 extern struct BackupMapLayout gBackupMapLayout;
 extern const struct SpritePalette sObjectEventSpritePalettes[];
+extern u16 sSpritePaletteTags[16];
 
 
 extern const struct OamData gObjectEventBaseOam_32x32;
