@@ -14,6 +14,7 @@
 void TrySpawnLightSprites(s16 camX, s16 camY);
 void UpdateLightSprite(struct Sprite *sprite);
 void SpawnLightSprite(s16 x, s16 y, s16 camX, s16 camY);
+u8 LoadSpritePaletteInSlot(const struct SpritePalette *palette, u8 paletteNum);
 //void TrySpawnLightSprites(s16 camX, s16 camY);
 
 // functions we expand on from rom
@@ -74,22 +75,127 @@ const struct SpriteTemplate *const gFieldEffectLightTemplates[] = {
 //    &gFieldEffectObjectTemplate_MartLight,
 };
 
+typedef struct
+{
+    u8 Type;
+    u8 Count;
+    u16 PalTag;
+} PalRef;
+
+#define PalTags ((u16 *) 0x03000DE8)
+#define PalRefs ((PalRef *) 0x0203FF00)
+#define PalTagsStart *((u8 *) 0x3003E58)
+#define PalTypeUnused 0
+#define PalTypeNPC 1
+#define PalTypeAnimation 2
+#define PalTypeWeather 3
+#define PalTypeReflection 4
 
 
-u8 UpdateSpritePalette(const struct SpritePalette * spritePalette, struct Sprite * sprite) {
-  // Free palette if otherwise unused
-  sprite->inUse = 0;
-  FieldEffectFreePaletteIfUnused(sprite->oam.paletteNum);
-  sprite->inUse = 1;
-  if (IndexOfSpritePaletteTag(spritePalette->tag) == 0xFF) {
-    sprite->oam.paletteNum = LoadSpritePalette(spritePalette);
-    UpdateSpritePaletteWithWeather(sprite->oam.paletteNum, 0);
-  } else {
-    sprite->oam.paletteNum = LoadSpritePalette(spritePalette);
-  }
 
-  return sprite->oam.paletteNum;
+
+/*** Funcs from Navenatox's dynamic OW pals repo ***/
+u8 FindPalRef(u8 Type, u16 PalTag)
+{
+	int i;
+	for (i = 0; i < 16; i++)
+	{
+		if (PalRefs[i].Type == Type && PalRefs[i].PalTag == PalTag) return i;
+	}
+	return 0xFF; // not found
 }
+
+u8 AddPalRef(u8 Type, u16 PalTag)
+{
+	int i;
+	for (i = 0; i < 16; i++)
+	{
+		if (PalRefs[i].Type == PalTypeUnused)
+		{
+			PalRefs[i].Type = Type;
+			PalRefs[i].PalTag = PalTag;
+			return i;
+		}
+	}
+	return 0xFF; // no more space
+}
+
+u8 FindPalTag(u16 PalTag)
+{
+	int i;
+	if (PalTagsStart >= 16) return 0xFF;
+	for (i = PalTagsStart; i < 16; i++)
+	{
+		if (sSpritePaletteTags[i] == PalTag) return i;
+	}
+	return 0xFF; // not found
+}
+
+u8 AddPalTag(u16 PalTag)
+{
+	int i;
+	if (PalTagsStart >= 16) return 0xFF;
+	for (i = PalTagsStart; i < 16; i++)
+	{
+		if (sSpritePaletteTags[i] == 0xFFFF)
+		{
+			sSpritePaletteTags[i] = PalTag;
+			return i;
+		}
+	}
+	return 0xFF; // no more space
+}
+
+//u8 PalRefIncreaseCount(u8 PalSlot)
+//{
+//	PalRefs[PalSlot].Count++;
+//	return PalSlot;
+//}
+//
+//void PalRefDecreaseCount(u8 PalSlot)
+//{
+//	if (PalRefs[PalSlot].Count != 0) PalRefs[PalSlot].Count--;
+//	if (PalRefs[PalSlot].Count == 0)
+//	{
+//		PalRefs[PalSlot].Type = 0;
+//		PalRefs[PalSlot].PalTag = 0;
+//	}
+//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** custom/modded code, credits aarant/pokemerrp **/
+
+u32 GrabLightSpritePaletteNum(void)
+{
+    u32 paletteNum = FindPalRef(PalTypeAnimation, OBJ_EVENT_PAL_TAG_LIGHT);
+    
+    if (paletteNum == 0xFF)
+    {
+        AddPalRef(PalTypeAnimation, OBJ_EVENT_PAL_TAG_LIGHT);
+    }
+    LoadSpritePaletteInSlot(&sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(OBJ_EVENT_PAL_TAG_LIGHT)], paletteNum);
+    return paletteNum;
+}
+
 
 // Like LoadSpriteSheet, but checks if already, and uses template image frames
 u16 LoadSpriteSheetByTemplate(const struct SpriteTemplate *template, u8 frame) {
@@ -106,23 +212,12 @@ u16 LoadSpriteSheetByTemplate(const struct SpriteTemplate *template, u8 frame) {
     return LoadSpriteSheet(&tempSheet);
 }
 
-// Find and update based on template's paletteTag
-// TODO: Add a better way to associate tags -> palettes besides listing them in sObjectEventSpritePalettes
-u8 UpdateSpritePaletteByTemplate(const struct SpriteTemplate * template, struct Sprite * sprite) {
-  u8 i = FindObjectEventPaletteIndexByTag(template->paletteTag);
-  if (i == 0xFF)
-    return i;
-  return UpdateSpritePalette(&sObjectEventSpritePalettes[i], sprite);
-}
-
 u8 LoadSpritePaletteInSlot(const struct SpritePalette *palette, u8 paletteNum) {
     paletteNum = paletteNum > 15 ? 15 : paletteNum;
     sSpritePaletteTags[paletteNum] = palette->tag;
     DoLoadSpritePalette(palette->data, paletteNum * 16);
     return paletteNum;
 }
-
-
 
 u32 MetatileBehavior_IsLanternLight(u8 metatileBehavior)
 {
@@ -131,7 +226,6 @@ u32 MetatileBehavior_IsLanternLight(u8 metatileBehavior)
     else
         return 0;
 }
-
 
 // SpawnObjectEventsOnReturnToField in emerald
 // add TrySpawnLightSprites to the end
@@ -204,34 +298,22 @@ void UpdateLightSprite(struct Sprite *sprite) {
 
     if (gTimeOfDay != 0 && gTimeOfDay != 5) { // if it is not currently night time
         sprite->invisible = 1;
-        sprite->data[5] = 0;
+        sprite->data[5] = 1;
         return;
     }
-    else if (sprite->data[5] != 0 || sprite->invisible == 1)
+    else if (sprite->data[5] != 0 && sprite->invisible == 1)
     {
-        LoadSpritePaletteInSlot(&sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(OBJ_EVENT_PAL_TAG_LIGHT)], sprite->oam.paletteNum);
+        sprite->oam.paletteNum = GrabLightSpritePaletteNum();//LoadSpritePaletteInSlot(&sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(OBJ_EVENT_PAL_TAG_LIGHT)], sprite->oam.paletteNum);
         sprite->data[5] = 0;
     }
 
-    UpdateSpritePaletteByTemplate(gFieldEffectLightTemplates[0], sprite);
-
-//    switch (sprite->data[5]) { // lightType
-//    case 0:
-        if (gPaletteFade.active) { // if palette fade is active, don't flicker since the timer won't be updated
-            Weather_SetBlendCoeffs(7, 12);
-            sprite->invisible = 0;
-//        } else if (gPlayerAvatar.tileTransitionState) {
-//            Weather_SetBlendCoeffs(7, 12); // As long as the second coefficient stays 12, shadows will not change
-//            sprite->invisible = 0;
-//            if (GetSpritePaletteTagByPaletteNum(sprite->oam.paletteNum) == OBJ_EVENT_PAL_TAG_LIGHT)
-//                LoadSpritePaletteInSlot(&sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(OBJ_EVENT_PAL_TAG_LIGHT)], sprite->oam.paletteNum);
-        } else if (sprite->invisible = gSaveBlock2->playTimeVBlanks & 1) {
-            Weather_SetBlendCoeffs(12, 12);
-            if (GetSpritePaletteTagByPaletteNum(sprite->oam.paletteNum) == OBJ_EVENT_PAL_TAG_LIGHT)
-                LoadSpritePaletteInSlot(&sObjectEventSpritePalettes[FindObjectEventPaletteIndexByTag(OBJ_EVENT_PAL_TAG_LIGHT)], sprite->oam.paletteNum);
-        }
-//        break;
-//    }
+    sprite->oam.paletteNum = GrabLightSpritePaletteNum();
+    if (gPaletteFade.active) { // if palette fade is active, don't flicker since the timer won't be updated
+        Weather_SetBlendCoeffs(7, 12);
+        sprite->invisible = 0;
+    } else if (sprite->invisible = gSaveBlock2->playTimeVBlanks & 1) {
+        Weather_SetBlendCoeffs(12, 12);
+    }
 }
 
 
@@ -250,10 +332,9 @@ void SpawnLightSprite(s16 x, s16 y, s16 cameraX, s16 cameraY)
     template = gFieldEffectLightTemplates[lightType];
     LoadSpriteSheetByTemplate(template, 0);
     sprite = &gSprites[CreateSprite(template, 0, 0, 0)];
-    if (lightType == 0 && (i = IndexOfSpritePaletteTag(template->paletteTag + 1)) < 16)
-        sprite->oam.paletteNum = i;
-    else
-        UpdateSpritePaletteByTemplate(template, sprite);
+
+    sprite->oam.paletteNum = GrabLightSpritePaletteNum();
+    
     GetMapCoordsFromSpritePos(x + cameraX, y + cameraY, &sprite->pos1.x, &sprite->pos1.y);
     sprite->data[5] = lightType;
     sprite->data[6] = x;
@@ -261,23 +342,13 @@ void SpawnLightSprite(s16 x, s16 y, s16 cameraX, s16 cameraY)
     sprite->affineAnims = gDummySpriteAffineAnimTable;
     sprite->affineAnimBeginning = 1;
     sprite->coordOffsetEnabled = 1;
-    /*switch (lightType) */{
-    //case 0: // Rustboro lanterns
-        sprite->centerToCornerVecX = -(32 >> 1);
-        sprite->centerToCornerVecY = -(32 >> 1);
-        sprite->oam.priority = 1;
-        sprite->oam.objMode = 1; // BLEND
-        sprite->oam.affineMode = 1;//ST_OAM_AFFINE_NORMAL;
-        sprite->pos1.x += 8;
-        sprite->pos1.y += 22 + sprite->centerToCornerVecY;
-    //    break;
-    //case 1 ... 2: // Pokemon Center & mart
-    //    sprite->centerToCornerVecX = -(16 >> 1);
-    //    sprite->centerToCornerVecY = -(16 >> 1);
-    //    sprite->oam.priority = 2;
-    //    sprite->subpriority = 0xFF;
-    //    sprite->oam.objMode = 1; // BLEND
-    }
+    sprite->centerToCornerVecX = -(32 >> 1);
+    sprite->centerToCornerVecY = -(32 >> 1);
+    sprite->oam.priority = 1;
+    sprite->oam.objMode = 1; // BLEND
+    sprite->oam.affineMode = 1;//ST_OAM_AFFINE_NORMAL;
+    sprite->pos1.x += 8;
+    sprite->pos1.y += 22 + sprite->centerToCornerVecY;
 }
 
 void TrySpawnLightSprites(s16 cameraX, s16 cameraY)
