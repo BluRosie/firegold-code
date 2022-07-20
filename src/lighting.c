@@ -366,7 +366,7 @@ void TrySpawnLightSprites(s16 cameraX, s16 cameraY)
     if (gTimeOfDay != 0 && gTimeOfDay != 5) { // if it is not currently night time
         return;
     }
-    
+        
     for (i = 0; gLightMetatiles[i].x > 0; i++)
     {
         x = gLightMetatiles[i].x;
@@ -392,6 +392,9 @@ void CacheLightMetatiles(void)
     
     objectEventCount = gMapHeader.events->objectEventCount;
     
+    gLightMetatiles[0].x = 0;
+    gLightMetatiles[0].y = 0;
+
     for (i = 0; i < objectEventCount; i++)
     {
         if (gMapHeader.events->objectEvents[i].graphicsId == 4)
@@ -415,8 +418,11 @@ void CacheLightMetatiles(void)
         }
     }*/
     
-    gLightMetatiles[i].x = -1;
-    gLightMetatiles[i].y = -1;
+    for (; j < 16; j++)
+    {
+        gLightMetatiles[j].x = -1;
+        gLightMetatiles[j].y = -1;
+    }
 }
 
 void InitMap(void)
