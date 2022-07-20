@@ -261,7 +261,7 @@ struct MapEvents
     u8 warpCount;
     u8 coordEventCount;
     u8 bgEventCount;
-    /*struct ObjectEventTemplate*/void *objectEvents;
+    struct ObjectEventTemplate *objectEvents;
     /*struct WarpEvent*/void *warps;
     /*struct CoordEvent*/void *coordEvents;
     /*struct BgEvent*/void *bgEvents;

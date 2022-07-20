@@ -263,6 +263,8 @@ void TrySpawnObjectEvents(s16 cameraX, s16 cameraY)
         for (i = 0; i < objectCount; i++)
         {
             struct ObjectEventTemplate *template = &gSaveBlock1->objectEventTemplates[i];
+            if (template->graphicsId == 4)
+                continue;
             s16 npcX = template->x + 7;
             s16 npcY = template->y + 7;
 
@@ -369,8 +371,8 @@ void TrySpawnLightSprites(s16 cameraX, s16 cameraY)
     {
         x = gLightMetatiles[i].x;
         y = gLightMetatiles[i].y;
-        if (x >= left && x <= right && y >= top && y <= bottom &&
-            MetatileBehavior_IsLanternLight(MapGridGetMetatileBehaviorAt(x, y)))
+        if (x >= left && x <= right && y >= top && y <= bottom /*&&
+            MetatileBehavior_IsLanternLight(MapGridGetMetatileBehaviorAt(x, y))*/)
         {
             SpawnLightSprite(x, y, cameraX, cameraY);
         }
@@ -381,13 +383,26 @@ void TrySpawnLightSprites(s16 cameraX, s16 cameraY)
 
 
 // Caches light metatile coordinates
-// TODO: Better way to dynamically generate lights
-static void CacheLightMetatiles(void)
+void CacheLightMetatiles(void)
 {
-    u8 i = 0;
+    u8 i = 0, objectEventCount = 0, j = 0;
     s32 x, y;
 
-    for (x = 0; x < gBackupMapLayout.width; x++)
+    // rewriting to do from map header
+    
+    objectEventCount = gMapHeader.events->objectEventCount;
+    
+    for (i = 0; i < objectEventCount; i++)
+    {
+        if (gMapHeader.events->objectEvents[i].graphicsId == 4)
+        {
+            gLightMetatiles[j].x = gMapHeader.events->objectEvents[i].x+7;
+            gLightMetatiles[j].y = gMapHeader.events->objectEvents[i].y+7;
+            j++;
+        }
+    }
+
+    /*for (x = 0; x < gBackupMapLayout.width; x++)
     {
         for (y = 0; y < gBackupMapLayout.height; y++)
         {
@@ -401,7 +416,7 @@ static void CacheLightMetatiles(void)
     }
     
     gLightMetatiles[i].x = -1;
-    gLightMetatiles[i].y = -1;
+    gLightMetatiles[i].y = -1;*/
 }
 
 void InitMap(void)
