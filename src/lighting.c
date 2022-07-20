@@ -413,10 +413,10 @@ void CacheLightMetatiles(void)
                 i++;
             }
         }
-    }
+    }*/
     
     gLightMetatiles[i].x = -1;
-    gLightMetatiles[i].y = -1;*/
+    gLightMetatiles[i].y = -1;
 }
 
 void InitMap(void)
