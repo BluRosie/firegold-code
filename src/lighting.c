@@ -8,7 +8,7 @@
 #define OBJ_EVENT_PAL_TAG_LIGHT 0x8001
 #define OBJ_EVENT_PAL_TAG_LIGHT_2 0x8002
 #define OBJ_EVENT_PAL_TAG_NEON_LIGHT 0x8003
-#define gLightMetatiles ((struct Coords16*)0x0203C018) // reserve like 20 or so lights
+#define gLightMetatiles ((struct Coords16*)0x0203FF80) // reserve like 20 or so lights
 
 // this file's functions
 void TrySpawnLightSprites(s16 camX, s16 camY);
