@@ -10,7 +10,7 @@ aarant/pokemerrp on Discord then made a [lighting branch](https://github.com/aar
 
 This branch looks to implement that in a much more convenient manner using the CFRU toolchain.  No manual assembling, free space management, or anything of the sort.
 
-![](lantern.mov)
+![](lantern.gif)
 
 ### Build Instructions
 
