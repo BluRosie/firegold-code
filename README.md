@@ -6,9 +6,11 @@ ShinyQuagsire made a new repo for one called [Wizard-DN](https://github.com/shin
 
 Ultima-Soul then [developed a branch](https://github.com/ultima-soul/Wizard-DN/tree/dynamic_overworld_palettes) for use with Leon's old ROM base that worked with Navenatox's dynamic Overworld palettes.
 
+aarant/pokemerrp on Discord then made a [lighting branch](https://github.com/aarant/pokeemerald/tree/lighting) which had some very nice lanterns that I then ported to binary FireRed.
+
 This branch looks to implement that in a much more convenient manner using the CFRU toolchain.  No manual assembling, free space management, or anything of the sort.
 
-![](wizard-dn.png)
+![](lantern.mov)
 
 ### Build Instructions
 
