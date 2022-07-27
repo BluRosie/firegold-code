@@ -1896,6 +1896,16 @@ sMapPreviewScreenData_Day = 0x09D2CF40;
 sMapPreviewScreenData_Evening = 0x09D2D110;
 sMapPreviewScreenData_Night = 0x09D2D2E0;
 
+sBattleTerrainTable_Morning = 0x09D31050;
+sBattleTerrainTable_Day = 0x09D308D0;
+sBattleTerrainTable_Evening = 0x09D30B50;
+sBattleTerrainTable_Night = 0x09D30DD0;
+
 GetBgTilemapBuffer = 0x08002008 | 1;
 SetBgTilemapBuffer = 0x08001fa0 | 1;
 CopyToBgTilemapBuffer = 0x08002040 | 1;
+
+gBattleTextboxTiles = 0x08d00000;
+gBattleTextboxTilemap = 0x08d0051c;
+gBattleTextboxPalette = 0x08d004d8;
+GetBattleTerrainOverride = 0x0800fc2c | 1;

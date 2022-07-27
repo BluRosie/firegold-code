@@ -1,7 +1,11 @@
 #examples:
 #SetTradedMonPokedexFlags 080507A0 1
 
-#LoadMapPreviewGfx 080c19fc 0
 GetMapPreviewScreenIdx 080f80e4 1
 MapPreview_LoadGfx 080f819c 1
 GetDungeonMapPreviewScreenInfo 080f8544 1
+
+GetBattleTerrainByMapScene 0800f238 1
+LoadBattleTerrainGfx 0800f260 1
+LoadBattleTerrainEntryGfx 0800f2ac 1
+LoadChosenBattleElement 0800fcb4 1

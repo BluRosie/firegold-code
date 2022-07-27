@@ -2,6 +2,8 @@
 
 Fire Gold ports the HGSS' map preview day/night system where every preview changes depending on the time of day.  This branch's code is responsible for that.
 
+Also added different battle backgrounds with this same idea.
+
 ![](map-previews.gif)
 
 ### Build Instructions

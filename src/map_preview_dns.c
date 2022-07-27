@@ -73,6 +73,7 @@ struct MapPreviewScreen *GrabCurrentPreviewScreenData()
     case 2:
         return sMapPreviewScreenData_Day;
     case 3:
+    case 4:
         return sMapPreviewScreenData_Evening;
     }
 }
