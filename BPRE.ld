@@ -1888,3 +1888,14 @@ GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;
 CreateMon = 0x0803DA54|1;
 
+sDungeonMapPreview = 0x020399dc;
+CopyMapPreviewTilemapToBgTilemapBuffer = 0x080c1e78 | 1;
+
+sMapPreviewScreenData_Morning = 0x0843e9e8;
+sMapPreviewScreenData_Day = 0x09D2CF40;
+sMapPreviewScreenData_Evening = 0x09D2D110;
+sMapPreviewScreenData_Night = 0x09D2D2E0;
+
+GetBgTilemapBuffer = 0x08002008 | 1;
+SetBgTilemapBuffer = 0x08001fa0 | 1;
+CopyToBgTilemapBuffer = 0x08002040 | 1;

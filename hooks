@@ -1,2 +1,7 @@
 #examples:
 #SetTradedMonPokedexFlags 080507A0 1
+
+#LoadMapPreviewGfx 080c19fc 0
+GetMapPreviewScreenIdx 080f80e4 1
+MapPreview_LoadGfx 080f819c 1
+GetDungeonMapPreviewScreenInfo 080f8544 1
