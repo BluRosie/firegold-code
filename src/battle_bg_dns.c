@@ -37,17 +37,17 @@ struct BattleBackground
 
 #define gTimeOfDay *((u8*)0x0203C000)
 
-extern struct BattleBackground* sBattleTerrainTable_Morning[];
-extern struct BattleBackground* sBattleTerrainTable_Day[];
-extern struct BattleBackground* sBattleTerrainTable_Evening[];
-extern struct BattleBackground* sBattleTerrainTable_Night[];
+extern struct BattleBackground sBattleTerrainTable_Morning[];
+extern struct BattleBackground sBattleTerrainTable_Day[];
+extern struct BattleBackground sBattleTerrainTable_Evening[];
+extern struct BattleBackground sBattleTerrainTable_Night[];
 
 void LZDecompressVram(void *, void*);
 void LoadCompressedPalette(void *, u32, u32);
 void *GetBgTilemapBuffer(u32);
 void CopyToBgTilemapBuffer(u32, u8 *, u32, u32);
 
-struct BattleBackground **GetCurrentBattleBGTable()
+struct BattleBackground *GetCurrentBattleBGTable()
 {
     switch (gTimeOfDay)
     {
