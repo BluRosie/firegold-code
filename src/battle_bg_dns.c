@@ -1,12 +1,14 @@
 #include "../include/gba/defines.h"
 #include "../include/gba/types.h"
 #include "../include/bg.h"
+#include "../include/lighting.h"
 
 // part 1:  conversion table, which just needs its entries expanded to 1C
 struct BattleSceneMapping 
 {
     u8 mapScene;
     u8 battleTerrain;
+    u16 padding;
 };
 
 #define sMapBattleSceneMapping ((struct BattleSceneMapping *)0x09D36030)
@@ -36,6 +38,8 @@ struct BattleBackground
 };
 
 #define gTimeOfDay *((u8*)0x0203C000)
+#define gMapType (*(u8*)(0x02036E13))
+#define IS_INSIDE (gMapType == 4 || gMapType == 8 || gMapType == 9 || gMapType == 0xFF)
 
 extern struct BattleBackground sBattleTerrainTable_Morning[];
 extern struct BattleBackground sBattleTerrainTable_Day[];
@@ -49,6 +53,9 @@ void CopyToBgTilemapBuffer(u32, u8 *, u32, u32);
 
 struct BattleBackground *GetCurrentBattleBGTable()
 {
+    if (IS_INSIDE)
+        return sBattleTerrainTable_Day;
+
     switch (gTimeOfDay)
     {
     default:
@@ -70,6 +77,10 @@ void LoadBattleTerrainGfx(u16 terrain)
     struct BattleBackground *currentBattleBackgroundTable = GetCurrentBattleBGTable();
     if (terrain >= 32)
         terrain = 9;
+    if (MapGridGetMetatileBehaviorAt(gSaveBlock1->pos.x+7, gSaveBlock1->pos.y+7) == 0x15) // ocean surf
+        terrain = 4;
+    else if (MapGridGetMetatileBehaviorAt(gSaveBlock1->pos.x+7, gSaveBlock1->pos.y+7) == 0x10) // pond surf
+        terrain = 5;
     // Copy to bg3
     LZDecompressVram(currentBattleBackgroundTable[terrain].tileset, (void *)BG_CHAR_ADDR(2));
     LZDecompressVram(currentBattleBackgroundTable[terrain].tilemap, (void *)BG_SCREEN_ADDR(26));
@@ -81,6 +92,10 @@ void LoadBattleTerrainEntryGfx(u16 terrain)
     struct BattleBackground *currentBattleBackgroundTable = GetCurrentBattleBGTable();
     if (terrain >= 32)
         terrain = 9;
+    if (MapGridGetMetatileBehaviorAt(gSaveBlock1->pos.x+7, gSaveBlock1->pos.y+7) == 0x15) // ocean surf
+        terrain = 4;
+    else if (MapGridGetMetatileBehaviorAt(gSaveBlock1->pos.x+7, gSaveBlock1->pos.y+7) == 0x10) // pond surf
+        terrain = 5;
     // Copy to bg1
     LZDecompressVram(currentBattleBackgroundTable[terrain].entryTileset, (void *)BG_CHAR_ADDR(1));
     LZDecompressVram(currentBattleBackgroundTable[terrain].entryTilemap, (void *)BG_SCREEN_ADDR(28));
