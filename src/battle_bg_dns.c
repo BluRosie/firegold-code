@@ -50,6 +50,8 @@ void LZDecompressVram(void *, void*);
 void LoadCompressedPalette(void *, u32, u32);
 void *GetBgTilemapBuffer(u32);
 void CopyToBgTilemapBuffer(u32, u8 *, u32, u32);
+u8 GetBattleTerrainOverride();
+void LoadBattleMenuWindowGfx();
 
 struct BattleBackground *GetCurrentBattleBGTable()
 {
@@ -96,6 +98,8 @@ void LoadBattleTerrainEntryGfx(u16 terrain)
         terrain = 4;
     else if (MapGridGetMetatileBehaviorAt(gSaveBlock1->pos.x+7, gSaveBlock1->pos.y+7) == 0x10) // pond surf
         terrain = 5;
+    else
+        terrain = GetBattleTerrainOverride();
     // Copy to bg1
     LZDecompressVram(currentBattleBackgroundTable[terrain].entryTileset, (void *)BG_CHAR_ADDR(1));
     LZDecompressVram(currentBattleBackgroundTable[terrain].entryTilemap, (void *)BG_SCREEN_ADDR(28));
@@ -104,8 +108,6 @@ void LoadBattleTerrainEntryGfx(u16 terrain)
 extern const u32 gBattleTextboxTiles[];
 extern const u32 gBattleTextboxTilemap[];
 extern const u32 gBattleTextboxPalette[];
-u8 GetBattleTerrainOverride();
-void LoadBattleMenuWindowGfx();
 
 bool8 LoadChosenBattleElement(u8 caseId)
 {
