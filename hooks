@@ -1,2 +1,8 @@
 #examples:
 #SetTradedMonPokedexFlags 080507A0 1
+
+DestroySafariZoneStatsWindow 0806ef18 0
+#DoDrawStartMenu 0806f01c 0
+#StartCB_HandleInput 0806f280 0
+StartCB_HandleInput_hook 0806F324 2
+DoDrawStartMenu_hook 0806F090 0

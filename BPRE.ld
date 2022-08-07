@@ -1430,7 +1430,7 @@ IsUpdateLinkStateCBActive = 0x805642C | 1;
 AppendToStartMenuItems = 0x806ED94 | 1;
 SetUpStartMenu_Link = 0x806EE34 | 1;
 SetUpStartMenu_UnionRoom = 0x806EE58 | 1;
-DestroySafariZoneStatsWindow = 0x806EF18 | 1;
+/*DestroySafariZoneStatsWindow = 0x806EF18 | 1;*/
 PrintStartMenuItems = 0x806EF44 | 1;
 DrawStartMenuInOneGo = 0x806F14C | 1;
 task50_startmenu = 0x806F168 | 1;
@@ -1888,4 +1888,8 @@ LoadStdWindowFrameGfx = 0x080f6e9c|1;
 GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;
 CreateMon = 0x0803DA54|1;
+
+DrawSafariZoneStatsWindow = 0x0806ee7c |1;
+sStartMenuDescPointers = 0x083a7394 |1;
+SetUpStartMenu = 0x0806ed54|1;
 
