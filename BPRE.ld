@@ -1889,3 +1889,6 @@ GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;
 CreateMon = 0x0803DA54|1;
 
+FreezeObjectEvents = 0x08068974 |1;
+CB2_EndScriptedWildBattle = 0x0807fba0 |1;
+

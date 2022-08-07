@@ -1,2 +1,7 @@
 #examples:
 #SetTradedMonPokedexFlags 080507A0 1
+
+#DoStandardWildBattle 0807f748 0
+#StartScriptedWildBattle 0807f8c4 0
+StartLegendaryBattle 0807f9d8 0
+UpdateRoamerHPStatus 08141fe8 1
