@@ -14,7 +14,7 @@
 #define gTimeOfDay *((u8*)0x0203C000)
 #define gCurrentTimeHours *((u8*)0x03005542)
 #define gCurrentTimeMins *((u8*)0x03005543)
-#define gCurrentTimeMins *((u8*)0x03005544)
+#define gCurrentTimeSeconds *((u8*)0x03005544)
 
 // structure defines
 struct ObjectEvent
