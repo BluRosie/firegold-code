@@ -7,6 +7,8 @@
 
 // see if implicit declarations just work anyway
 
+#define RoamerAddress 0x0203C100
+
 struct Roamer
 {
     u32 pid;
@@ -30,7 +32,7 @@ void StartLegendaryBattle(void)
 {
     u16 species;
     u32 roamer = 0xFF;
-    struct Roamer *roamerDataInVars = GetVarPointer(0x43C6); // roamer var start
+    struct Roamer *roamerDataInVars = (struct Roamer *)(RoamerAddress);//GetVarPointer(0x43C6); // roamer var start
 
     ScriptContext2_Enable();
     gMain.savedCallback = CB2_EndScriptedWildBattle;
@@ -82,7 +84,7 @@ void StartLegendaryBattle(void)
     if (roamer != 0xFF)
     {
         u32 temp;
-        gBattleTypeFlags |= BATTLE_TYPE_ROAMER;
+        gBattleTypeFlags = BATTLE_TYPE_ROAMER;
         
         if (roamerDataInVars[roamer].inited)
         {
@@ -98,16 +100,21 @@ void StartLegendaryBattle(void)
         else
         {
             roamerDataInVars[roamer].inited = TRUE;
-
+        
             roamerDataInVars[roamer].hp = GetMonData(&gEnemyParty[0], MON_DATA_HP, NULL);
             roamerDataInVars[roamer].maxHP = GetMonData(&gEnemyParty[0], MON_DATA_MAX_HP, NULL);
+            /*DEBUG*///while (!IsMonShiny(&gEnemyParty[0]))
+            /*DEBUG*///{
+            /*DEBUG*///    temp = Random();
+            /*DEBUG*///    SetMonData(&gEnemyParty[0], MON_DATA_PERSONALITY, &temp);
+            /*DEBUG*///}
             roamerDataInVars[roamer].pid = GetMonData(&gEnemyParty[0], MON_DATA_PERSONALITY, NULL);
             roamerDataInVars[roamer].status = GetMonData(&gEnemyParty[0], MON_DATA_STATUS, NULL);
         }
     }
     else
     {
-        gBattleTypeFlags = 0;
+        //gBattleTypeFlags = 0;
         gBattleTypeFlags |= BATTLE_TYPE_WILD_SCRIPTED;
     }
 
@@ -127,7 +134,7 @@ void UpdateRoamerHPStatus(struct Pokemon *mon)
     
     u16 species = GetMonData(mon, MON_DATA_SPECIES);;
     u32 roamer = 0xFF;
-    struct Roamer *roamerDataInVars = GetVarPointer(0x43C6); // roamer var start
+    struct Roamer *roamerDataInVars = (struct Roamer *)(RoamerAddress); // roamer var start
     switch (species)
     {
     case SPECIES_ENTEI:
@@ -151,19 +158,19 @@ void UpdateRoamerHPStatus(struct Pokemon *mon)
     }
 
 
-    if (roamerDataInVars[roamer].inited)
-    {
-        u32 temp;
-        temp = roamerDataInVars[roamer].hp;
-        SetMonData(&gEnemyParty[0], MON_DATA_HP, &temp);
-        temp = roamerDataInVars[roamer].maxHP;
-        SetMonData(&gEnemyParty[0], MON_DATA_MAX_HP, &temp);
-        temp = roamerDataInVars[roamer].pid;
-        SetMonData(&gEnemyParty[0], MON_DATA_PERSONALITY, &temp);
-        temp = roamerDataInVars[roamer].status;
-        SetMonData(&gEnemyParty[0], MON_DATA_STATUS, &temp);
-    }
-    else
+    //if (roamerDataInVars[roamer].inited)
+    //{
+    //    u32 temp;
+    //    temp = roamerDataInVars[roamer].hp;
+    //    SetMonData(&gEnemyParty[0], MON_DATA_HP, &temp);
+    //    temp = roamerDataInVars[roamer].maxHP;
+    //    SetMonData(&gEnemyParty[0], MON_DATA_MAX_HP, &temp);
+    //    temp = roamerDataInVars[roamer].pid;
+    //    SetMonData(&gEnemyParty[0], MON_DATA_PERSONALITY, &temp);
+    //    temp = roamerDataInVars[roamer].status;
+    //    SetMonData(&gEnemyParty[0], MON_DATA_STATUS, &temp);
+    //}
+    //else
     {
         roamerDataInVars[roamer].inited = TRUE;
 
@@ -171,6 +178,30 @@ void UpdateRoamerHPStatus(struct Pokemon *mon)
         roamerDataInVars[roamer].maxHP = GetMonData(mon, MON_DATA_MAX_HP, NULL);
         roamerDataInVars[roamer].pid = GetMonData(mon, MON_DATA_PERSONALITY, NULL);
         roamerDataInVars[roamer].status = GetMonData(mon, MON_DATA_STATUS, NULL);
+    }
+    
+    if (roamerDataInVars[roamer].hp == 0) // uninit roamer if the hp is 0 and it has fainted
+    {
+        roamerDataInVars[roamer].inited = FALSE;
+        roamerDataInVars[roamer].hp = 0;
+        roamerDataInVars[roamer].maxHP = 0;
+        roamerDataInVars[roamer].pid = 0;
+        roamerDataInVars[roamer].status = 0;
+    }
+}
+
+#define gSpecialVar_0x8004 *((u16*)0x020370c0)
+#define gSpecialVar_Result *((u16*)0x020370d0)
+
+void IsPartyMonShiny(void)
+{
+    if (IsMonShiny(&gPlayerParty[gSpecialVar_0x8004]))
+    {
+        gSpecialVar_Result = 1; 
+    }
+    else
+    {
+        gSpecialVar_Result = 0;
     }
 }
 
