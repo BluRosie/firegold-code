@@ -27,6 +27,7 @@ int GetStringWidthDifference(int fontId, const u8 *str, int totalWidth, int lett
 }
 
 #define GetStringRightAlignXOffset(fontId, str, totalWidth) GetStringWidthDifference(fontId, str, totalWidth, 0)
+#define gCurrentTimeDayOfWeek *((u8*)0x03005541)
 
 void ShowTimeWindow(void)
 {
@@ -46,8 +47,32 @@ void ShowTimeWindow(void)
     else
         suffix = gText_PM;
 
+    switch (gCurrentTimeDayOfWeek)
+    {
+    case 0:
+        StringExpandPlaceholders(gStringVar4, gText_Sun);
+        break;
+    case 1:
+        StringExpandPlaceholders(gStringVar4, gText_Mon);
+        break;
+    case 2:
+        StringExpandPlaceholders(gStringVar4, gText_Tue);
+        break;
+    case 3:
+        StringExpandPlaceholders(gStringVar4, gText_Wed);
+        break;
+    case 4:
+        StringExpandPlaceholders(gStringVar4, gText_Thu);
+        break;
+    case 5:
+        StringExpandPlaceholders(gStringVar4, gText_Fri);
+        break;
+    case 6:
+        StringExpandPlaceholders(gStringVar4, gText_Sat);
+        break;
+    }
     //StringExpandPlaceholders(gStringVar4, gText_ContinueMenuTime);
-    //AddTextPrinterParameterized(sSafariZoneStatsWindowId, 1, gStringVar4, 0, 1, 0xFF, 0); // prints "Time"
+    AddTextPrinterParameterized(sSafariZoneStatsWindowId, 1, gStringVar4, 0, 1, 0xFF, 0); // prints "Time"
 
     ptr = ConvertIntToDecimalStringN(gStringVar4, gCurrentTimeHours, STR_CONV_MODE_LEFT_ALIGN, 3);
     *ptr = 0xF0;

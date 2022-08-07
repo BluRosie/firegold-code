@@ -19,26 +19,25 @@ Night
 #org @gText_ContinueMenuTime
 Time
 
-#org @gStartMenuText_Pokedex
-Pok\edex
+#org @gText_Sun
+[GRAY][DARK_SHADOW]Sun.
 
-#org @gStartMenuText_Pokemon
-Pok\emon
+#org @gText_Mon
+[LIGHT_GREEN][DARK_SHADOW]Mon.
 
-#org @gStartMenuText_Bag
-Bag
+#org @gText_Tue
+[RED]Tue.
 
-#org @gStartMenuText_Player
-[PLAYER]
+#org @gText_Wed
+[BLUE]Wed.
 
-#org @gStartMenuText_Save
-Save
+#org @gText_Thu
+[GREEN]Thu.
 
-#org @gStartMenuText_Option
-Option
+#org @gText_Fri
+[LIGHT_BLUE][DARK_SHADOW]Fri.
 
-#org @gStartMenuText_Exit
-Exit
+#org @gText_Sat
+[ORANGE][DARK_SHADOW]Sat.
 
-#org @gStartMenuText_Retire
-Retire
+

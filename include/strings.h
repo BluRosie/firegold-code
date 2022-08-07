@@ -9,14 +9,13 @@ extern const u8 gText_Evening[];
 extern const u8 gText_Night[];
 extern const u8 gText_ContinueMenuTime[];
 extern const u8 gText_ContinueMenuTime[];
-extern const u8 gStartMenuText_Pokedex[];
-extern const u8 gStartMenuText_Pokemon[];
-extern const u8 gStartMenuText_Bag[];
-extern const u8 gStartMenuText_Player[];
-extern const u8 gStartMenuText_Save[];
-extern const u8 gStartMenuText_Option[];
-extern const u8 gStartMenuText_Exit[];
-extern const u8 gStartMenuText_Retire[];
+extern const u8 gText_Sun[];
+extern const u8 gText_Mon[];
+extern const u8 gText_Tue[];
+extern const u8 gText_Wed[];
+extern const u8 gText_Thu[];
+extern const u8 gText_Fri[];
+extern const u8 gText_Sat[];
 
 
 #endif // GUARD_STRINGS_H
