@@ -1883,6 +1883,7 @@ AddScrollIndicatorArrowPairParameterized = 0x08133B40|1;
 RemoveScrollIndicatorArrowPair = 0x08133C30|1;
 AddTextPrinterParameterized3 = 0x0812E51C|1;
 AddTextPrinterParameterized4 = 0x0812E5A4|1;
+LoadStdWindowFrameGfx = 0x080f6e9c|1;
 
 GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;

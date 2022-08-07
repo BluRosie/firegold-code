@@ -3,6 +3,14 @@
 
 #define PIXEL_FILL(num) ((num) | ((num) << 4))
 
+// Mode for CopyWindowToVram, CopyWindowRectToVram and CopyWindowToVram8Bit
+enum {
+    COPYWIN_NONE,
+    COPYWIN_MAP,
+    COPYWIN_GFX,
+    COPYWIN_FULL,
+};
+
 struct WindowTemplate
 {
     u8 bg;
@@ -37,5 +45,10 @@ void CopyWindowToVram(u8 windowId, u8 mode);
 void PutWindowTilemap(u8 windowId);
 void ClearWindowTilemap(u8 windowId);
 void FillWindowPixelBuffer(u8 windowId, u8 fillValue);
+u8 AddWindow(struct WindowTemplate *temp);
+void DrawStdWindowFrame(u8 id, u32 boole);
+void ClearStdWindowAndFrameToTransparent(u32 id, u32 boole);
+void RemoveWindow(u32 id);
+void LoadStdWindowFrameGfx(void);
 
 #endif // GUARD_WINDOW_H
