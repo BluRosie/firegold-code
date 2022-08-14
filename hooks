@@ -2,3 +2,4 @@
 #SetTradedMonPokedexFlags 080507A0 1
 
 LoadMapPreviewGfx 080c19fc 0
+DecideWhichRegionMap 080C0064 4

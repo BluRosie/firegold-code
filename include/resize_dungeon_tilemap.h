@@ -15,8 +15,8 @@ struct MapPreviewScreen
 
 struct DungeonMapPreview
 {
-    u16 oldtiles[7200];  // repointing these to later in the structure.
     u16 tilemap[640];
+    u16 oldtiles[7200];  // repointing these to later in the structure.
     const struct MapPreviewScreen * mapPreviewInfo;
     TaskFunc savedTask;
     u8 mainState;

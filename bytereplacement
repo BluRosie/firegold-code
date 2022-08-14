@@ -1,1 +1,29 @@
 ##
+
+## remap region map tiles
+#083F1A60 03 03 02 0F 02 0C 01 00 
+#083F1A68 03 03 04 0F 02 0C 1F 00 
+## tiles
+#083F1A70 03 03 06 19 0B 0C 3D 00
+## figure this out - please
+#083F1A78 03 12 00 05 02 0C 00 02
+#083F1A80 03 18 00 05 02 0C 0A 02 
+#083F1A88 FF 00 00 00 00 00 00 00
+
+# different allocation size for sDungeonMapPreview
+080C19E4 F0 AE 00 00
+# different tilemap ptr
+080C1B36 00
+
+# readjust window
+080C1E88 01
+# adjust top pixels down
+080C1EE6 20
+080C1F18 28
+# adjust bottom pixels up
+080C1EFA 08
+080C1F40 80
+
+# safari zone is in johto
+#083F1AB1 88
+
