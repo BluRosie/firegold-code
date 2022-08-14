@@ -18,6 +18,8 @@ map_is_valid:
     ldrb r1, [r1, #0x14] // gMapHeader.regionMapSectionId
     cmp r1, #0x8F // start of johto maps
     bge handleJohto // assuming kanto is 0
+    cmp r1, #0x88
+    beq handleJohto
 
 handleKanto:
     mov r1, #1 // invalid town map?
