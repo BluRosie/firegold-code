@@ -3,18 +3,18 @@ moves:
   - gyro ball
   - trick room
   - tailwind
-  - shell side arm ()
-  - dire claw
-  - chloroblast
+  - shell side arm (does whichever between attack/spatk will do more damage)
+  - dire claw (tri attack but sleep/paralysis/poison + hex double against status)
+  - chloroblast (50% of hp recoil before move is used)
   - roost
-  - stomp tantrum
+  - stomp tantrum (if user's last move failed, does double damage)
 
   update:
   - hurricane
   - blizzard
   - toxic
   - confusion rate
-  - toxic thread
+  - toxic thread (poison + lower speed)
   - teleport
   - minimize
   - swallow
