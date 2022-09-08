@@ -1,0 +1,62 @@
+moves:
+  - psyshock
+  - gyro ball
+  - trick room
+  - tailwind
+  - shell side arm ()
+  - dire claw
+  - chloroblast
+  - roost
+  - stomp tantrum
+
+  update:
+  - hurricane
+  - blizzard
+  - toxic
+  - confusion rate
+  - toxic thread
+  - teleport
+  - minimize
+  - swallow
+
+  bugged:
+  - clear smog
+  - brine
+
+abilities:
+  - slush rush
+  - berserker
+  - imposter
+  - steely spirit
+  - quick draw
+  - curious medicine
+  - poison touch
+  - weak armor
+  - stench
+  - frisk
+  - screen cleaner
+  - perish body
+  - unnerve
+  - healer
+  - power of alchemy
+  - harvest
+  - neutralizing gas
+  - mold breaker
+  - infiltrator
+  - contrary
+
+  update:
+  - defiant
+  - competitive
+  - static
+  - regenerator
+  - pastel veil
+  - sturdy
+  - weather setters
+
+items:
+  - focus sash
+  - weather rocks
+  - light clay
+  - normal gem
+  - power herb
