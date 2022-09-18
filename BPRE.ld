@@ -1889,3 +1889,8 @@ GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;
 CreateMon = 0x0803DA54|1;
 
+
+PrintPlayerName = 0x0800ce70|1;
+PrintPlayTime = 0x0800ced4|1;
+PrintDexCount = 0x0800cf3c|1;
+PrintBadgeCount = 0x0800cfc4|1;
