@@ -1,27 +1,27 @@
 moves:
-  - psyshock
-  - gyro ball
-  - trick room
-  - tailwind
+  - psyshock (uses opponent def to calculate damage)
+  - gyro ball (uses speed difference to calculate damage)
+  - trick room (swaps up speed calculation)
+  - tailwind (boosts speed for team for a few turns)
   - shell side arm (does whichever between attack/spatk will do more damage)
   - dire claw (tri attack but sleep/paralysis/poison + hex double against status)
   - chloroblast (50% of hp recoil before move is used)
-  - roost
+  - roost (add flying shit)
   - stomp tantrum (if user's last move failed, does double damage)
 
   update:
-  - hurricane
-  - blizzard
-  - toxic
-  - confusion rate
+  - hurricane (bypass accuracy in rain)
+  - blizzard (bypass accuracy in hail)
+  - toxic (poison 100% accurate)
+  - confusion rate (1/2 -> 1/3)
   - toxic thread (poison + lower speed)
-  - teleport
-  - minimize
-  - swallow
+  - teleport (switch out in trainer battles, escape in wild)
+  - minimize (done)
+  - swallow/stockpile/spit up (up def/spdef, take away those buffs when a swallow/spit up is used)
 
   bugged:
-  - clear smog
-  - brine
+  - clear smog (weird freezingish issues)
+  - brine (just reimplement fr)
 
 abilities:
   - slush rush
