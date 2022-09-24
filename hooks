@@ -1,2 +1,5 @@
 #examples:
 #SetTradedMonPokedexFlags 080507A0 1
+
+#0803ecec +4
+CalculateBaseDamage_hook 0803ECF0 5

@@ -509,7 +509,7 @@ BattleScriptPushCursor = 0x8017544 | 1;
 BattleScriptPop = 0x801756C | 1;
 IsImprisoned = 0x8017A64 | 1;
 //HasNoMonsToSwitch = 0x8019C10 | 1;
-//AbilityBattleEffects = 0x8019F18 | 1;
+AbilityBattleEffects = 0x8019F18 | 1;
 BattleScriptExecute = 0x801BBE4 | 1;
 BattleScriptPushCursorAndCallback = 0x801BC24 | 1;
 //ItemBattleEffects = 0x801BC68 | 1;
@@ -817,8 +817,8 @@ BagGetItemIdByPocketPosition = 0x809A798 | 1;
 CountTotalItemQuantityInBag = 0x809A7DC | 1;
 //SanitizeItemId = 0x809A8A4 | 1;
 ItemId_GetPrice = 0x809A900 | 1;
-//ItemId_GetHoldEffect = 0x809A924 | 1;
-//ItemId_GetHoldEffectParam = 0x809A948 | 1;
+ItemId_GetHoldEffect = 0x809A924 | 1;
+ItemId_GetHoldEffectParam = 0x809A948 | 1;
 ItemId_GetDescription = 0x809A96C | 1;
 ItemIsUnique = 0x809A990 | 1;
 ItemId_GetMystery2 = 0x809A9B4 | 1;
@@ -1888,4 +1888,11 @@ LoadStdWindowFrameGfx = 0x080f6e9c|1;
 GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;
 CreateMon = 0x0803DA54|1;
+
+gBattleMoves = 0x08900000;
+sHoldEffectToType = 0x0825decc;
+gStatStageRatios = 0x0825dead;
+
+CountAliveMonsInBattle = 0x0803f5b4 |1;
+
 

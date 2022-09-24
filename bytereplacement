@@ -1,1 +1,6 @@
 ##
+
+# damage calc hook setup
+# push {r5-r6}
+# nop
+0803ECEC 60 B4 C0 46
