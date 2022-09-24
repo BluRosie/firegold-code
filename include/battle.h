@@ -513,6 +513,7 @@
 #define BATTLE_ALIVE_DEF_SIDE       2
 
 
+#define WEATHER_HAS_EFFECT ((!AbilityBattleEffects(ABILITYEFFECT_CHECK_ON_FIELD, 0, ABILITY_CLOUD_NINE, 0, 0) && !AbilityBattleEffects(ABILITYEFFECT_CHECK_ON_FIELD, 0, ABILITY_AIR_LOCK, 0, 0)))
 #define WEATHER_HAS_EFFECT2 ((!AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, ABILITY_CLOUD_NINE, 0, 0) && !AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, ABILITY_AIR_LOCK, 0, 0)))
 
 
@@ -556,6 +557,20 @@ struct BattleResources
 #define RESOURCE_FLAG_FLASH_FIRE 1
 extern struct BattleResources *gBattleResources;
 
+
+/*
+new shit
+
+psyshock        1fd
+gyroball        1aa(fiery dance)
+shell side arm        1f2
+stomptantrum        1eb
+brine            1cc
+*/
+#define MOVE_PSYSHOCK 0x1FD
+#define MOVE_GYRO_BALL 0x1AA
+#define MOVE_SHELL_SIDE_ARM 0x1F2
+#define MOVE_STOMP_TANTRUM 0x1EB
 
 struct BattleMove
 {
@@ -622,6 +637,7 @@ extern u16 gCurrentMove;
 extern u8 gCritMultiplier;
 extern const u8 gStatStageRatios[][2];
 extern u32 gBattleWeather;
+extern struct BattlePokemon gBattleMons[];
 
 u32 AbilityBattleEffects(u32 arg0, u32 arg1, u32 ability, u32 arg3, u32 arg4);
 u32 CountAliveMonsInBattle(u32 arg0);

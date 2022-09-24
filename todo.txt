@@ -1,15 +1,19 @@
 moves:
-  - psyshock (uses opponent def to calculate damage)
-  - gyro ball (uses speed difference to calculate damage)
+  - DONE psyshock (uses opponent def to calculate damage)
+  - DONE gyro ball (uses speed difference to calculate damage)
   - trick room (swaps up speed calculation)
   - tailwind (boosts speed for team for a few turns)
-  - shell side arm (does whichever between attack/spatk will do more damage)
+  - DONE shell side arm (does whichever between attack/spatk will do more damage)
+
+  - stomp tantrum (if user's last move failed, does double damage)
+
+
+  needs more code:
   - dire claw (tri attack but sleep/paralysis/poison + hex double against status)
   - chloroblast (50% of hp recoil before move is used)
   - roost (add flying shit)
-  - stomp tantrum (if user's last move failed, does double damage)
 
-  update:
+  update (mostly battle scripts):
   - hurricane (bypass accuracy in rain)
   - blizzard (bypass accuracy in hail)
   - toxic (poison 100% accurate)
@@ -21,10 +25,12 @@ moves:
 
   bugged:
   - clear smog (weird freezingish issues)
-  - brine (just reimplement fr)
+  - brine skips accuracy checks (just reimplement fr)
 
 abilities:
   - slush rush
+
+  needs more code:
   - berserker
   - imposter
   - steely spirit

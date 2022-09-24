@@ -3,6 +3,56 @@
 #include "../include/constants/flags.h"
 #include "../include/constants/species.h"
 
+u32 GetBattlerSpeed(u8 battler1)
+{
+    u8 speedMultiplierBattler1 = 0;
+    u32 speedBattler1 = 0;
+    u8 holdEffect = 0;
+    u8 holdEffectParam = 0;
+
+    if (WEATHER_HAS_EFFECT)
+    {
+        if ((gBattleMons[battler1].ability == ABILITY_SWIFT_SWIM && gBattleWeather & B_WEATHER_RAIN)
+            || (gBattleMons[battler1].ability == ABILITY_CHLOROPHYLL && gBattleWeather & B_WEATHER_SUN))
+            speedMultiplierBattler1 = 2;
+        else
+            speedMultiplierBattler1 = 1;
+    }
+    else
+    {
+        speedMultiplierBattler1 = 1;
+    }
+
+    speedBattler1 = (gBattleMons[battler1].speed * speedMultiplierBattler1)
+                * (gStatStageRatios[gBattleMons[battler1].statStages[STAT_SPEED]][0])
+                / (gStatStageRatios[gBattleMons[battler1].statStages[STAT_SPEED]][1]);
+
+    //if (gBattleMons[battler1].item == ITEM_ENIGMA_BERRY)
+    //{
+    //    holdEffect = gEnigmaBerries[battler1].holdEffect;
+    //    holdEffectParam = gEnigmaBerries[battler1].holdEffectParam;
+    //}
+    //else
+    {
+        holdEffect = ItemId_GetHoldEffect(gBattleMons[battler1].item);
+        holdEffectParam = ItemId_GetHoldEffectParam(gBattleMons[battler1].item);
+    }
+    //// badge boost
+    //if (!(gBattleTypeFlags & BATTLE_TYPE_LINK)
+    // && FlagGet(FLAG_BADGE03_GET)
+    // && GetBattlerSide(battler1) == B_SIDE_PLAYER)
+    //    speedBattler1 = (speedBattler1 * 110) / 100;
+
+    if (holdEffect == HOLD_EFFECT_MACHO_BRACE)
+        speedBattler1 /= 2;
+    if (gBattleMons[battler1].status1 & STATUS1_PARALYSIS)
+        speedBattler1 /= 4;
+    //if (holdEffect == HOLD_EFFECT_QUICK_CLAW && gRandomTurnNumber < (0xFFFF * holdEffectParam) / 100)
+    //    speedBattler1 = UINT_MAX;
+
+    return speedBattler1;
+}
+
 s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *defender, u32 move, u16 sideStatus, u32 stack_for_lr, u16 powerOverride, u8 typeOverride, u8 battlerIdAtk, u8 battlerIdDef)
 {
     u32 i;
@@ -15,11 +65,23 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     u8 defenderHoldEffectParam;
     u8 attackerHoldEffect;
     u8 attackerHoldEffectParam;
+    s32 splitOverride = -1; // -1 for no override, 0, 1, or 2 to override to that split
 
-    if (!powerOverride)
-        gBattleMovePower = gBattleMoves[move].power;
-    else
-        gBattleMovePower = powerOverride;
+    switch (move)
+    {
+    case MOVE_GYRO_BALL:
+        if (GetBattlerSpeed(battlerIdAtk) == 0)
+            gBattleMovePower = 1;
+        else
+            gBattleMovePower = 25 * GetBattlerSpeed(battlerIdDef) / GetBattlerSpeed(battlerIdAtk);
+        break;
+    default:
+        if (!powerOverride)
+            gBattleMovePower = gBattleMoves[move].power;
+        else
+            gBattleMovePower = powerOverride;
+        break;
+    }
 
     if (!typeOverride)
         type = gBattleMoves[move].type;
@@ -139,8 +201,27 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         gBattleMovePower = (150 * gBattleMovePower) / 100;
     if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION)
         defense /= 2;
+    
+    if (move == MOVE_SHELL_SIDE_ARM)
+    {
+        u32 damageAtk = 0, damageSpAtk = 0;
+        
+        // ((((2 * the user's level / 5 + 2) * 90 * X) / Y) / 50)
+        // where X is the user's Attack stat and Y is the target's Defense stat, 
+        // is greater than the same value where X is the user's Special Attack stat 
+        // and Y is the target's Special Defense stat
+        damageAtk = ((((2 * attacker->level / 5 + 2) * 90 * attacker->attack) / defender->defense) / 50);
+        damageSpAtk = ((((2 * attacker->level / 5 + 2) * 90 * attacker->spAttack) / defender->spDefense) / 50);
+        
+        if (damageAtk == damageSpAtk)
+            splitOverride = (Random() & 1) ? damageAtk : damageSpAtk;
+        else if (damageAtk > damageSpAtk)
+            splitOverride = SPLIT_PHYSICAL;
+        else
+            splitOverride = SPLIT_SPECIAL;
+    }
 
-    if (IS_MOVE_PHYSICAL(move))
+    if (IS_MOVE_PHYSICAL(move) || splitOverride == SPLIT_PHYSICAL)
     {
         if (gCritMultiplier == 2)
         {
@@ -190,7 +271,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     //if (type == TYPE_MYSTERY)
     //    damage = 0; // is ??? type. does 0 damage.
 
-    if (IS_MOVE_SPECIAL(move))
+    if (IS_MOVE_SPECIAL(move) || splitOverride == SPLIT_SPECIAL)
     {
         if (gCritMultiplier == 2)
         {
@@ -205,16 +286,30 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         damage = damage * gBattleMovePower;
         damage *= (2 * attacker->level / 5 + 2);
 
-        if (gCritMultiplier == 2)
+        if (move != MOVE_PSYSHOCK)
         {
-            if (defender->statStages[STAT_SPDEF] < 6)
-                APPLY_STAT_MOD(damageHelper, defender, spDefense, STAT_SPDEF)
+            if (gCritMultiplier == 2)
+            {
+                if (defender->statStages[STAT_SPDEF] < 6)
+                    APPLY_STAT_MOD(damageHelper, defender, spDefense, STAT_SPDEF)
+                else
+                    damageHelper = spDefense;
+            }
             else
-                damageHelper = spDefense;
+                APPLY_STAT_MOD(damageHelper, defender, spDefense, STAT_SPDEF)
         }
         else
-            APPLY_STAT_MOD(damageHelper, defender, spDefense, STAT_SPDEF)
-
+        {
+            if (gCritMultiplier == 2)
+            {
+                if (defender->statStages[STAT_DEF] < 6)
+                    APPLY_STAT_MOD(damageHelper, defender, defense, STAT_DEF)
+                else
+                    damageHelper = defense;
+            }
+            else
+                APPLY_STAT_MOD(damageHelper, defender, defense, STAT_DEF)
+        }
         damage = (damage / damageHelper);
         damage /= 50;
 
@@ -228,10 +323,6 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 
         if ((gBattleTypeFlags & BATTLE_TYPE_DOUBLE) && gBattleMoves[move].target == 8 && CountAliveMonsInBattle(BATTLE_ALIVE_DEF_SIDE) == 2)
             damage /= 2;
-
-        // flash fire triggered
-        if ((gBattleResources->flags->flags[battlerIdAtk] & RESOURCE_FLAG_FLASH_FIRE) && type == TYPE_FIRE)
-            damage = (15 * damage) / 10;
     }
 
     // are effects of weather negated with cloud nine or air lock
@@ -268,6 +359,10 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
             }
         }
     }
+    
+    // flash fire triggered
+    if ((gBattleResources->flags->flags[battlerIdAtk] & RESOURCE_FLAG_FLASH_FIRE) && type == TYPE_FIRE)
+        damage = (15 * damage) / 10;
 
     return damage + 2;
 }
