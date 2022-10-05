@@ -3,6 +3,12 @@
 #include "../include/constants/flags.h"
 #include "../include/constants/species.h"
 
+#define ITEM_CHOICE_BAND 0xBA
+#define ITEM_CHOICE_SPECS 0xE2
+#define ITEM_CHOICE_SCARF 0xE3
+#define ITEM_MUSCLE_BAND 0xEC
+#define ITEM_WISE_GLASSES 0xED
+
 u32 GetBattlerSpeed(u8 battler1)
 {
     u8 speedMultiplierBattler1 = 0;
@@ -47,6 +53,8 @@ u32 GetBattlerSpeed(u8 battler1)
         speedBattler1 /= 2;
     if (gBattleMons[battler1].status1 & STATUS1_PARALYSIS)
         speedBattler1 /= 4;
+    if (gBattleMons[battler1].item == ITEM_CHOICE_SCARF)
+        speedBattler1 = speedBattler1 * 150 / 100;
     //if (holdEffect == HOLD_EFFECT_QUICK_CLAW && gRandomTurnNumber < (0xFFFF * holdEffectParam) / 100)
     //    speedBattler1 = UINT_MAX;
 
@@ -74,6 +82,23 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
             gBattleMovePower = 1;
         else
             gBattleMovePower = 25 * GetBattlerSpeed(battlerIdDef) / GetBattlerSpeed(battlerIdAtk);
+        break;
+    case MOVE_SHELL_SIDE_ARM:
+        u32 damageAtk = 0, damageSpAtk = 0;
+        
+        // ((((2 * the user's level / 5 + 2) * 90 * X) / Y) / 50)
+        // where X is the user's Attack stat and Y is the target's Defense stat, 
+        // is greater than the same value where X is the user's Special Attack stat 
+        // and Y is the target's Special Defense stat
+        damageAtk = ((((2 * attacker->level / 5 + 2) * 90 * attacker->attack) / defender->defense) / 50);
+        damageSpAtk = ((((2 * attacker->level / 5 + 2) * 90 * attacker->spAttack) / defender->spDefense) / 50);
+        
+        if (damageAtk == damageSpAtk)
+            splitOverride = Random() & 1;
+        else if (damageAtk > damageSpAtk)
+            splitOverride = SPLIT_PHYSICAL;
+        else
+            splitOverride = SPLIT_SPECIAL;
         break;
     default:
         if (!powerOverride)
@@ -157,10 +182,14 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         }
     }
 
-    if (attackerHoldEffect == HOLD_EFFECT_CHOICE_BAND && IS_MOVE_PHYSICAL(move))
+    if (attacker->item == ITEM_CHOICE_BAND && ((IS_MOVE_PHYSICAL(move) && splitOverride < 0) || splitOverride == SPLIT_PHYSICAL))
         attack = (150 * attack) / 100;
-    if (attackerHoldEffect == HOLD_EFFECT_CHOICE_BAND && IS_MOVE_SPECIAL(move))
+    if (attacker->item == ITEM_MUSCLE_BAND && ((IS_MOVE_PHYSICAL(move) && splitOverride < 0) || splitOverride == SPLIT_PHYSICAL))
+        attack = (110 * attack) / 100;
+    if (attacker->item == ITEM_CHOICE_SPECS && ((IS_MOVE_SPECIAL(move) && splitOverride < 0) || splitOverride == SPLIT_SPECIAL))
         spAttack = (150 * spAttack) / 100;
+    if (attacker->item == ITEM_WISE_GLASSES && ((IS_MOVE_SPECIAL(move) && splitOverride < 0) || splitOverride == SPLIT_SPECIAL))
+        spAttack = (110 * spAttack) / 100;
     if (attackerHoldEffect == HOLD_EFFECT_SOUL_DEW && !(gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER)) && (attacker->species == SPECIES_LATIAS || attacker->species == SPECIES_LATIOS))
         spAttack = (150 * spAttack) / 100;
     if (defenderHoldEffect == HOLD_EFFECT_SOUL_DEW && !(gBattleTypeFlags & (BATTLE_TYPE_BATTLE_TOWER)) && (defender->species == SPECIES_LATIAS || defender->species == SPECIES_LATIOS))
@@ -201,27 +230,8 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         gBattleMovePower = (150 * gBattleMovePower) / 100;
     if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION)
         defense /= 2;
-    
-    if (move == MOVE_SHELL_SIDE_ARM)
-    {
-        u32 damageAtk = 0, damageSpAtk = 0;
-        
-        // ((((2 * the user's level / 5 + 2) * 90 * X) / Y) / 50)
-        // where X is the user's Attack stat and Y is the target's Defense stat, 
-        // is greater than the same value where X is the user's Special Attack stat 
-        // and Y is the target's Special Defense stat
-        damageAtk = ((((2 * attacker->level / 5 + 2) * 90 * attacker->attack) / defender->defense) / 50);
-        damageSpAtk = ((((2 * attacker->level / 5 + 2) * 90 * attacker->spAttack) / defender->spDefense) / 50);
-        
-        if (damageAtk == damageSpAtk)
-            splitOverride = (Random() & 1) ? damageAtk : damageSpAtk;
-        else if (damageAtk > damageSpAtk)
-            splitOverride = SPLIT_PHYSICAL;
-        else
-            splitOverride = SPLIT_SPECIAL;
-    }
 
-    if (IS_MOVE_PHYSICAL(move) || splitOverride == SPLIT_PHYSICAL)
+    if ((IS_MOVE_PHYSICAL(move) && splitOverride < 0) || splitOverride == SPLIT_PHYSICAL)
     {
         if (gCritMultiplier == 2)
         {
@@ -271,7 +281,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
     //if (type == TYPE_MYSTERY)
     //    damage = 0; // is ??? type. does 0 damage.
 
-    if (IS_MOVE_SPECIAL(move) || splitOverride == SPLIT_SPECIAL)
+    if ((IS_MOVE_SPECIAL(move) && splitOverride < 0) || splitOverride == SPLIT_SPECIAL)
     {
         if (gCritMultiplier == 2)
         {
