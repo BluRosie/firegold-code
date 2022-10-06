@@ -85,20 +85,27 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         break;
     case MOVE_SHELL_SIDE_ARM:
         u32 damageAtk = 0, damageSpAtk = 0;
-        
+
         // ((((2 * the user's level / 5 + 2) * 90 * X) / Y) / 50)
         // where X is the user's Attack stat and Y is the target's Defense stat, 
         // is greater than the same value where X is the user's Special Attack stat 
         // and Y is the target's Special Defense stat
         damageAtk = ((((2 * attacker->level / 5 + 2) * 90 * attacker->attack) / defender->defense) / 50);
         damageSpAtk = ((((2 * attacker->level / 5 + 2) * 90 * attacker->spAttack) / defender->spDefense) / 50);
-        
+
         if (damageAtk == damageSpAtk)
             splitOverride = Random() & 1;
         else if (damageAtk > damageSpAtk)
             splitOverride = SPLIT_PHYSICAL;
         else
             splitOverride = SPLIT_SPECIAL;
+
+        gBattleMovePower = gBattleMoves[move].power;
+        break;
+    case MOVE_BRINE:
+        gBattleMovePower = gBattleMoves[move].power;
+        if ((defender->maxHP / defender->hp) >= 2)
+            gBattleMovePower *= 2;
         break;
     default:
         if (!powerOverride)
@@ -182,6 +189,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         }
     }
 
+    // new choice item handling
     if (attacker->item == ITEM_CHOICE_BAND && ((IS_MOVE_PHYSICAL(move) && splitOverride < 0) || splitOverride == SPLIT_PHYSICAL))
         attack = (150 * attack) / 100;
     if (attacker->item == ITEM_MUSCLE_BAND && ((IS_MOVE_PHYSICAL(move) && splitOverride < 0) || splitOverride == SPLIT_PHYSICAL))
@@ -216,6 +224,8 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         attack = (150 * attack) / 100;
     if (defender->ability == ABILITY_MARVEL_SCALE && defender->status1)
         defense = (150 * defense) / 100;
+    if (defender->ability == ABILITY_FUR_COAT)
+        defense *= 2;
     if (type == TYPE_ELECTRIC && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, ABILITYEFFECT_MUD_SPORT, 0))
         gBattleMovePower /= 2;
     if (type == TYPE_FIRE && AbilityBattleEffects(ABILITYEFFECT_FIELD_SPORT, 0, 0, ABILITYEFFECT_WATER_SPORT, 0))
@@ -228,6 +238,8 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         gBattleMovePower = (150 * gBattleMovePower) / 100;
     if (type == TYPE_BUG && attacker->ability == ABILITY_SWARM && attacker->hp <= (attacker->maxHP / 3))
         gBattleMovePower = (150 * gBattleMovePower) / 100;
+    if (defender->ability == ABILITY_MULTISCALE && (defender->hp == defender->maxHP))
+        gBattleMovePower /= 2;
     if (gBattleMoves[gCurrentMove].effect == EFFECT_EXPLOSION)
         defense /= 2;
 

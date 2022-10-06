@@ -100,6 +100,9 @@
 #define ABILITY_CACOPHONY 76
 #define ABILITY_AIR_LOCK 77
 
+#define ABILITY_MULTISCALE 81
+#define ABILITY_FUR_COAT 142
+
 // hold effects
 #define HOLD_EFFECT_NONE            0
 #define HOLD_EFFECT_RESTORE_HP      1
@@ -571,6 +574,7 @@ brine            1cc
 #define MOVE_GYRO_BALL 0x1AA
 #define MOVE_SHELL_SIDE_ARM 0x1F2
 #define MOVE_STOMP_TANTRUM 0x1EB
+#define MOVE_BRINE 0x1CC
 
 struct BattleMove
 {
