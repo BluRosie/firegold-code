@@ -84,6 +84,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
             gBattleMovePower = 25 * GetBattlerSpeed(battlerIdDef) / GetBattlerSpeed(battlerIdAtk);
         break;
     case MOVE_SHELL_SIDE_ARM:
+    {
         u32 damageAtk = 0, damageSpAtk = 0;
 
         // ((((2 * the user's level / 5 + 2) * 90 * X) / Y) / 50)
@@ -102,6 +103,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 
         gBattleMovePower = gBattleMoves[move].power;
         break;
+    }
     case MOVE_BRINE:
         gBattleMovePower = gBattleMoves[move].power;
         if ((defender->maxHP / defender->hp) >= 2)
@@ -308,7 +310,7 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
         damage = damage * gBattleMovePower;
         damage *= (2 * attacker->level / 5 + 2);
 
-        if (move != MOVE_PSYSHOCK)
+        if (move != MOVE_PSYSHOCK && move != MOVE_PSYSTRIKE)
         {
             if (gCritMultiplier == 2)
             {

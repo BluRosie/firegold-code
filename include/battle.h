@@ -571,6 +571,7 @@ stomptantrum        1eb
 brine            1cc
 */
 #define MOVE_PSYSHOCK 0x1FD
+#define MOVE_PSYSTRIKE 0x1FE
 #define MOVE_GYRO_BALL 0x1AA
 #define MOVE_SHELL_SIDE_ARM 0x1F2
 #define MOVE_STOMP_TANTRUM 0x1EB
