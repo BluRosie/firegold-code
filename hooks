@@ -1,2 +1,5 @@
 #examples:
 #SetTradedMonPokedexFlags 080507A0 1
+
+read_trainer_data_if_zero 08043680 2
+LoadItem 0801162C 0
