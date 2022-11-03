@@ -2,6 +2,27 @@
 .thumb_func
 .align 2
 
+
+
+
+.equ NUM_OF_EASY_MODE_SPREADS, 75
+.equ NUM_OF_HARD_MODE_SPREADS, NUM_OF_EASY_MODE_SPREADS
+
+.equ VAR_BATTLE_TOWER_TYPE, 0x43CB
+
+.equ BATTLE_TOWER_TYPE_NONE, 0
+.equ BATTLE_TOWER_TYPE_SINGLE_EASY, 1
+.equ BATTLE_TOWER_TYPE_SINGLE_HARD, 2
+.equ BATTLE_TOWER_TYPE_DOUBLE_EASY, 3
+.equ BATTLE_TOWER_TYPE_DOUBLE_HARD, 4
+
+.equ BATTLE_TOWER_TYPE_EASY_BIT, 0x01
+
+
+
+
+/* misc defines */
+
 /* trainer classes */
 .equ hexmaniac, 0xa
 .equ pokemaniac, 0x3f
@@ -1455,7 +1476,15 @@ PartyLengthSet:
     b GenerateParty
 
 SetThree:
+    ldr r0, =VAR_BATTLE_TOWER_TYPE
+    bl VarGet_r7
+    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+    bge SetFour
     mov r0, #0x3
+    b GenerateParty
+
+SetFour:
+    mov r0, #0x4
 
 GenerateParty:
     add r6, r6, #0x4
@@ -1532,15 +1561,27 @@ PutTogether:
     mov r7, #0x0
 
 LoadThePokemon:
-    ldr r1, .ClassTable
-    mov r0, r8
-    lsl r0, r0, #0x2    /* Multiply by four */
-    add r1, r1, r0
-    mov r1, #0 //ldrb r1, [r1, #0x3] /* Pokemon Pool Entry */
-    mov r0, #0x90
-    lsl r0, r0, #0x1    /* 0x120 = 0x10 * 0x12, Entry * Length = Offset */
-    mul r0, r1
+    //ldr r1, .ClassTable
+    //mov r0, r8
+    //lsl r0, r0, #0x2    /* Multiply by four */
+    //add r1, r1, r0
+    //mov r1, #0 //ldrb r1, [r1, #0x3] /* Pokemon Pool Entry */
+    //mov r0, #0x90
+    //lsl r0, r0, #0x1    /* 0x120 = 0x10 * 0x12, Entry * Length = Offset */
+    //mul r0, r1
+
+    ldr r0, =VAR_BATTLE_TOWER_TYPE
+    bl VarGet_r6
+    and r0, #BATTLE_TOWER_TYPE_EASY_BIT
+    cmp r0, #0
+    beq LoadEasyTable
+    ldr r1, .PokemonTableHard
+    b afterTable
+
+LoadEasyTable:
     ldr r1, .PokemonTable
+
+afterTable:
     add r0, r0, r1      /* Table to get data from */
     lsl r1, r4, #0x18
     lsr r1, r1, #0x18   /* Rightmost */
@@ -1585,10 +1626,28 @@ FlagCheck:
     ldr r7, .FlagCheck
     bx r7
 
+VarGet_r6:
+    ldr r6, =0x806E568 | 1 // VarGet
+    bx r6
+
+VarGet_r7:
+    ldr r7, =0x806E568 | 1 // VarGet
+    bx r7
+
 GetRandomPokemon:
     push {r2-r7, lr}
+    ldr r0, =VAR_BATTLE_TOWER_TYPE
+    bl VarGet_r6
+    and r0, #BATTLE_TOWER_TYPE_EASY_BIT
+    cmp r0, #0
+    beq LoadHardDenom
     bl RandomNumber
-    mov r1, #0x12
+    mov r1, #NUM_OF_EASY_MODE_SPREADS
+    b afterLoadDenom
+LoadHardDenom:
+    bl RandomNumber
+    mov r1, #NUM_OF_HARD_MODE_SPREADS
+afterLoadDenom:
     bl Modulus2
     pop {r2-r7, pc}
 
@@ -1627,6 +1686,9 @@ StoreTheParty:
 .FlagCheck:             .word 0x0806E6D1
 .PokemonData:           .word 0x0203C050
 .PokemonTable:          .word PokemonTableStartEasyMode
+.PokemonTableHard:      .word PokemonTableStartEasyMode
+
+.pool
 
 /* --------------------------------- */
 
