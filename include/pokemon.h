@@ -259,12 +259,30 @@ struct PartyMenu
     s16 data[2];
 };
 
+struct PartyMenuInternal
+{
+    TaskFunc task;
+    MainCallback exitCallback;
+    u32 chooseMultiple:1;
+    u32 lastSelectedSlot:3;  // Used to return to same slot when going left/right bewtween columns
+    u32 spriteIdConfirmPokeball:7;
+    u32 spriteIdCancelPokeball:7;
+    u32 messageId:14;
+    u8 windowId[3];
+    u8 actions[8];
+    u8 numActions;
+    u16 palBuffer[BG_PLTT_SIZE / sizeof(u16)];
+    s16 data[16];
+};
+
 extern struct Pokemon gPlayerParty[PARTY_SIZE];
 extern struct Pokemon gEnemyParty[PARTY_SIZE];
 extern const struct BaseStats gBaseStats[];
 extern const u32 gExperienceTables[8][101];
 
 extern struct PartyMenu gPartyMenu;
+
+extern struct PartyMenuInternal *sPartyMenuInternal;
 
 extern u8 gPlayerPartyCount;
 

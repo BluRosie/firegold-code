@@ -1891,3 +1891,6 @@ Random = 0x08044EC8|1;
 CreateMon = 0x0803DA54|1;
 
 sPartyMenuBoxes = 0x0203b0b4;
+GetBattleEntryEligibility = 0x08127550 | 1;
+DisplayPartyPokemonDescriptionData = 0x0811f2fc | 1;
+DisplayPartyPokemonDescriptionText = 0x08121c70 | 1;
