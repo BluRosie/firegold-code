@@ -506,7 +506,7 @@
 .equ mysticicalflame, 0x1d8
 .equ direclaw, 0x1d9
 .equ incinerate, 0x1da
-.equ worryseed, 0x1db
+.equ tailwind, 0x1db
 .equ gastroacid, 0x1dc
 .equ infernalparade, 0x1dd
 .equ flowerguard, 0x1de
@@ -528,7 +528,7 @@
 .equ shadowbone, 0x1ee
 .equ dragonhammer, 0x1ef
 .equ strangesteam, 0x1f0
-.equ dironbash, 0x1f1
+.equ ironbash, 0x1f1
 .equ shellsidearm, 0x1f2
 .equ eeriespell, 0x1f3
 .equ eerieimpulse, 0x1f4
@@ -1038,7 +1038,7 @@
 .equ icestone, 0x62
 .equ tinymushroom, 0x67
 .equ bigmushroom, 0x68
-.equ bignugget 0x69
+.equ bignugget, 0x69
 .equ pearl, 0x6a
 .equ bigpearl, 0x6b
 .equ stardust, 0x6c
@@ -1143,21 +1143,22 @@
 .equ luckypunch, 0xde
 .equ metalpowder, 0xdf
 .equ thickclub, 0xe0
-.equ choicespecs, 0xe1
-.equ choicescarf, 0xe2
-.equ lifeorb, 0xe3
-.equ rockyhelmet, 0xe4
-.equ blacksludge, 0xe5
-.equ assaultvest, 0xe6
-.equ eviolite, 0xe7
-.equ expertbelt, 0xe8
-.equ widelens, 0xe9
-.equ berserkgene, 0xea
-.equ muscleband, 0xeb
-.equ wiseglasses, 0xec
-.equ focussash, 0xed
-.equ heatrock, 0xee
-.equ damprock, 0xef
+.equ stick, 0xe1
+.equ choicespecs, 0xe2
+.equ choicescarf, 0xe3
+.equ lifeorb, 0xe4
+.equ rockyhelmet, 0xe5
+.equ blacksludge, 0xe6
+.equ assaultvest, 0xe7
+.equ eviolite, 0xe8
+.equ expertbelt, 0xe9
+.equ widelens, 0xea
+.equ berserkgene, 0xeb
+.equ muscleband, 0xec
+.equ wiseglasses, 0xed
+.equ focussash, 0xee
+.equ heatrock, 0xef
+.equ damprock, 0xf0
 .equ smoothrock, 0xf1
 .equ icyrock, 0xf2
 .equ lightclay, 0xf3
@@ -1385,7 +1386,7 @@ GenerateData:
 GetTrainerClass:
     bl RandomNumber
     mov r1, #0xA        /* # of Trainer Classes */
-    bl Modulus
+    bl Modulus2
     ldr r1, .ClassTable
     mov r8, r0          /* r8 = Entry of Class table */
     lsl r0, r0, #0x2    /* Multiply by four */
@@ -1401,7 +1402,7 @@ GetName:
     push {r1-r3}
     bl RandomNumber
     mov r1, #0x20       /* # of Trainer Names */
-    bl Modulus
+    bl Modulus2
     pop {r1-r3} 
     cmp r3, #0x1        /* 0x1 = Male */
     beq GetMaleName
@@ -1535,7 +1536,7 @@ LoadThePokemon:
     mov r0, r8
     lsl r0, r0, #0x2    /* Multiply by four */
     add r1, r1, r0
-    ldrb r1, [r1, #0x3] /* Pokemon Pool Entry */
+    mov r1, #0 //ldrb r1, [r1, #0x3] /* Pokemon Pool Entry */
     mov r0, #0x90
     lsl r0, r0, #0x1    /* 0x120 = 0x10 * 0x12, Entry * Length = Offset */
     mul r0, r1
@@ -1576,8 +1577,8 @@ RandomNumber:
     ldr r7, .Random
     bx r7
 
-Modulus:
-    ldr r7, .Modulus
+Modulus2:
+    ldr r7, .Modulus2
     bx r7
 
 FlagCheck:
@@ -1588,7 +1589,7 @@ GetRandomPokemon:
     push {r2-r7, lr}
     bl RandomNumber
     mov r1, #0x12
-    bl Modulus
+    bl Modulus2
     pop {r2-r7, pc}
 
 StoreTheParty:
@@ -1618,30 +1619,30 @@ StoreTheParty:
 .TrainerData:           .word 0x0823EAC8
 .TowerData:             .word 0x0203C028
 .Random:                .word 0x08044EC9
-.Modulus:               .word 0x081E4685
+.Modulus2:              .word 0x081E4685
 .ClassTable:            .word ClassTableStart
 .MaleNames:             .word MaleNamesStart
 .FemaleNames:           .word FemaleNamesStart
 .ModeFlag:              .word 0x00000200
 .FlagCheck:             .word 0x0806E6D1
 .PokemonData:           .word 0x0203C050
-.PokemonTable:          .word PokemonTableStart
+.PokemonTable:          .word PokemonTableStartEasyMode
 
 /* --------------------------------- */
 
 .align 2
 
 ClassTableStart:
-    .byte CoolTrainerM, Male, CoolTrainerM_Pic, 0
-    .byte CoolTrainerF, Female, CoolTrainerF_Pic, 0
-    .byte ExpertM, Male, ExpertM_Pic, 1
-    .byte ExpertF, Female, ExpertF_Pic, 1
-    .byte Gentleman, Male, Gentleman_Pic, 2
-    .byte PokeManiac, Male, PokeManiac_Pic, 3
-    .byte PKMNBreederM, Male, PKMNBreederM_Pic, 4
-    .byte PKMNBreederF, Female, PKMNBreederF_Pic, 4
-    .byte DragonTamer, Male, DragonTamer_Pic, 5
-    .byte HexManiac, Female, HexManiac_Pic, 6
+    .byte cooltrainerm, male, cooltrainerm_pic, 0
+    .byte cooltrainerf, female, cooltrainerf_pic, 0
+    .byte expertm, male, expertm_pic, 1
+    .byte expertf, female, expertf_pic, 1
+    .byte gentleman, male, gentleman_pic, 2
+    .byte pokemaniac, male, pokemaniac_pic, 3
+    .byte pkmnbreederm, male, pkmnbreederm_pic, 4
+    .byte pkmnbreederf, female, pkmnbreederf_pic, 4
+    .byte dragontamer, male, dragontamer_pic, 5
+    .byte hexmaniac, female, hexmaniac_pic, 6
     
 .align 2
 
@@ -1729,149 +1730,6 @@ FemaleNamesStart:
 
 .align 2
 
-PokemonTableStart:
-/* cooltrainer */
-    .hword 1, 100, metagross, leftovers, meteormash, explosion, earthquake, hiddenpower
-    .hword 2, 100, poliwrath, salacberry, substitute, bellydrum, brickbreak, return
-    .hword 3, 100, blaziken, leftovers, fireblast, thunderpunch, skyuppercut, hiddenpower
-    .hword 4, 100, gengar, leftovers, thunderbolt, icepunch, hiddenpower, firepunch
-    .hword 5, 100, breloom, leftovers, spore, focuspunch, skyuppercut, machpunch
-    .hword 6, 100, forretress, leftovers, spikes, rapidspin, hiddenpower, earthquake
-    .hword 7, 100, absol, salacberry, swordsdance, shadowball, hiddenpower, batonpass
-    .hword 8, 100, machamp, leftovers, bulkup, crosschop, rockslide, hiddenpower
-    .hword 9, 100, tyranitar, lumberry, dragondance, earthquake, rockslide, icebeam
-    .hword 10, 100, dusclops, leftovers, calmmind, willowisp, icebeam, painsplit
-    .hword 11, 100, medicham, leftovers, brickbreak, rockslide, focuspunch, substitute
-    .hword 12, 100, kabutops, leftovers, hiddenpower, knockoff, rockslide, swordsdance
-    .hword 13, 100, shiftry, leftovers, brickbreak, swordsdance, shadowball, explosion
-    .hword 14, 100, ursaring, leftovers, swordsdance, hiddenpower, return, earthquake
-    .hword 15, 100, weezing, leftovers, sludgebomb, haze, flamethrower, explosion
-    .hword 16, 100, zangoose, liechiberry, swordsdance, shadowball, brickbreak, return
-    .hword 17, 100, regirock, leftovers, rockslide, thunderwave, focuspunch, explosion
-    .hword 18, 100, ninjask, starfberry, batonpass, silverwind, substitute, swordsdance
-
-/* expert */
-    .hword 19, 100, charizard, petayaberry, substitute, hiddenpower, fireblast, focuspunch
-    .hword 20, 100, meganium, leftovers, leechseed, synthesis, hiddenpower, lightscreen
-    .hword 21, 100, camerupt, leftovers, earthquake, flamethrower, toxic, explosion
-    .hword 22, 100, jumpluff, leftovers, hiddenpower, swordsdance, leechseed, sleeppowder
-    .hword 23, 100, pidgeot, silkscarf, substitute, return, aerialace, hiddenpower
-    .hword 24, 100, mantine, leftovers, raindance, surf, icebeam, toxic
-    .hword 25, 100, sceptile, leftovers, leafblade, leechseed, substitute, hiddenpower
-    .hword 26, 100, shiftry, leftovers, brickbreak, shadowball, quickattack, explosion
-    .hword 27, 100, venusaur, leftovers, sleeppowder, leechseed, sludgebomb, synthesis
-    .hword 28, 100, blaziken, salacberry, endure, swordsdance, reversal, fireblast
-    .hword 29, 100, swellow, starfberry, substitute, endeavor, batonpass, return
-    .hword 30, 100, slowbro, leftovers, curse, earthquake, icebeam, surf
-    .hword 31, 100, ninetales, leftovers, fireblast, grudge, hiddenpower, willowisp
-    .hword 32, 100, golduck, leftovers, calmmind, surf, hypnosis, icebeam
-    .hword 33, 100, salamence, leftovers, dragonclaw, brickbreak, hiddenpower, fireblast
-    .hword 34, 100, milotic, leftovers, surf, recover, toxic, refresh
-    .hword 35, 100, celebi, leftovers, calmmind, psychic, hiddenpower, batonpass
-    .hword 36, 100, skarmory, leftovers, spikes, drillpeck, hiddenpower, taunt
-
-/* gentleman */
-    .hword 37, 100, moltres, leftovers, flamethrower, hiddenpower, willowisp, roar
-    .hword 38, 100, espeon, leftovers, psychic, calmmind, substitute, batonpass
-    .hword 39, 100, persian, liechiberry, substitute, return, shadowball, hypnosis
-    .hword 40, 100, jirachi, leftovers, calmmind, wish, firepunch, psychic
-    .hword 41, 100, jolteon, leftovers, thunderbolt, hiddenpower, thunderwave, roar
-    .hword 42, 100, skarmory, leftovers, spikes, whirlwind, protect, drillpeck
-    .hword 43, 100, celebi, leftovers, leechseed, recover, healbell, hiddenpower
-    .hword 44, 100, suicune, leftovers, calmmind, hydropump, icebeam, hiddenpower
-    .hword 45, 100, zapdos, leftovers, thunderbolt, hiddenpower, thunderwave, protect
-    .hword 46, 100, arcanine, leftovers, howl, hiddenpower, extremespeed, flamethrower
-    .hword 47, 100, articuno, leftovers, icebeam, rest, sleeptalk, roar
-    .hword 48, 100, raikou, leftovers, rest, sleeptalk, thunderbolt, hiddenpower
-    .hword 49, 100, gardevoir, leftovers, calmmind, psychic, thunderbolt, destinybond
-    .hword 50, 100, regice, leftovers, icebeam, thunder, explosion, thunderwave
-    .hword 51, 100, entei, leftovers, sunnyday, calmmind, flamethrower, solarbeam
-    .hword 52, 100, registeel, leftovers, rest, sleeptalk, toxic, earthquake
-    .hword 53, 100, umbreon, leftovers, curse, batonpass, taunt, moonlight
-    .hword 54, 100, regirock, leftovers, rockslide, focuspunch, thunderwave, explosion
-
-/* poke maniac */
-    .hword 55, 100, porygon2, leftovers, recover, icebeam, thunderbolt, toxic
-    .hword 56, 100, magneton, magnet, thunderbolt, hiddenpower, thunderwave, protect
-    .hword 57, 100, electrode, petayaberry, thunderbolt, substitute, explosion, toxic
-    .hword 58, 100, aggron, leftovers, rockslide, icebeam, substitute, focuspunch
-    .hword 59, 100, cradily, leftovers, rockslide, barrier, mirrorcoat, recover
-    .hword 60, 100, zapdos, leftovers, thunderbolt, rest, toxic, lightscreen
-    .hword 61, 100, metagross, leftovers, agility, meteormash, earthquake, explosion
-    .hword 62, 100, armaldo, leftovers, earthquake, rapidspin, rockblast, swordsdance
-    .hword 63, 100, regirock, leftovers, swagger, psychup, superpower, rockslide
-    .hword 64, 100, dusclops, leftovers, calmmind, icebeam, willowisp, painsplit
-    .hword 65, 100, steelix, leftovers, earthquake, toxic, roar, explosion
-    .hword 66, 100, claydol, leftovers, rapidspin, earthquake, psychic, refresh
-    .hword 67, 100, wobbuffet, focusband, encore, counter, mirrorcoat, safeguard
-    .hword 68, 100, jirachi, leftovers, wish, protect, firepunch, bodyslam
-    .hword 69, 100, ampharos, leftovers, thunderbolt, reflect, hiddenpower, thunderwave
-    .hword 70, 100, exploud, leftovers, return, shadowball, earthquake, flamethrower
-    .hword 71, 100, lanturn, leftovers, thunderbolt, confuseray, thunderwave, surf
-    .hword 72, 100, muk, leftovers, sludgebomb, icepunch, explosion, hiddenpower
-
-/* pkmn breeder */
-    .hword 73, 100, marowak, thickclub, swordsdance, bonemerang, rockslide, doubleedge
-    .hword 74, 100, magmar, leftovers, flamethrower, crosschop, thunderpunch, hiddenpower
-    .hword 75, 100, jynx, leftovers, calmmind, icebeam, lovelykiss, substitute
-    .hword 76, 100, electabuzz, leftovers, thunderbolt, icepunch, hiddenpower, toxic
-    .hword 77, 100, blissey, leftovers, softboiled, icebeam, thunderbolt, sing
-    .hword 78, 100, clefable, leftovers, bellydrum, meteormash, softboiled, return
-    .hword 79, 100, kangaskhan, leftovers, return, shadowball, rest, earthquake
-    .hword 80, 100, azumarill, leftovers, substitute, focuspunch, hiddenpower, sing 
-    .hword 81, 100, miltank, leftovers, curse, bodyslam, milkdrink, healbell
-    .hword 82, 100, hitmontop, leftovers, bulkup, hijumpkick, hiddenpower, earthquake
-    .hword 83, 100, suicune, leftovers, calmmind, surf, rest, sleeptalk
-    .hword 84, 100, celebi, leftovers, calmmind, gigadrain, hiddenpower, psychic
-    .hword 85, 100, hitmonlee, salacberry, endure, bulkup, reversal, hiddenpower
-    .hword 86, 100, roselia, leftovers, spikes, synthesis, gigadrain, aromatherapy
-    .hword 87, 100, hitmonchan, leftovers, bulkup, skyuppercut, hiddenpower, earthquake
-    .hword 88, 100, lapras, leftovers, icebeam, thunderbolt, rest, sleeptalk
-    .hword 89, 100, vaporeon, leftovers, surf, wish, protect, icebeam
-    .hword 90, 100, snorlax, leftovers, curse, rest, return, hiddenpower
-
-/* dragon tamer */
-    .hword 91, 100, salamence, leftovers, dragondance, hiddenpower, rockslide, earthquake
-    .hword 92, 100, charizard, salacberry, bellydrum, doubleedge, fireblast, earthquake
-    .hword 93, 100, dragonite, leftovers, hiddenpower, earthquake, dragondance, thunderbolt
-    .hword 94, 100, flygon, leftovers, earthquake, rockslide, hiddenpower, substitute
-    .hword 95, 100, skarmory, leftovers, spikes, whirlwind, protect, toxic
-    .hword 96, 100, aerodactyl, leftovers, rockslide, doubleedge, earthquake, hiddenpower
-    .hword 97, 100, milotic, leftovers, mirrorcoat, recover, surf, hypnosis
-    .hword 98, 100, aggron, leftovers, rockslide, icebeam, counter, earthquake
-    .hword 99, 100, armaldo, leftovers, earthquake, knockoff, rockslide, swordsdance
-    .hword 100, 100, kingdra, leftovers, raindance, surf, icebeam, toxic
-    .hword 101, 100, rhydon, leftovers, earthquake, megahorn, rockslide, substitute
-    .hword 102, 100, sceptile, leftovers, swordsdance, leafblade, hiddenpower, brickbreak
-    .hword 103, 100, steelix, leftovers, earthquake, hiddenpower, rockslide, explosion
-    .hword 104, 100, kabutops, lumberry, raindance, swordsdance, rockslide, surf
-    .hword 105, 100, venusaur, leftovers, razorleaf, hiddenpower, leechseed, sleeppowder
-    .hword 106, 100, moltres, leftovers, fireblast, hiddenpower, willowisp, roar
-    .hword 107, 100, gligar, leftovers, earthquake, hiddenpower, irontail, swordsdance
-    .hword 108, 100, tyranitar, leftovers, dragondance, rockslide, earthquake, hiddenpower
-
-/* hex maniac */
-    .hword 109, 100, gengar, leftovers, willowisp, taunt, thunderbolt, icepunch
-    .hword 110, 100, starmie, leftovers, rapidspin, recover, surf, thunderwave
-    .hword 111, 100, absol, leftovers, calmmind, thunderbolt, icebeam, batonpass
-    .hword 112, 100, alakazam, leftovers, calmmind, psychic, firepunch, thunderpunch
-    .hword 113, 100, crobat, leftovers, sludgebomb, aerialace, hiddenpower, shadowball
-    .hword 114, 100, dusclops, leftovers, shadowball, seismictoss, willowisp, rest
-    .hword 115, 100, exeggutor, lumberry, sleeppowder, stunspore, explosion, solarbeam
-    .hword 116, 100, houndoom, leftovers, pursuit, fireblast, crunch, toxic
-    .hword 117, 100, misdreavus, leftovers, meanlook, perishsong, taunt, protect
-    .hword 118, 100, slowking, leftovers, surf, icebeam, calmmind, thunderwave
-    .hword 119, 100, shiftry, leftovers, brickbreak, sunnyday, solarbeam, hiddenpower
-    .hword 120, 100, mightyena, leftovers, healbell, roar, crunch, toxic
-    .hword 121, 100, gardevoir, leftovers, calmmind, psychic, meanlook, hypnosis
-    .hword 122, 100, dodrio, liechiberry, substitute, flail, agility, hiddenpower
-    .hword 123, 100, slowbro, leftovers, surf, psychic, rest, calmmind
-    .hword 124, 100, hypno, leftovers, psychic, thunderwave, wish, reflect
-    .hword 125, 100, mrmime, leftovers, calmmind, psychic, batonpass, barrier
-    .hword 126, 100, umbreon, leftovers, meanlook, toxic, protect, moonlight
-
-.align 2
-
 /* 
 ---------------------------------------------------------------------------------------
 The format of each entry is:
@@ -1883,149 +1741,6 @@ would normally.
 ---------------------------------------------------------------------------------------
 */
 
-PokemonTableStartAux:
-/* cooltrainer */
-    .byte adamant, 0, 0, 0, bug, 128, 252, 0, 128, 0, 0, pokeball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, maxivs, 28, 252, 24, 204, 0, 0, diveball, abilityone, 0, 0, 0
-    .byte rash, 0, 0, 0, ice, 16, 56, 0, 196, 240, 0, pokeball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, grass, 0, 0, 0, 252, 252, 4, nestball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 0, 252, 4, 252, 0, 0, safariball, abilityone, 0, 0, 0
-    .byte careful, 0, 0, 0, bug, 252, 0, 4, 0, 252, 0, safariball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, fighting, 252, 32, 0, 224, 0, 0, ultraball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, ghost, 128, 252, 0, 128, 0, 0, greatball, abilityone, 0, 0, 0
-    .byte naive, 0, 0, 0, maxivs, 4, 25, 0, 252, 0, 0, safariball, abilityone, 0, 0, 0
-    .byte bold, 0, 0, 0, maxivs, 252, 0, 200, 0, 56, 0, repeatball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, maxivs, 4, 252, 0, 252, 0, 0, ultraball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, ground, 70, 252, 0, 188, 0, 0, pokeball, abilitytwo, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 60, 252, 0, 196, 0 ,0, nestball, abilitytwo, 0, 0, 0
-    .byte adamant, 0, 0, 0, ghost, 160, 252, 0, 96, 0, 0, ultraball, abilityone, 0, 0, 0
-    .byte brave, 0, 0, 0, maxivs, 252, 178, 0, 12, 68, 0, ultraball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, maxivs, 4, 252, 0, 252, 0, 0, timerball, abilityone, 0, 0, 0
-    .byte impish, 0, 0, 0, maxivs, 252, 252, 0, 0, 0, 4, masterball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, maxivs, 0, 252, 4, 252, 0, 0, netball, abilityone, 0, 0, 0
-
-/* expert */
-    .byte rash, 0, 0, 0, ice, 0, 24, 0, 244, 240, 0, pokeball, abilityone, 0, 0, 0
-    .byte calm, 0, 0, 0, grass, 252, 0, 132, 0, 72, 52, pokeball, abilityone, 0, 0, 0
-    .byte brave, 0, 0, 0, maxivs, 28, 188, 0, 0, 136 ,156, repeatball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, flying, 128, 140, 0, 220, 0, 0, nestball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, ground, 4, 252, 0, 252, 0, 0, nestball, abilityone, 0, 0, 0
-    .byte modest, 0, 0, 0, maxivs, 252, 0, 0, 20, 236, 0, diveball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, ice, 0, 0, 4, 252, 252, 0, pokeball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 60, 252, 0, 196, 0, 0, nestball, abilitytwo, 0, 0, 0
-    .byte careful, 0, 0, 0, maxivs, 252, 0, 84, 24, 0, 148, pokeball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, maxivs, 80, 252, 0, 176, 0, 0, pokeball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, maxivs, 4, 252, 0, 252, 0, 0, greatball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 252, 176, 0, 0, 0, 80, netball, abilitytwo, 0, 0, 0
-    .byte timid, 0, 0, 0, maxivs, 100, 0, 0, 156, 252, 0, greatball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, maxivs, 4, 0, 0, 252, 252, 0, diveball, abilitytwo, 0, 0, 0
-    .byte naive, 0, 0, 0, maxivs, 0, 4, 0, 252, 252, 0, ultraball, abilityone, 0, 0, 0
-    .byte bold, 0, 0, 0, maxivs, 252, 0, 252, 0, 4, 0, diveball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, fire, 252, 0, 0, 180, 76, 0, masterball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, ground, 4, 252, 0, 252, 0, 0, ultraball, abilityone, 0, 0, 0
-
-/* gentleman */
-    .byte modest, 0, 0, 0, grass, 0, 0, 0, 252, 252, 4, masterball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, maxivs, 200, 0, 0, 72, 0, 236, luxuryball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 80, 252, 0, 176, 0, 0, premierball, abilityone, 0, 0, 0
-    .byte bold, 0, 0, 0, maxivs, 252, 0, 224, 32, 0, 0, masterball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, ice, 76, 0, 0, 252, 180, 0, luxuryball, abilityone, 0, 0, 0
-    .byte careful, 0, 0, 0, maxivs, 252, 0, 0, 4, 0, 252, ultraball, abilityone, 0, 0, 0
-    .byte bold, 0, 0, 0, grass, 252, 0, 124, 32, 40, 60, masterball, abilityone, 0, 0, 0
-    .byte modest, 0, 0, 0, grass, 28, 0, 0, 228, 252, 0, masterball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, electric, 4, 0, 0, 252, 252, 0, masterball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, fighting, 252, 252, 0, 4, 0, 0, ultraball, abilityone, 0, 0, 0
-    .byte calm, 0, 0, 0, maxivs, 252, 0, 0, 8, 114, 136, masterball, abilityone, 0, 0, 0
-    .byte modest, 0, 0, 0, ice, 252, 0, 0, 136, 120, 0, masterball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, maxivs, 56, 0, 0, 200, 252, 0, premierball, abilitytwo, 0, 0, 0
-    .byte quiet, 0, 0, 0, maxivs, 252, 104, 0, 0, 152, 0, masterball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, maxivs, 120, 0, 0, 148, 240, 0, masterball, abilityone, 0, 0, 0
-    .byte careful, 0, 0, 0, maxivs, 252, 0, 0, 20, 0, 236, masterball, abilityone, 0, 0, 0
-    .byte calm, 0, 0, 0, maxivs, 252, 0, 120, 0, 0, 136, luxuryball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 252, 252, 0, 0, 0, 4, masterball, abilityone, 0, 0, 0
-
-/* poke maniac */
-    .byte bold, 0, 0, 0, maxivs, 252, 0, 200, 0, 0, 56, greatball, abilityone, 0, 0, 0
-    .byte modest, 0, 0, 0, fire, 4, 0, 0, 252, 252, 0, repeatball, abilityone, 0, 0, 0
-    .byte mild, 0, 0, 0, maxivs, 12, 32, 116, 96, 252, 0, pokeball, abilitytwo, 0, 0, 0
-    .byte brave, 0, 0, 0, maxivs, 228, 252, 0, 0, 28, 0, greatball, abilityone, 0, 0, 0
-    .byte careful, 0, 0, 0, maxivs, 252, 0, 164, 0, 0, 92, pokeball, abilityone, 0, 0, 0
-    .byte calm, 0, 0, 0, maxivs, 252, 0, 0, 4, 0, 252, masterball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 168, 252, 0, 88, 0, 0, pokeball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 188, 252, 68, 0, 0, 0, pokeball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 252, 252, 0, 0, 0, 4, masterball, abilityone, 0, 0, 0
-    .byte bold, 0, 0, 0, maxivs, 252, 0, 200, 0, 56, 0, ultraball, abilityone, 0, 0, 0
-    .byte impish, 0, 0, 0, maxivs, 252, 36, 0, 0, 0, 220, timerball, abilitytwo, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 252, 216, 0,  8, 32, 0, premierball, abilityone, 0, 0, 0
-    .byte careful, 0, 0, 0, maxivs, 4, 0, 252, 0, 0, 252, pokeball, abilityone, 0, 0, 0
-    .byte sassy, 0, 0, 0, maxivs, 252, 0, 76, 0, 0, 180, masterball, abilityone, 0, 0, 0
-    .byte quiet, 0, 0, 0, grass, 252, 156, 0, 0, 100, 0, safariball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 220, 180, 0, 108, 0, 0, greatball, abilityone, 0, 0, 0
-    .byte modest, 0, 0, 0, maxivs, 40, 0, 0, 0, 252, 218, netball, abilityone, 0, 0, 0
-    .byte brave, 0, 0, 0, ghost, 252, 252, 0, 0, 0, 4, ultraball, abilitytwo, 0, 0, 0
-
-/* pkmn breeder */
-    .byte jolly, 0, 0, 0, maxivs, 4, 252, 0, 252, 0, 0, ultraball, abilityone, 0, 0, 0
-    .byte mild, 0, 0, 0, ice, 0, 64, 0, 192, 252, 0, greatball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, maxivs, 0, 0, 0, 252, 252, 4, luxuryball, abilityone, 0, 0, 0
-    .byte modest, 0, 0, 0, grass, 4, 0, 0, 252, 252, 0, pokeball, abilityone, 0, 0, 0
-    .byte bold, 0, 0, 0, maxivs, 44, 0, 252, 0, 212, 0, luxuryball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 224, 252, 0, 0, 0, 32, luxuryball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 212, 252, 0, 0, 0, 44, ultraball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, ghost, 252, 252, 0, 4, 0, 0, netball, abilitytwo, 0, 0, 0
-    .byte impish, 0, 0, 0, maxivs, 220, 192, 96, 0, 0, 0, luxuryball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, ghost, 144, 252, 0, 112, 0, 0, timerball, abilityone, 0, 0, 0
-    .byte modest, 0, 0, 0, maxivs, 240, 0, 0, 16, 252, 0, masterball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, fire, 76, 0, 0, 180, 252, 0, masterball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, ghost, 4, 252, 0, 252, 0, 0, pokeball, abilityone, 0, 0, 0
-    .byte calm, 0, 0, 0, maxivs, 252, 0, 20, 0, 0, 236, safariball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, maxivs, 0, 252, 0, 252, 0, 4, pokeball, abilityone, 0, 0, 0
-    .byte bold, 0, 0, 0, maxivs, 252, 0, 164, 0, 92, 0, diveball, abilityone, 0, 0, 0
-    .byte bold, 0, 0, 0, maxivs, 252, 0, 228, 0, 0, 28, pokeball, abilityone, 0, 0, 0
-    .byte careful, 0, 0, 0, steel, 144, 96, 132, 0, 0, 136, ultraball, abilityone, 0, 0, 0
-
-/* dragon tamer */
-    .byte adamant, 0, 0, 0, flying, 116, 252, 0, 140, 0, 0, ultraball, abilityone, 0, 0, 0
-    .byte lonely, 0, 0, 0, maxivs, 0, 252, 0, 136, 120, 0, pokeball, abilityone, 0, 0, 0
-    .byte lonely, 0, 0, 0, flying, 52, 204, 0, 184, 68, 0, ultraball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, bug, 4, 252, 0, 252, 0, 0, pokeball, abilityone, 0, 0, 0
-    .byte careful, 0, 0, 0, maxivs, 252, 0, 0, 4, 0, 252, repeatball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, flying, 4, 252, 0, 252, 0, 0, pokeball, abilityone, 0, 0, 0
-    .byte bold, 0, 0, 0, maxivs, 4, 0, 0, 252, 252, 0, diveball, abilityone, 0, 0, 0
-    .byte brave, 0, 0, 0, maxivs, 228, 252, 0, 0, 28, 0, premierball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 202, 252, 56, 0, 0, 0, pokeball, abilityone, 0, 0, 0
-    .byte modest, 0, 0, 0, maxivs, 240, 0, 0, 16, 252, 0, netball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 212, 122, 0, 176, 0, 0, greatball, abilitytwo, 0, 0, 0
-    .byte hasty, 0, 0, 0, flying, 0, 252, 0, 220, 36, 0, pokeball, abilityone, 0, 0, 0
-    .byte impish, 0, 0, 0, steel, 144, 228, 0, 0, 0, 136, premierball, abilityone, 0, 0, 0
-    .byte naughty, 0, 0, 0, maxivs, 156, 252, 0, 8, 92, 0, netball, abilityone, 0, 0, 0
-    .byte calm, 0, 0, 0, fire, 252, 0, 64, 56, 80, 56, pokeball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, grass, 0, 0, 0, 252, 252, 4, masterball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, flying, 4, 252, 0, 252, 0, 0, timerball, abilityone, 0, 0, 0
-    .byte naive, 0, 0, 0, bug, 4, 252, 0, 252, 0, 0, ultraball, abilityone, 0, 0, 0
-
-/* hex maniac */
-    .byte timid, 0, 0, 0, maxivs, 248, 0, 44, 96, 8, 112, pokeball, abilityone, 0, 0, 0
-    .byte adamant, 0, 0, 0, maxivs, 252, 0, 0, 216, 40, 0, diveball, abilitytwo, 0, 0, 0
-    .byte timid, 0, 0, 0, maxivs, 252, 0, 0, 216, 40, 0, ultraball, abilityone, 0, 0, 0
-    .byte modest, 0, 0, 0, maxivs, 4, 0, 0, 252, 252, 0, pokeball, abilityone, 0, 0, 0
-    .byte jolly, 0, 0, 0, ground, 80, 252, 0, 176, 0, 0, luxuryball, abilityone, 0, 0, 0
-    .byte careful, 0, 0, 0, maxivs, 252, 36, 20, 0, 0, 200, greatball, abilityone, 0, 0, 0
-    .byte modest, 0, 0, 0, maxivs, 96, 0, 0, 60, 252, 96, safariball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, maxivs, 56, 0, 0, 188, 252, 12, ultraball, abilityone, 0, 0, 0
-    .byte calm, 0, 0, 0, maxivs, 252, 0, 176, 64, 0, 16, pokeball, abilityone, 0, 0, 0
-    .byte bold, 0, 0, 0, maxivs, 252, 0, 176, 12, 68, 0, netball, abilitytwo, 0, 0, 0
-    .byte rash, 0, 0, 0, fire, 136, 92, 0, 28, 252, 0, repeatball, abilityone, 0, 0, 0
-    .byte bold, 0, 0, 0, maxivs, 252, 0, 252, 0, 0, 4, pokeball, abilityone, 0, 0, 0
-    .byte timid, 0, 0, 0, maxivs, 4, 0, 0, 252, 252, 0, greatball, abilitytwo, 0, 0, 0
-    .byte adamant, 0, 0, 0, ghost, 248, 252, 8, 0, 0, 0, ultraball, abilitytwo, 0, 0, 0
-    .byte bold, 0, 0, 0, maxivs, 252, 0, 176, 0, 28, 52, netball, abilitytwo, 0, 0, 0
-    .byte bold, 0, 0, 0, maxivs, 252, 0, 192, 64, 0, 0, ultraball, abilityone, 0, 0, 0
-    .byte calm, 0, 0, 0, maxivs, 252, 0, 0, 0, 60, 196, ultraball, abilityone, 0, 0, 0
-    .byte careful, 0, 0, 0, maxivs, 252, 0, 32, 224, 0, 0, luxuryball, abilityone, 0, 0, 0
-
-.align 2
-
 
 
 
@@ -2034,19 +1749,19 @@ PokemonTableStartAux:
 PokemonTableStartEasyMode:
     .hword  1, 50, bayleef, occaberry, magicalleaf, ancientpower, leechseed, lightscreen
     .hword  2, 50, quilava, passhoberry, lavaplume, rollout, smokescreen, willowisp
-    .hword  3, 50, croconaw, indoberry, dive, bite, icefang, scaryface
+    .hword  3, 50, croconaw, rindoberry, dive, bite, icefang, scaryface
     .hword  4, 50, fearow, wacanberry, aerialace, facade, mudslap, leer
     .hword  5, 50, noctowl, sharpbeak, aircutter, psybeam, hypnosis, reflect
     .hword  6, 50, raticate, scopelens, hyperfang, bite, agility, focusenergy
     .hword  7, 50, furret, silkscarf, facade, coil, amnesia, batonpass
     .hword  8, 50, pikachu, lightball, shockwave, nuzzle, quickattack, brickbreak
     .hword  9, 50, butterfree, chartiberry, psybeam, silverwind, sleeppowder, quiverdance
-    .hword 10, 50, beedrill, focussash, twinneedle, swordsdance, endeavor, aerialace
+    .hword 10, 50, beedrill, focussash, twineedle, swordsdance, endeavor, aerialace
     .hword 11, 50, ledian, lightclay, silverwind, drainpunch, lightscreen, reflect
     .hword 12, 50, ariados, blacksludge, toxicthread, crosspoison, stickyweb, psybeam
     .hword 13, 50, graveler, softsand, rocktomb, magnitude, defensecurl, rockpolish
     .hword 14, 50, golbat, wacanberry, crosspoison, aerialace, meanlook, confuseray
-    .hword 15, 50, wigglytuff, chestoberry, disarmingvoice, sing, swift, rest
+    .hword 15, 50, wigglytuff, chestoberry, disarmvoice, sing, swift, rest
     .hword 16, 50, togetic, sitrusberry, aerialace, magicalleaf, yawn, wish
     .hword 17, 50, sandslash, smoothrock, dig, sandstorm, rocktomb, rapidspin
     .hword 18, 50, arbok, payapaberry, poisontail, coil, bite, glare
@@ -2056,7 +1771,7 @@ PokemonTableStartEasyMode:
     .hword 22, 50, haunter, kasibberry, ominouswind, confuseray, hypnosis, curse
     .hword 23, 50, onix, weaknesspolicy, dig, rocktomb, irondefense, dragonbreath
     .hword 24, 50, weepinbell, payapaberry, gigadrain, acid, stunspore, synthesis
-    .hword 25, 50, parasect, leftovers, xscissor, bulletseed, spore, screench
+    .hword 25, 50, parasect, leftovers, xscissor, bulletseed, spore, screech
     .hword 26, 50, poliwhirl, expertbelt, bubblebeam, brickbreak, hypnosis, mudshot
     .hword 27, 50, seaking, damprock, dive, psybeam, raindance, mist
     .hword 28, 50, gloom, blacksludge, gigadrain, acid, moonlight, toxic
@@ -2065,8 +1780,8 @@ PokemonTableStartEasyMode:
     .hword 31, 50, nidorina, muscleband, poisonfang, bite, doublekick, flatter
     .hword 32, 50, nidorino, wiseglasses, poisonfang, waterpulse, psybeam, flatter
     .hword 33, 50, yanma, brightpowder, uturn, aerialace, detect, doubleteam
-    .hword 34, 50, sunflora, miracleseed, gigadrain, ingrain, leechseed, flowershield
-    .hword 35, 50, sudowoodo, hardrock, rocktomb, faintattack, lowkick, block
+    .hword 34, 50, sunflora, miracleseed, gigadrain, ingrain, leechseed, flowerguard
+    .hword 35, 50, sudowoodo, hardstone, rocktomb, feintattack, lowkick, block
     .hword 36, 50, wobbuffet, sitrusberry, counter, mirrorcoat, encore, destinybond
     .hword 37, 50, venomoth, silverpowder, silverwind, psybeam, sleeppowder, skillswap
     .hword 38, 50, scyther, chartiberry, uturn, aerialace, lightscreen, leer
@@ -2077,34 +1792,34 @@ PokemonTableStartEasyMode:
     .hword 43, 50, azumarill, persimberry, aquajet, facade, raindance, defensecurl
     .hword 44, 50, primeape, cobaberry, brickbreak, swagger, assurance, focusenergy
     .hword 45, 50, persian, focusband, slash, bite, torment, swagger
-    .hword 46, 50, machoke, blackbelt, rocktomb, lowkick, scareyface, focusenergy
+    .hword 46, 50, machoke, blackbelt, rocktomb, lowkick, scaryface, focusenergy
     .hword 47, 50, girafarig, tangaberry, psybeam, stomp, wish, skillswap
-    .hword 48, 50, magmar, cheriberry, firepunch, barrier, faintattack, willowisp
+    .hword 48, 50, magmar, cheriberry, firepunch, barrier, feintattack, willowisp
     .hword 49, 50, jynx, babiriberry, lovelykiss, icywind, psybeam, faketears
-    .hword 50, 50, electabuzz, rawstberry, thunerpunch, lightscreen, lowkick, thunderwave
+    .hword 50, 50, electabuzz, rawstberry, thunderpunch, lightscreen, lowkick, thunderwave
     .hword 51, 50, mrmime, oranberry, barrier, psybeam, fakeout, magicalleaf
     .hword 52, 50, smeargle, lumberry, spore, bellydrum, shadowsneak, quickattack
     .hword 53, 50, farfetchd, stick, aerialace, slash, agility, swordsdance
-    .hword 54, 50, qwilfish, poisonbarb, barbbarrage, waterpulse, pinmissle, minimize
-    .hword 55, 50, shuckle, oranberry, warp, toxic, protect, sandstorm
+    .hword 54, 50, qwilfish, poisonbarb, barbbarrage, waterpulse, pinmissile, minimize
+    .hword 55, 50, shuckle, oranberry, wrap, toxic, protect, sandstorm
     .hword 56, 50, corsola, widelens, rockblast, bubblebeam, recover, bulldoze
     .hword 57, 50, octillery, expertbelt, octazooka, aurorabeam, psybeam, bulletseed
     .hword 58, 50, lickitung, ganlonberry, defensecurl, refresh, rollout, facade
-    .hword 59, 50, tangela, occaberry, gigadrain, warp, amnesia, leechseed
+    .hword 59, 50, tangela, occaberry, gigadrain, wrap, amnesia, leechseed
     .hword 60, 50, seadra, pechaberry, dragonbreath, octazooka, agility, smokescreen
     .hword 61, 50, gligar, yacheberry, bulldoze, acrobatics, swordsdance, toxic
     .hword 62, 50, delibird, icyrock, icywind, tailwind, aircutter, hail
     .hword 63, 50, piloswine, nevermeltice, iceshard, dig, mist, ancientpower
-    .hword 64, 50, ursaring, persimberry, faintattack, scaryface, slash, charm
+    .hword 64, 50, ursaring, persimberry, feintattack, scaryface, slash, charm
     .hword 65, 50, rhydon, aspearberry, bulldoze, rocktomb, scaryface, roar
     .hword 66, 50, murkrow, blackglasses, foulplay, taunt, swagger, suckerpunch
     .hword 67, 50, magcargo, shucaberry, ancientpower, flamewheel, shellsmash, acidarmor
     .hword 68, 50, misdreavus, spelltag, thunderwave, ominouswind, confuseray, painsplit
     .hword 69, 50, porygon2, chilanberry, psybeam, icywind, recycle, agility
     .hword 70, 50, chansey, sitrusberry, swift, refresh, defensecurl, minimize
-    .hword 71, 50, ivysaur, miracalseed, sludge, growth, synthesis, magicalleaf
+    .hword 71, 50, ivysaur, miracleseed, sludge, growth, synthesis, magicalleaf
     .hword 72, 50, charmeleon, charcoal, slash, firepunch, dragonbreath, aerialace
-    .hword 73, 50, wartortle, mysticalwater, waterpulse, bite, irondefense, yawn
+    .hword 73, 50, wartortle, mysticwater, waterpulse, bite, irondefense, yawn
     .hword 74, 50, dragonair, habanberry, dragonbreath, thunderwave, waterpulse, return
     .hword 75, 50, pupitar, pechaberry, dig, rocktomb, bite, scaryface
 
@@ -2222,7 +1937,7 @@ LoadItem:
 
 LoadHPEV:
     lsl r0, r6, #0x4
-    ldr r2, .PokemonData
+    ldr r2, .PokemonData2
     add r2, r0
     add r2, #0x5
     mov r1, #0x1A       /* HP EV */
@@ -2231,7 +1946,7 @@ LoadHPEV:
 
 LoadAtkEV:
     lsl r0, r6, #0x4
-    ldr r2, .PokemonData
+    ldr r2, .PokemonData2
     add r2, r0
     add r2, #0x6
     mov r1, #0x1B       /* Attack EV */
@@ -2240,7 +1955,7 @@ LoadAtkEV:
 
 LoadDefEV:
     lsl r0, r6, #0x4
-    ldr r2, .PokemonData
+    ldr r2, .PokemonData2
     add r2, r0
     add r2, #0x7
     mov r1, #0x1C       /* Defence EV */
@@ -2249,7 +1964,7 @@ LoadDefEV:
 
 LoadSpeedEV:
     lsl r0, r6, #0x4
-    ldr r2, .PokemonData
+    ldr r2, .PokemonData2
     add r2, r0
     add r2, #0x8
     mov r1, #0x1D       /* Speed EV */
@@ -2258,7 +1973,7 @@ LoadSpeedEV:
 
 LoadSAtkEV:
     lsl r0, r6, #0x4
-    ldr r2, .PokemonData
+    ldr r2, .PokemonData2
     add r2, r0
     add r2, #0x9
     mov r1, #0x1E       /* Special Attack EV */
@@ -2267,7 +1982,7 @@ LoadSAtkEV:
 
 LoadSDefEV:
     lsl r0, r6, #0x4
-    ldr r2, .PokemonData
+    ldr r2, .PokemonData2
     add r2, r0
     add r2, #0xA
     mov r1, #0x1F       /* Special Defence EV */
@@ -2276,7 +1991,7 @@ LoadSDefEV:
 
 LoadBall:
     lsl r0, r6, #0x4
-    ldr r2, .PokemonData
+    ldr r2, .PokemonData2
     add r2, r0
     add r2, #0xB
     mov r1, #0x26       /* Poke Ball Type */
@@ -2285,7 +2000,7 @@ LoadBall:
 
 LoadAbility:
     lsl r0, r6, #0x4
-    ldr r2, .PokemonData
+    ldr r2, .PokemonData2
     add r2, r0
     add r2, #0xC
     mov r1, #0x2E       /* Ability Bit */
@@ -2294,7 +2009,7 @@ LoadAbility:
 
 StartNatureLoop:
     lsl r0, r6, #0x4
-    ldr r2, .PokemonData
+    ldr r2, .PokemonData2
     add r2, r0
     ldrb r5, [r2, #0x0]
     cmp r5, #0x0
@@ -2321,7 +2036,7 @@ EndNatureLoop:
 
 LoadIVs:
     lsl r0, r6, #0x4
-    ldr r2, .PokemonData
+    ldr r2, .PokemonData2
     add r2, r2, r0
     ldrb r6, [r2, #0x4]
     push {r6}
@@ -2391,7 +2106,7 @@ Modulus:
 
 .align 2
 .Return:            .word 0x08011639
-.PokemonData:       .word PokemonTableStartAux
+.PokemonData2:      .word PokemonTableStartEasyModeSpreads
 .Encrypt:           .word 0x0804037D
 .Recalculate:       .word 0x0803E47D
 .Modulus:           .word 0x081E4685
