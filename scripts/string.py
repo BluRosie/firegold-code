@@ -74,6 +74,8 @@ SpecialBuffers = {
     "DPAD_LEFT_RIGHT": ["F8", "0B"],
     "DPAD": ["F8", "0C"],
     
+    "PKMN": ["53", "54"],
+    
     "BRAILLE": ["FC", "06", "06"],
     "Br_A": ["01"],
     "Br_B": ["05"],

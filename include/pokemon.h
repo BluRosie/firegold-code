@@ -2,7 +2,9 @@
 #define GUARD_POKEMON_H
 
 #include "constants/global.h"
+#include "main.h"
 #include "sprite.h"
+#include "task.h"
 
 #define MON_DATA_PERSONALITY        0
 #define MON_DATA_OT_ID              1
@@ -243,10 +245,26 @@ struct BaseStats
             u8 noFlip : 1;
 };
 
+struct PartyMenu
+{
+    MainCallback exitCallback;
+    TaskFunc task;
+    u8 menuType:4;
+    u8 layout:2;
+    u8 chooseMonsBattleType:2;
+    s8 slotId;
+    s8 slotId2;
+    u8 action;
+    u16 bagItem;
+    s16 data[2];
+};
+
 extern struct Pokemon gPlayerParty[PARTY_SIZE];
 extern struct Pokemon gEnemyParty[PARTY_SIZE];
 extern const struct BaseStats gBaseStats[];
 extern const u32 gExperienceTables[8][101];
+
+extern struct PartyMenu gPartyMenu;
 
 extern u8 gPlayerPartyCount;
 

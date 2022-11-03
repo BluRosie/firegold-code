@@ -26,3 +26,11 @@ Start115200 08115200 2
 Start12C020 0812C020 2
 Start11670 08011670 2
 Start11688 08011688 2
+
+CheckBattleEntriesAndGetMessage 081275f8 0
+ReducePlayerPartyToThree 080a03d8 0
+HasPartySlotAlreadyBeenSelected 08127710 1
+CursorCB_NoEntry 08124278 1
+ClearSelectedPartyOrder 081274fc 0
+CursorCB_Enter 08124154 1
+DisplayPartyPokemonDataForChooseMultiple 0811f388 1
