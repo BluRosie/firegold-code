@@ -15,6 +15,8 @@
 .equ BATTLE_TOWER_TYPE_SINGLE_HARD, 2
 .equ BATTLE_TOWER_TYPE_DOUBLE_EASY, 3
 .equ BATTLE_TOWER_TYPE_DOUBLE_HARD, 4
+.equ BATTLE_TOWER_TYPE_MULTI_EASY, 5
+.equ BATTLE_TOWER_TYPE_MULTI_HARD, 6
 
 .equ BATTLE_TOWER_TYPE_EASY_BIT, 0x01
 
@@ -1483,7 +1485,7 @@ SetThree:
     mov r0, #0x3
     b GenerateParty
 
-SetFour:
+SetFour:                /* multi battles still require 4 mons */
     mov r0, #0x4
 
 GenerateParty:
@@ -1572,8 +1574,11 @@ LoadThePokemon:
 
     ldr r0, =VAR_BATTLE_TOWER_TYPE
     bl VarGet_r6
-    and r0, #BATTLE_TOWER_TYPE_EASY_BIT
-    cmp r0, #0
+    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+    beq LoadEasyTable
+    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
+    beq LoadEasyTable
+    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
     beq LoadEasyTable
     ldr r1, .PokemonTableHard
     b afterTable
@@ -1638,15 +1643,18 @@ GetRandomPokemon:
     push {r2-r7, lr}
     ldr r0, =VAR_BATTLE_TOWER_TYPE
     bl VarGet_r6
-    and r0, #BATTLE_TOWER_TYPE_EASY_BIT
-    cmp r0, #0
-    beq LoadHardDenom
-    bl RandomNumber
-    mov r1, #NUM_OF_EASY_MODE_SPREADS
-    b afterLoadDenom
-LoadHardDenom:
+    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+    beq LoadEasyDenom
+    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
+    beq LoadEasyDenom
+    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
+    beq LoadEasyDenom
     bl RandomNumber
     mov r1, #NUM_OF_HARD_MODE_SPREADS
+    b afterLoadDenom
+LoadEasyDenom:
+    bl RandomNumber
+    mov r1, #NUM_OF_EASY_MODE_SPREADS
 afterLoadDenom:
     bl Modulus2
     pop {r2-r7, pc}

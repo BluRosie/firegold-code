@@ -12,14 +12,21 @@
 
 void SetPartyToLevel50(void)
 {
-    for (int i = 0; i < gPlayerPartyCount; i++)
+    CalculatePlayerPartyCount();
+    for (u32 i = 0; i < gPlayerPartyCount; i++)
     {
         u32 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL);
         u32 level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
-        if (species != 0 /* && level > 50 // test without this first */ && GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL) == 0)
+        if (species != 0 && level > 50 && GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL) == 0)
         {
-            SetMonData(&gPlayerParty[i], MON_DATA_EXP, &gExperienceTables[gBaseStats[species].growthRate][level]);
-            CalculateMonStats(&gPlayerParty[i]);
+            u32 experience[] = {125000, 100000, /*125000, */117360, 156250, 142500};
+            int j = 0;
+            while (GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL) != 50)
+            {
+                SetMonData(&gPlayerParty[i], MON_DATA_EXP, (u8 *)&experience[j]);
+                CalculateMonStats(&gPlayerParty[i]);
+                j++;
+            }
         }
     }
 }
@@ -35,10 +42,12 @@ void SetPartyToLevel50(void)
 #define BATTLE_TOWER_TYPE_SINGLE_HARD 2
 #define BATTLE_TOWER_TYPE_DOUBLE_EASY 3
 #define BATTLE_TOWER_TYPE_DOUBLE_HARD 4
+#define BATTLE_TOWER_TYPE_MULTI_EASY 5
+#define BATTLE_TOWER_TYPE_MULTI_HARD 5
 
 #define BATTLE_TOWER_TYPE_EASY_BIT 0x01
 
-#define gSelectedOrderFromParty (u8 *)(0x0203b0d4)
+#define gSelectedOrderFromParty ((u8 *)(0x0203b0d4))
 
 
 enum
@@ -159,14 +168,23 @@ void ReducePlayerPartyToThree(void)
 
     // copy the selected pokemon according to the order.
     for (i = 0; i < 4; i++)
+    {
         if (gSelectedOrderFromParty[i]) // as long as the order keeps going (did the player select 1 mon? 2? 3?), do not stop
+        {
             party[i] = gPlayerParty[gSelectedOrderFromParty[i] - 1]; // index is 0 based, not literal
+        }
+    }
 
     Memset(gPlayerParty, 0, 6 * sizeof(struct Pokemon));
 
     // overwrite the first 3 with the order copied to.
     for (i = 0; i < 4; i++)
-        gPlayerParty[i] = party[i];
+    {
+        if (gSelectedOrderFromParty[i]) // as long as the order keeps going (did the player select 1 mon? 2? 3?), do not stop
+        {
+            gPlayerParty[i] = party[i];
+        }
+    }
 
     CalculatePlayerPartyCount();
     Free(party);
@@ -206,22 +224,24 @@ enum
 
 
 
+extern const u8 gText_Fourth_PM[];
+extern const u8 gText_NoMoreThanFourMayEnter[];
 
 // committing absolute crimes
-const u32 sDescriptionStringTable[] =
+const u8 *const sDescriptionStringTable[] =
 {
-    [PARTYBOX_DESC_NO_USE]     = 0x08417411,
-    [PARTYBOX_DESC_ABLE_3]     = 0x08417419,
-    [PARTYBOX_DESC_FIRST]      = 0x0841741e,
-    [PARTYBOX_DESC_SECOND]     = 0x08417424,
-    [PARTYBOX_DESC_THIRD]      = 0x0841742b,
-    [PARTYBOX_DESC_ABLE]       = 0x08417431,
-    [PARTYBOX_DESC_NOT_ABLE]   = 0x08417436,
-    [PARTYBOX_DESC_ABLE_2]     = 0x0841743f,
-    [PARTYBOX_DESC_NOT_ABLE_2] = 0x08417445,
-    [PARTYBOX_DESC_LEARNED]    = 0x0841744f,
+    [PARTYBOX_DESC_NO_USE]     = (const u8 *)0x08417411,
+    [PARTYBOX_DESC_ABLE_3]     = (const u8 *)0x08417419,
+    [PARTYBOX_DESC_FIRST]      = (const u8 *)0x0841741e,
+    [PARTYBOX_DESC_SECOND]     = (const u8 *)0x08417424,
+    [PARTYBOX_DESC_THIRD]      = (const u8 *)0x0841742b,
+    [PARTYBOX_DESC_ABLE]       = (const u8 *)0x08417431,
+    [PARTYBOX_DESC_NOT_ABLE]   = (const u8 *)0x08417436,
+    [PARTYBOX_DESC_ABLE_2]     = (const u8 *)0x0841743f,
+    [PARTYBOX_DESC_NOT_ABLE_2] = (const u8 *)0x08417445,
+    [PARTYBOX_DESC_LEARNED]    = (const u8 *)0x0841744f,
     [PARTYBOX_DESC_FOURTH]     = gText_Fourth_PM,
-}
+};
 
 
 
@@ -268,7 +288,7 @@ void CursorCB_NoEntry(u8 taskId)
     if (gSelectedOrderFromParty[2] != 0)
         DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_THIRD, &sPartyMenuBoxes[gSelectedOrderFromParty[2] - 1], DRAW_MENU_BOX_AND_TEXT);
     DisplayPartyMenuStdMessage(PARTY_MSG_CHOOSE_MON);
-    gTasks[taskId].func = Task_HandleChooseMonInput;
+    gTasks[taskId].func = (void (*)(u8))(0x0811fb28 | 1); //Task_HandleChooseMonInput
 }
 
 
@@ -278,7 +298,7 @@ void ClearSelectedPartyOrder(void)
 }
 
 
-static void CursorCB_Enter(u8 taskId)
+void CursorCB_Enter(u8 taskId)
 {
     u32 maxBattlers;
     u32 i;
@@ -316,13 +336,13 @@ static void CursorCB_Enter(u8 taskId)
                 MoveCursorToConfirm();
 
             DisplayPartyMenuStdMessage(PARTY_MSG_CHOOSE_MON);
-            gTasks[taskId].func = Task_HandleChooseMonInput;
+            gTasks[taskId].func = (void (*)(u8))(0x0811fb28 | 1); //Task_HandleChooseMonInput
             return;
         }
     }
     PlaySE(SE_FAILURE);
     DisplayPartyMenuMessage(str, 1);
-    gTasks[taskId].func = (void (u8))(0x081203b8 | 1); // Task_ReturnToChooseMonAfterText
+    gTasks[taskId].func = (void (*)(u8))(0x081203b8 | 1); // Task_ReturnToChooseMonAfterText
 }
 
 

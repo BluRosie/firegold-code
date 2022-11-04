@@ -363,7 +363,7 @@ gPokedexEntries = 0x844E850;
 gUnknown_08459FFC = 0x8459FFC;
 MonHoverShadowPal = 0x8D11B84;
 MonHoverShadowSprite = 0x8E7BAD4;
-gExperienceTables = 0x08253ae4;
+gExperienceTables = 0x08253AE4;
 
 /* Pokemon Function */
 EmitSetMonData = 0x800DFF0 | 1;
@@ -1894,3 +1894,4 @@ sPartyMenuBoxes = 0x0203b0b4;
 GetBattleEntryEligibility = 0x08127550 | 1;
 DisplayPartyPokemonDescriptionData = 0x0811f2fc | 1;
 DisplayPartyPokemonDescriptionText = 0x08121c70 | 1;
+MoveCursorToConfirm = 0x08124258 | 1;
