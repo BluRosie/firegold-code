@@ -113,42 +113,40 @@ u8 CheckBattleEntriesAndGetMessage(void)
     u8 i, j;
     struct Pokemon *party = gPlayerParty;
     u8 *order = gSelectedOrderFromParty;
+    u32 limit = 0;
     
     switch (gPartyMenu.chooseMonsBattleType)
     {
     case CHOOSE_MONS_FOR_BATTLE_TOWER:
-        if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_DOUBLE_EASY)
+        if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_MULTI_EASY)
         {
-            if (order[2] == 0 || order[3] == 0)
+            if (order[1] == 0)
+                return PARTY_MSG_TWO_MONS_ARE_NEEDED;
+            limit = 2;
+        }
+        else if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_DOUBLE_EASY)
+        {
+            if (order[3] == 0)
                 return PARTY_MSG_FOUR_MONS_ARE_NEEDED;
-            for (i = 0; i < 4; ++i)
-            {
-                sPartyMenuInternal->data[15] = GetMonData(&party[order[i] - 1], MON_DATA_SPECIES);
-                sPartyMenuInternal->data[14] = GetMonData(&party[order[i] - 1], MON_DATA_HELD_ITEM);
-                for (j = i + 1; j < 4; ++j)
-                {
-                    if (sPartyMenuInternal->data[15] == GetMonData(&party[order[j] - 1], MON_DATA_SPECIES))
-                        return PARTY_MSG_MONS_CANT_BE_SAME;
-                    if (sPartyMenuInternal->data[14] != 0 && sPartyMenuInternal->data[14] == GetMonData(&party[order[j] - 1], MON_DATA_HELD_ITEM))
-                        return PARTY_MSG_NO_SAME_HOLD_ITEMS;
-                }
-            }
+            limit = 4;
         }
         else
         {
             if (order[2] == 0)
                 return PARTY_MSG_THREE_MONS_ARE_NEEDED;
-            for (i = 0; i < 3; ++i)
+            limit = 3;
+        }
+
+        for (i = 0; i < limit; ++i)
+        {
+            sPartyMenuInternal->data[15] = GetMonData(&party[order[i] - 1], MON_DATA_SPECIES);
+            sPartyMenuInternal->data[14] = GetMonData(&party[order[i] - 1], MON_DATA_HELD_ITEM);
+            for (j = i + 1; j < limit; ++j)
             {
-                sPartyMenuInternal->data[15] = GetMonData(&party[order[i] - 1], MON_DATA_SPECIES);
-                sPartyMenuInternal->data[14] = GetMonData(&party[order[i] - 1], MON_DATA_HELD_ITEM);
-                for (j = i + 1; j < 3; ++j)
-                {
-                    if (sPartyMenuInternal->data[15] == GetMonData(&party[order[j] - 1], MON_DATA_SPECIES))
-                        return PARTY_MSG_MONS_CANT_BE_SAME;
-                    if (sPartyMenuInternal->data[14] != 0 && sPartyMenuInternal->data[14] == GetMonData(&party[order[j] - 1], MON_DATA_HELD_ITEM))
-                        return PARTY_MSG_NO_SAME_HOLD_ITEMS;
-                }
+                if (sPartyMenuInternal->data[15] == GetMonData(&party[order[j] - 1], MON_DATA_SPECIES))
+                    return PARTY_MSG_MONS_CANT_BE_SAME;
+                if (sPartyMenuInternal->data[14] != 0 && sPartyMenuInternal->data[14] == GetMonData(&party[order[j] - 1], MON_DATA_HELD_ITEM))
+                    return PARTY_MSG_NO_SAME_HOLD_ITEMS;
             }
         }
         break;
@@ -309,6 +307,11 @@ void CursorCB_Enter(u8 taskId)
         maxBattlers = 2;
         str = (const u8 *)(0x08416b3e); // gText_NoMoreThanTwoMayEnter
     }
+    else if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_MULTI_EASY)
+    {
+        maxBattlers = 3;
+        str = (const u8 *)(0x08416b3e); // gText_NoMoreThanTwoMayEnter
+    }
     else if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_DOUBLE_EASY)
     {
         maxBattlers = 4;
@@ -358,6 +361,8 @@ void DisplayPartyPokemonDataForChooseMultiple(u8 slot)
     else
     {
         if (gPartyMenu.chooseMonsBattleType == CHOOSE_MONS_FOR_UNION_ROOM_BATTLE)
+            maxBattlers = 2;
+        else if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_MULTI_EASY)
             maxBattlers = 2;
         else if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_DOUBLE_EASY)
             maxBattlers = 4;
