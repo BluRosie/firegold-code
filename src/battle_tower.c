@@ -48,6 +48,7 @@ void SetPartyToLevel50(void)
 #define BATTLE_TOWER_TYPE_EASY_BIT 0x01
 
 #define gSelectedOrderFromParty ((u8 *)(0x0203b0d4))
+#define gSelectedOrderFromPartySave ((u8 *)(0x0203c124)) // in the saves
 
 
 enum
@@ -163,6 +164,14 @@ void ReducePlayerPartyToThree(void)
 {
     struct Pokemon * party = Alloc(4 * sizeof(struct Pokemon));
     int i;
+    
+    if (!gSelectedOrderFromParty[0])
+    {
+        for (i = 0; i < 4; i++)
+        {
+            gSelectedOrderFromParty[i] = gSelectedOrderFromPartySave[i];
+        }
+    }
 
     // copy the selected pokemon according to the order.
     for (i = 0; i < 4; i++)
@@ -170,6 +179,7 @@ void ReducePlayerPartyToThree(void)
         if (gSelectedOrderFromParty[i]) // as long as the order keeps going (did the player select 1 mon? 2? 3?), do not stop
         {
             party[i] = gPlayerParty[gSelectedOrderFromParty[i] - 1]; // index is 0 based, not literal
+            gSelectedOrderFromPartySave[i] = gSelectedOrderFromParty[i];
         }
     }
 
@@ -293,6 +303,7 @@ void CursorCB_NoEntry(u8 taskId)
 void ClearSelectedPartyOrder(void)
 {
     Memset(gSelectedOrderFromParty, 0, 4);
+    Memset(gSelectedOrderFromPartySave, 0, 4);
 }
 
 

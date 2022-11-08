@@ -15,7 +15,7 @@ PokemonTableStartHardMode:
 .hword 5, 50, charizard, choiceband, flareblitz, thunderpunch, rockslide, aerialace
 .hword 6, 50, charizard, salacberry, overheat, earthquake, bellydrum, substitute
 .hword 7, 50, charizard, choicespecs, heatwave, dragonpulse, airslash, focusblast
-.hword 8, 50, charizard, chartiberry, flamethrower, sunyday, solarbeam, earthquake
+.hword 8, 50, charizard, chartiberry, flamethrower, sunnyday, solarbeam, earthquake
 .hword 9, 50, blastoise, expertbelt, waterspout, blizzard, earthquake, flashcannon
 .hword 10, 50, blastoise, rindoberry, surf, icebeam, fakeout, earthquake
 .hword 11, 50, blastoise, leftovers, toxic, rest, surf, protect
@@ -68,7 +68,7 @@ PokemonTableStartHardMode:
 .hword 58, 50, venomoth, blacksludge, attract, toxic, protect, bugbuzz
 .hword 59, 50, venomoth, focussash, quiverdance, bugbuzz, sludgebomb, psychic
 .hword 60, 50, venomoth, focussash, quiverdance, bugbuzz, sludgebomb, gigadrain
-.hword 61, 50, dugtrio, leichiberry, earthquake, rockslide, nightslash, substitute
+.hword 61, 50, dugtrio, liechiberry, earthquake, rockslide, nightslash, substitute
 .hword 62, 50, dugtrio, focussash, earthquake, reversal, substitute, rockslide
 .hword 63, 50, dugtrio, choiceband, earthquake, stoneedge, shadowclaw, aerialace
 .hword 64, 50, dugtrio, brightpowder, earthquake, sandstorm, doubleteam, attract
@@ -106,7 +106,7 @@ PokemonTableStartHardMode:
 .hword 96, 50, victreebel, miracleseed, leafstorm, knockoff, leafblade, poisonjab
 .hword 97, 50, tentacruel, assaultvest, surf, sludgebomb, mirrorcoat, icebeam
 .hword 98, 50, tentacruel, wiseglasses, hydropump, gigadrain, icebeam, sludgebomb
-.hword 99, 50, tantacruel, blacksludge, acidspray, gigadrain, toxicspikes, protect
+.hword 99, 50, tentacruel, blacksludge, acidspray, gigadrain, toxicspikes, protect
 .hword 100, 50, tentacruel, blacksludge, toxic, venoshock, hydropump, gigadrain
 .hword 101, 50, golem, quickclaw, doubleedge, earthquake, stoneedge, firepunch
 .hword 102, 50, golem, choiceband, doubleedge, earthquake, rockblast, thunderpunch
@@ -114,7 +114,7 @@ PokemonTableStartHardMode:
 .hword 104, 50, golem, choicescarf, earthquake, rockslide, thunderpunch, firepunch
 .hword 105, 50, rapidash, choiceband, flareblitz, smartstrike, megahorn, poisonjab
 .hword 106, 50, rapidash, widelens, fireblast, horndrill, willowisp, bounce
-.hword 107, 50, rapidash, expertbelt, flareblitz, bounce, highhorsepower, megahorn
+.hword 107, 50, rapidash, expertbelt, flareblitz, bounce, hihorsepower, megahorn
 .hword 108, 50, rapidash, brightpowder, hypnosis, doubleteam, horndrill, flamethrower
 .hword 109, 50, slowbro, leftovers, slackoff, scald, psychic, calmmind
 .hword 110, 50, slowbro, sitrusberry, trickroom, surf, icebeam, flamethrower
@@ -124,7 +124,7 @@ PokemonTableStartHardMode:
 .hword 114, 50, dodrio, focusband, swordsdance, drillrun, bravebird, facade
 .hword 115, 50, dodrio, salacberry, endure, flail, drillpeck, swordsdance
 .hword 116, 50, dodrio, choiceband, drillrun, jumpkick, bravebird, doubleedge
-.hword 117, 50, dewgong, chestoberry, rest, surf, icebeam, signal
+.hword 117, 50, dewgong, chestoberry, rest, surf, icebeam, signalbeam
 .hword 118, 50, dewgong, widelens, sheercold, horndrill, rest, sleeptalk
 .hword 119, 50, dewgong, mysticwater, hail, blizzard, aquajet, surf
 .hword 120, 50, dewgong, icyrock, hail, dive, toxic, blizzard
@@ -220,17 +220,17 @@ PokemonTableStartHardMode:
 .hword 210, 50, flareon, charcoal, overheat, flareblitz, quickattack, protect
 .hword 211, 50, flareon, muscleband, yawn, flareblitz, protect, dig
 .hword 212, 50, flareon, choiceband, overheat, flareblitz, irontail, superpower
-.hword 213, 50, omaster, focussash, shellsmash, surf, rockslide, icebeam
-.hword 214, 50, omaster, lifeorb, raindance, surf, stoneedge, icebeam
-.hword 215, 50, omaster, whiteherb, shellsmash, hydropump, ancientpower, earthpower
-.hword 216, 50, omaster, muscleband, shellsmash, surf, stoneedge, earthquake
+.hword 213, 50, omastar, focussash, shellsmash, surf, rockslide, icebeam
+.hword 214, 50, omastar, lifeorb, raindance, surf, stoneedge, icebeam
+.hword 215, 50, omastar, whiteherb, shellsmash, hydropump, ancientpower, earthpower
+.hword 216, 50, omastar, muscleband, shellsmash, surf, stoneedge, earthquake
 .hword 217, 50, kabutops, rindoberry, swordsdance, liquidation, stoneedge, aquajet
 .hword 218, 50, kabutops, focussash, raindance, liquidation, rockslide, earthquake
 .hword 219, 50, kabutops, choiceband, knockoff, gigadrain, liquidation, rockslide
 .hword 220, 50, kabutops, assaultvest, earthquake, gigadrain, liquidation, stoneedge
 .hword 221, 50, aerodactyl, choiceband, rockslide, firefang, thunderfang, icefang
 .hword 222, 50, aerodactyl, lifeorb, rockslide, fly, earthquake, thunderfang
-.hword 223, 50, aerodactyl, muscleband, stoneedge, earthquake, dragoncalw, fly
+.hword 223, 50, aerodactyl, muscleband, stoneedge, earthquake, dragonclaw, fly
 .hword 224, 50, aerodactyl, focussash, stoneedge, crunch, ironhead, earthquake
 .hword 225, 50, snorlax, figyberry, bellydrum, bodyslam, thunderpunch, earthquake
 .hword 226, 50, snorlax, figyberry, curse, recycle, crunch, bodyslam
@@ -275,7 +275,7 @@ PokemonTableStartHardMode:
 .hword 265, 50, ampharos, magnet, thunderbolt, focusblast, thunderwave, dragonpulse
 .hword 266, 50, ampharos, leftovers, thunderbolt, focusblast, thunderwave, confuseray
 .hword 267, 50, bellossom, occaberry, quiverdance, sleeppowder, petaldance, moonblast
-.hword 268, 50, bellossom, sitrusberry, quiverdance, sunnnyday, solarbeam, hiddenpower
+.hword 268, 50, bellossom, sitrusberry, quiverdance, sunnyday, solarbeam, hiddenpower
 .hword 269, 50, bellossom, muscleband, swordsdance, leafblade, drainpunch, moonlight
 .hword 270, 50, bellossom, lifeorb, quiverdance, gigadrain, moonblast, sludgebomb
 .hword 271, 50, azumarill, assaultvest, waterfall, aquajet, playrough, superpower
@@ -305,7 +305,7 @@ PokemonTableStartHardMode:
 .hword 295, 50, espeon, choicespecs, psyshock, grassknot, shadowball, dazzlinggleam
 .hword 296, 50, espeon, sitrusberry, calmmind, morningsun, storedpower, dazzlinggleam
 .hword 297, 50, espeon, focussash, psychic, yawn, shadowball, hiddenpower
-.hword 298, 50, espeon, focussash, calmmind, storepower, yawn, batonpass
+.hword 298, 50, espeon, focussash, calmmind, storedpower, yawn, batonpass
 .hword 299, 50, umbreon, leftovers, foulplay, snarl, healbell, moonlight
 .hword 300, 50, umbreon, lumberry, foulplay, snarl, toxic, rest
 .hword 301, 50, umbreon, magoberry, darkpulse, snarl, charm, toxic
@@ -317,7 +317,7 @@ PokemonTableStartHardMode:
 .hword 307, 50, forretress, sitrusberry, stealthrock, spikes, toxicspikes, ironhead
 .hword 308, 50, forretress, assaultvest, voltswitch, ironhead, earthquake, bugbite
 .hword 309, 50, forretress, leftovers, bodypress, stealthrock, ironhead, spikes
-.hword 310, 50, forretress, leftovers, bodypress, spikes, toixc, protect
+.hword 310, 50, forretress, leftovers, bodypress, spikes, toxic, protect
 .hword 311, 50, steelix, quickclaw, irontail, stoneedge, earthquake, explosion
 .hword 312, 50, steelix, lifeorb, ironhead, rockslide, earthquake, crunch
 .hword 313, 50, steelix, sitrusberry, earthquake, stealthrock, roar, rest
@@ -369,7 +369,7 @@ PokemonTableStartHardMode:
 .hword 359, 50, smeargle, chopleberry, bellydrum, extremespeed, spore, batonpass
 .hword 360, 50, smeargle, focusband, stickyweb, nuzzle, seismictoss, toxicspikes
 .hword 361, 50, smeargle, focusband, psychoboost, spore, uturn, superpower
-.hword 362, 50, smeargle, focussash, shellsmash, storepower, spore, substitute
+.hword 362, 50, smeargle, focussash, shellsmash, storedpower, spore, substitute
 .hword 363, 50, hitmontop, assaultvest, closecombat, fakeout, counter, machpunch
 .hword 364, 50, hitmontop, weaknesspolicy, triplekick, earthquake, suckerpunch, machpunch
 .hword 365, 50, hitmontop, assaultvest, thief, counter, machpunch, closecombat
@@ -399,7 +399,7 @@ PokemonTableStartHardMode:
 .hword 389, 50, glaceon, choicescarf, icebeam, shadowball, mirrorcoat, hyperbeam
 .hword 390, 50, glaceon, expertbelt, freezedry, shadowball, waterpulse, yawn
 .hword 391, 50, glaceon, leftovers, hail, blizzard, wish, waterpulse
-.hword 392, 50, glaceon, brihtpowder, hail, blizzard, doubleteam, protect
+.hword 392, 50, glaceon, brightpowder, hail, blizzard, doubleteam, protect
 .hword 393, 50, sylveon, sitrusberry, hypervoice, quickattack, calmmind, shadowball
 .hword 394, 50, sylveon, lumberry, hypervoice, mysticalfire, calmmind, shadowball
 .hword 395, 50, sylveon, muscleband, bodyslam, quickattack, bite, yawn
@@ -409,7 +409,7 @@ PokemonTableStartHardMode:
 .hword 399, 50, honchkrow, wacanberry, thunderwave, airslash, foulplay, roost
 .hword 400, 50, honchkrow, lifeorb, bravebird, suckerpunch, superpower, heatwave
 .hword 401, 50, mismagius, choicespecs, shadowball, mysticalfire, dazzlinggleam, energyball
-.hword 402, 50, mismagius, colburberry, shadowball, dazzlingleam, nastyplot, psychic
+.hword 402, 50, mismagius, colburberry, shadowball, dazzlinggleam, nastyplot, psychic
 .hword 403, 50, mismagius, expertbelt, shadowball, thunderbolt, nastyplot, energyball
 .hword 404, 50, mismagius, leftovers, shadowball, painsplit, thunderwave, confuseray
 .hword 405, 50, gliscor, yacheberry, earthquake, acrobatics, swordsdance, skyuppercut
@@ -458,8 +458,8 @@ PokemonTableStartHardMode:
 .hword 448, 50, exeggutoralolan, choiceband, dragonhammer, woodhammer, earthquake, fireblast
 .hword 449, 50, marowakalolan, thickclub, shadowbone, flareblitz, bulldoze, thunderpunch
 .hword 450, 50, marowakalolan, thickclub, shadowbone, flareblitz, earthquake, brickbreak
-.hword 451, 50, rapidashgalarian, choiceband, playrough, psychocut, megahorn, highhorsepower
-.hword 452, 50, rapidashgalarian, kebiaberry, playrough, psychocut, hypnosis, highhorsepower
+.hword 451, 50, rapidashgalarian, choiceband, playrough, psychocut, megahorn, hihorsepower
+.hword 452, 50, rapidashgalarian, kebiaberry, playrough, psychocut, hypnosis, hihorsepower
 .hword 453, 50, slowbrogalarian, quickclaw, shellsidearm, icebeam, psychic, slackoff
 .hword 454, 50, slowbrogalarian, quickclaw, shellsidearm, calmmind, psyshock, slackoff
 .hword 455, 50, slowkinggalarian, assaultvest, eeriespell, flamethrower, sludgebomb, icebeam
@@ -473,11 +473,11 @@ PokemonTableStartHardMode:
 .hword 463, 50, mrrime, wiseglasses, icebeam, psychic, teeterdance, thunderbolt
 .hword 464, 50, mrrime, choicespecs, freezedry, psychic, focusblast, shadowball
 .hword 465, 50, mrrime, leftovers, icebeam, toxic, slackoff, protect
-.hword 466, 50, mrrime, chociescarf, freezedry, dazzlinggleam, energyball, thunderbolt
-.hword 467, 50, articunogalarian, sitrusberry, freezingglare, airslash, calmmind, recover
-.hword 468, 50, articunogalarian, weaknesspolicy, freezingglare, airslash, steelwing, recover
-.hword 469, 50, zapdosgalarian, choiceband, thunderouskick, bravebird, uturn, drillrun
-.hword 470, 50, zapdosgalarian, wacanberry, thunderouskick, drillpeck, bulkup, roost
+.hword 466, 50, mrrime, choicescarf, freezedry, dazzlinggleam, energyball, thunderbolt
+.hword 467, 50, articunogalarian, sitrusberry, freezeglare, airslash, calmmind, recover
+.hword 468, 50, articunogalarian, weaknesspolicy, freezeglare, airslash, steelwing, recover
+.hword 469, 50, zapdosgalarian, choiceband, thunderkick, bravebird, uturn, drillrun
+.hword 470, 50, zapdosgalarian, wacanberry, thunderkick, drillpeck, bulkup, roost
 .hword 471, 50, moltresgalarian, sitrusberry, fierywrath, airslash, ancientpower, nastyplot
 .hword 472, 50, moltresgalarian, lifeorb, fierywrath, airslash, nastyplot, roost
 .hword 473, 50, cursola, choicespecs, shadowball, scald, powergem, gigadrain
@@ -491,7 +491,7 @@ PokemonTableStartHardMode:
 .hword 481, 50, kleavor, assaultvest, stoneaxe, xscissor, knockoff, quickattack
 .hword 482, 50, kleavor, lifeorb, stoneaxe, xscissor, swordsdance, roost
 .hword 483, 50, kleavor, lifeorb, stoneaxe, uturn, swordsdance, superpower
-.hword 484, 50, kleavor, sitrusberry, stoneaxe, uturn, swrodsdance, quickattack
+.hword 484, 50, kleavor, sitrusberry, stoneaxe, uturn, swordsdance, quickattack
 .hword 485, 50, typhlosionhisuian, choicespecs, shadowball, flamethrower, extrasensory, focusblast
 .hword 486, 50, typhlosionhisuian, leftovers, willowisp, infernalparade, earthquake, flamethrower
 .hword 487, 50, overqwil, expertbelt, poisonjab, foulplay, waterfall, destinybond
@@ -519,7 +519,7 @@ PokemonTableStartHardMode:
 .hword 509, 50, yanmega, focussash, airslash, uturn, hypnosis, dreameater
 .hword 510, 50, yanmega, assaultvest, airslash, bugbuzz, shadowball, ancientpower
 .hword 511, 50, mamoswine, choiceband, earthquake, iciclecrash, rocktomb, knockoff
-.hword 512, 50, mamoswine, passhoberry, earthquake, iciclecrash, icishard, superpower
+.hword 512, 50, mamoswine, passhoberry, earthquake, iciclecrash, iceshard, superpower
 .hword 513, 50, mamoswine, lifeorb, earthquake, iciclecrash, knockoff, iceshard
 .hword 514, 50, mamoswine, assaultvest, earthquake, iciclecrash, rockslide, knockoff
 .hword 515, 50, ambipom, silkscarf, fakeout, doublehit, uturn, aerialace

@@ -524,9 +524,9 @@
 .equ toxicspikes, 0x1d5
 .equ poweruppunch, 0x1d6
 .equ liquidation, 0x1d7
-.equ mysticicalflame, 0x1d8
+.equ mysticalfire, 0x1d8
 .equ direclaw, 0x1d9
-.equ incinerate, 0x1da
+.equ trickroom, 0x1da
 .equ tailwind, 0x1db
 .equ gastroacid, 0x1dc
 .equ infernalparade, 0x1dd
@@ -545,7 +545,7 @@
 .equ hihorsepower, 0x1ea
 .equ bodypress, 0x1eb
 .equ dragonrush, 0x1ec
-.equ meteorassualt, 0x1ed
+.equ meteorassault, 0x1ed
 .equ shadowbone, 0x1ee
 .equ dragonhammer, 0x1ef
 .equ strangesteam, 0x1f0
@@ -555,7 +555,7 @@
 .equ eerieimpulse, 0x1f4
 .equ freezeglare, 0x1f5
 .equ thunderkick, 0x1f6
-.equ fireywrath, 0x1f7
+.equ fierywrath, 0x1f7
 .equ auroraveil, 0x1f8
 .equ toxicthread, 0x1f9
 .equ barbbarrage, 0x1fa
