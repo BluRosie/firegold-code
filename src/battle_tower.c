@@ -179,7 +179,6 @@ void ReducePlayerPartyToThree(void)
         if (gSelectedOrderFromParty[i]) // as long as the order keeps going (did the player select 1 mon? 2? 3?), do not stop
         {
             party[i] = gPlayerParty[gSelectedOrderFromParty[i] - 1]; // index is 0 based, not literal
-            gSelectedOrderFromPartySave[i] = gSelectedOrderFromParty[i];
         }
     }
 
@@ -264,7 +263,7 @@ void CursorCB_NoEntry(u8 taskId)
     PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[1]);
     for (i = 0; i < 4; ++i)
     {
-        if (gSelectedOrderFromParty[i] ==  gPartyMenu.slotId + 1)
+        if (gSelectedOrderFromParty[i] == gPartyMenu.slotId + 1)
         {
             gSelectedOrderFromParty[i] = 0;
             switch (i)
@@ -287,6 +286,10 @@ void CursorCB_NoEntry(u8 taskId)
             }
             break;
         }
+    }
+    for (i = 0; i < 4; i++) // after no entry is sorted out, reupdate gSelectedOrderFromParty
+    {
+        gSelectedOrderFromPartySave[i] = gSelectedOrderFromParty[i];
     }
     DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_ABLE_3, &sPartyMenuBoxes[gPartyMenu.slotId], DRAW_MENU_BOX_AND_TEXT);
     if (gSelectedOrderFromParty[0] != 0)
@@ -350,8 +353,13 @@ void CursorCB_Enter(u8 taskId)
                 MoveCursorToConfirm();
 
             DisplayPartyMenuStdMessage(PARTY_MSG_CHOOSE_MON);
+            gSelectedOrderFromPartySave[i] = gSelectedOrderFromParty[i];
             gTasks[taskId].func = (void (*)(u8))(0x0811fb28 | 1); //Task_HandleChooseMonInput
             return;
+        }
+        else
+        {
+            gSelectedOrderFromPartySave[i] = gSelectedOrderFromParty[i];
         }
     }
     PlaySE(SE_FAILURE);
