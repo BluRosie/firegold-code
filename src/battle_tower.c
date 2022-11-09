@@ -33,7 +33,7 @@ void SetPartyToLevel50(void)
 
 
 #define NUM_OF_EASY_MODE_SPREADS 75
-#define NUM_OF_HARD_MODE_SPREADS NUM_OF_EASY_MODE_SPREADS
+#define NUM_OF_HARD_MODE_SPREADS 530
 
 #define VAR_BATTLE_TOWER_TYPE 0x43CB
 
@@ -48,7 +48,7 @@ void SetPartyToLevel50(void)
 #define BATTLE_TOWER_TYPE_EASY_BIT 0x01
 
 #define gSelectedOrderFromParty ((u8 *)(0x0203b0d4))
-#define gSelectedOrderFromPartySave ((u8 *)(0x0203c124)) // in the saves
+#define gSelectedOrderFromPartySave ((u8 *)(0x0203c124)) // in the save block right after the roamers, 4 bytes.
 
 
 enum

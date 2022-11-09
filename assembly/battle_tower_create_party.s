@@ -7,6 +7,8 @@
 .equ NUM_OF_HARD_MODE_SPREADS, 530
 
 .equ VAR_BATTLE_TOWER_TYPE, 0x43CB
+.equ VAR_BATTLE_TOWER_TRAINER_CLASS, 0x43DE
+.equ NUM_TRAINER_NAMES_PER_CLASS, 5
 
 .equ BATTLE_TOWER_TYPE_NONE, 0
 .equ BATTLE_TOWER_TYPE_SINGLE_EASY, 1
@@ -1363,6 +1365,7 @@
 
 .include "battle_tower_easy_mode_spreads.inc"
 .include "battle_tower_hard_mode_spreads.inc"
+.include "battle_tower_trainer_definitions.inc"
 
 
 
@@ -1416,9 +1419,11 @@ GenerateData:
     strb r1, [r6]       /* Unknown Byte */
     
 GetTrainerClass:
-    bl RandomNumber
-    mov r1, #0xA        /* # of Trainer Classes */
-    bl Modulus2
+    //bl RandomNumber
+    //mov r1, #0xA        /* # of Trainer Classes */
+    //bl Modulus2
+    ldr r0, =VAR_BATTLE_TOWER_TRAINER_CLASS
+    bl VarGet_r7
     ldr r1, .ClassTable
     mov r8, r0          /* r8 = Entry of Class table */
     lsl r0, r0, #0x2    /* Multiply by four */
@@ -1433,16 +1438,14 @@ GetTrainerClass:
 GetName:
     push {r1-r3}
     bl RandomNumber
-    mov r1, #0x20       /* # of Trainer Names */
+    mov r1, #NUM_TRAINER_NAMES_PER_CLASS
     bl Modulus2
+    mov r1, #NUM_TRAINER_NAMES_PER_CLASS
+    mov r2, r8
+    mul r2, r1
+    add r0, r2          /* trainer class * 5 + rand() % 5 = entry in names table */
     pop {r1-r3} 
-    cmp r3, #0x1        /* 0x1 = Male */
-    beq GetMaleName
-    ldr r1, .FemaleNames
-    b NameLoopStart
-
-GetMaleName:
-    ldr r1, .MaleNames
+    ldr r1, .NamesTable
 
 NameLoopStart:
     mov r2, #0xC        /* Name length */
@@ -1697,8 +1700,8 @@ StoreTheParty:
 .Random:                .word 0x08044EC9
 .Modulus2:              .word 0x081E4685
 .ClassTable:            .word ClassTableStart
-.MaleNames:             .word MaleNamesStart
-.FemaleNames:           .word FemaleNamesStart
+.NamesTable:            .word NamesStart
+//.FemaleNames:           .word FemaleNamesStart
 .ModeFlag:              .word 0x00000200
 .FlagCheck:             .word 0x0806E6D1
 .PokemonData:           .word 0x0203C050
@@ -1706,102 +1709,6 @@ StoreTheParty:
 .PokemonTableHard:      .word PokemonTableStartHardMode
 
 .pool
-
-/* --------------------------------- */
-
-.align 2
-
-ClassTableStart:
-    .byte cooltrainerm, male, cooltrainerm_pic, 0
-    .byte cooltrainerf, female, cooltrainerf_pic, 0
-    .byte expertm, male, expertm_pic, 1
-    .byte expertf, female, expertf_pic, 1
-    .byte gentleman, male, gentleman_pic, 2
-    .byte pokemaniac, male, pokemaniac_pic, 3
-    .byte pkmnbreederm, male, pkmnbreederm_pic, 4
-    .byte pkmnbreederf, female, pkmnbreederf_pic, 4
-    .byte dragontamer, male, dragontamer_pic, 5
-    .byte hexmaniac, female, hexmaniac_pic, 6
-    
-.align 2
-
-/* --------------------------------- */
-
-.align 2
-
-MaleNamesStart:
-    .byte L, E, O, N, A, R, D, O, Done, Done, Done, Done
-    .byte A, L, E, X, A, N, D, E, R, Done, Done, Done
-    .byte H, E, C, T, O, R, Done, Done, Done, Done, Done, Done
-    .byte D, W, I, G, H,T, Done, Done, Done, Done, Done, Done
-    .byte P, E, T, E, R, Done, Done, Done, Done, Done, Done, Done
-    .byte R, O, B, E, R, T, Done, Done, Done, Done, Done, Done
-    .byte K, O, B, E, Done, Done, Done, Done, Done, Done, Done, Done
-    .byte O, R, I, O, N, Done, Done, Done, Done, Done, Done, Done
-    .byte J, A, S, P, E, R, Done, Done, Done, Done, Done, Done
-    .byte Q, U, I, N, C, Y, Done, Done, Done, Done, Done, Done
-    .byte A, K, I, H, I, T, O, Done, Done, Done, Done, Done
-    .byte T, E, R, R, A, N, C, E, Done, Done, Done, Done
-    .byte S, U, M, A, N, Done, Done, Done, Done, Done, Done, Done
-    .byte O, M, A, R, Done, Done, Done, Done, Done, Done, Done, Done
-    .byte J, A, C, K, S, O, N, Done, Done, Done, Done, Done
-    .byte K, E, V, I, N, Done, Done, Done, Done, Done, Done, Done
-    .byte J, O, S, E, P, H, Done, Done, Done, Done, Done, Done
-    .byte M, A, T, T, H, E, W, Done, Done, Done, Done, Done
-    .byte D, A, R, I, U, S, Done, Done, Done, Done, Done, Done
-    .byte C, A, L, V, I, N, Done, Done, Done, Done, Done, Done
-    .byte T, A, Y, S, H, A, W, N, Done, Done, Done, Done
-    .byte M, E, L, Done, Done, Done, Done, Done, Done, Done, Done, Done
-    .byte D, A, V, E, Done, Done, Done, Done, Done, Done, Done, Done
-    .byte V, I, N, C, E, N, T, Done, Done, Done, Done, Done
-    .byte E, R, N, E, S, T, O, Done, Done, Done, Done, Done
-    .byte E, T, H, A, N, Done, Done, Done, Done, Done, Done, Done
-    .byte G, E, O, F, F, E, R, Y, Done, Done, Done, Done
-    .byte B, A, R, B, A, R, O, Done, Done, Done, Done, Done
-    .byte N, E, L, S, O, N, Done, Done, Done, Done, Done, Done
-    .byte L, A, R, S, Done, Done, Done, Done, Done, Done, Done, Done
-    .byte T, A, K, U, M, I, Done, Done, Done, Done, Done, Done
-    .byte M, I, K, E, Done, Done, Done, Done, Done, Done, Done, Done
-
-.align 2
-
-/* --------------------------------- */
-
-.align 2
-
-FemaleNamesStart:
-    .byte A, M, A, N, D, A, Done, Done, Done, Done, Done, Done
-    .byte T, E, N, I, L, L, E, Done, Done, Done, Done, Done
-    .byte A, R, I, E, L, L, A, Done, Done, Done, Done, Done
-    .byte B, I, A, N, C, A, Done, Done, Done, Done, Done, Done
-    .byte R, E, B, E, C, C, A, Done, Done, Done, Done, Done
-    .byte T, E, N, K, O, Done, Done, Done, Done, Done, Done, Done
-    .byte R, E, I, M, U, Done, Done, Done, Done, Done, Done, Done
-    .byte L, U, C, I, L, L, E, Done, Done, Done, Done, Done
-    .byte J, U, N, E, Done, Done, Done, Done, Done, Done, Done, Done
-    .byte P, R, U, N, E, L, L, A, Done, Done, Done, Done
-    .byte W, E, N, D, Y, Done, Done, Done, Done, Done, Done, Done
-    .byte P, E, T, R, A, Done, Done, Done, Done, Done, Done, Done
-    .byte A, N, U, J, A, Done, Done, Done, Done, Done, Done, Done
-    .byte H, A, R, R, I, E, T, T, E, Done, Done, Done
-    .byte J, O, R, D, A, N, N, A, Done, Done, Done, Done
-    .byte H, A, N, N, A, H, Done, Done, Done, Done, Done, Done
-    .byte M, A, C, K, E, N, Z, I, E, Done, Done, Done
-    .byte S, O, R, I, E, L, Done, Done, Done, Done, Done, Done
-    .byte D, A, R, I, A, Done, Done, Done, Done, Done, Done, Done
-    .byte Y, O, L, A, N, D, A, Done, Done, Done, Done, Done
-    .byte A, L, E, X, A, N, D, R, A, Done, Done, Done
-    .byte B, R, I, A, N, N, E, Done, Done, Done, Done, Done
-    .byte C, A, R, O, L, I, N, E, Done, Done, Done, Done
-    .byte O, C, T, A, V, I, A, Done, Done, Done, Done, Done
-    .byte J, A, S, M, I, N, E, Done, Done, Done, Done, Done
-    .byte F, A, T, I, M, A, Done, Done, Done, Done, Done, Done
-    .byte M, I, R, A, N, D, A, Done, Done, Done, Done, Done
-    .byte B, O, N, N, I, E, Done, Done, Done, Done, Done, Done
-    .byte J, E, S, S, I, C, A, Done, Done, Done, Done, Done
-    .byte A, M, B, E, R, Done, Done, Done, Done, Done, Done, Done
-    .byte S, A, M, A, N, T, H, A, Done, Done, Done, Done
-    .byte U, M, A, Done, Done, Done, Done, Done, Done, Done, Done, Done
 
 .align 2
 
