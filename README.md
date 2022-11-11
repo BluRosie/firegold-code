@@ -1,6 +1,6 @@
-## Template
+## Map Preview Expansion
 
-This template currently builds no code, but has many functions declared and ready to use that aren't very specific to any one application.  Each new branch for code that is inserted into Fire Gold will be based on this branch.
+This branch actually just adjusts the location that the map previews are printed on the screen, as the map previews are too big in this game.
 
 ### Build Instructions
 
