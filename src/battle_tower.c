@@ -9,27 +9,27 @@
 
 
 
-
-void SetPartyToLevel50(void)
-{
-    CalculatePlayerPartyCount();
-    for (u32 i = 0; i < gPlayerPartyCount; i++)
-    {
-        u32 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL);
-        u32 level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
-        if (species != 0 && level > 50 && GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL) == 0)
-        {
-            u32 experience[] = {125000, 100000, /*125000, */117360, 156250, 142500};
-            int j = 0;
-            while (GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL) != 50)
-            {
-                SetMonData(&gPlayerParty[i], MON_DATA_EXP, (u8 *)&experience[j]);
-                CalculateMonStats(&gPlayerParty[i]);
-                j++;
-            }
-        }
-    }
-}
+// comment this out:  was made a permanent addition on 17 nov 22
+//void SetPartyToLevel50(void)
+//{
+//    CalculatePlayerPartyCount();
+//    for (u32 i = 0; i < gPlayerPartyCount; i++)
+//    {
+//        u32 species = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES, NULL);
+//        u32 level = GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL);
+//        if (species != 0 && level > 50 && GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG, NULL) == 0)
+//        {
+//            u32 experience[] = {125000, 100000, /*125000, */117360, 156250, 142500};
+//            int j = 0;
+//            while (GetMonData(&gPlayerParty[i], MON_DATA_LEVEL, NULL) != 50)
+//            {
+//                SetMonData(&gPlayerParty[i], MON_DATA_EXP, (u8 *)&experience[j]);
+//                CalculateMonStats(&gPlayerParty[i]);
+//                j++;
+//            }
+//        }
+//    }
+//}
 
 
 #define NUM_OF_EASY_MODE_SPREADS 75
