@@ -2,11 +2,14 @@
 
 #include "../include/alloc.h"
 #include "../include/constants/songs.h"
+#include "../include/constants/species.h"
 #include "../include/event_data.h"
 #include "../include/pokemon.h"
 #include "../include/sound.h"
 
 
+u32 IsMonInSlotInvalid(u8 slot);
+u32 MonNotAlreadySelected(u8 slot);
 
 
 // comment this out:  was made a permanent addition on 17 nov 22
@@ -233,6 +236,9 @@ enum
 
 extern const u8 gText_Fourth_PM[];
 extern const u8 gText_NoMoreThanFourMayEnter[];
+extern const u8 gText_NoTwoPokemonHoldSameItem[];
+extern const u8 gText_TwoMembersOfTheSameSpecies[];
+
 
 // committing absolute crimes
 const u8 *const sDescriptionStringTable[] =
@@ -287,17 +293,36 @@ void CursorCB_NoEntry(u8 taskId)
             break;
         }
     }
+
     for (i = 0; i < 4; i++) // after no entry is sorted out, reupdate gSelectedOrderFromParty
     {
         gSelectedOrderFromPartySave[i] = gSelectedOrderFromParty[i];
     }
-    DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_ABLE_3, &sPartyMenuBoxes[gPartyMenu.slotId], DRAW_MENU_BOX_AND_TEXT);
+    //DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_ABLE_3, &sPartyMenuBoxes[gPartyMenu.slotId], DRAW_MENU_BOX_AND_TEXT);
+    
+    for (i = 0; i < gPlayerPartyCount; i++)
+    {
+        if (MonNotAlreadySelected(i))
+        {
+            if (IsMonInSlotInvalid(i))
+            {
+                DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_NOT_ABLE_2, &sPartyMenuBoxes[i], DRAW_MENU_BOX_AND_TEXT);
+            }
+            else
+            {
+                DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_ABLE_3, &sPartyMenuBoxes[i], DRAW_MENU_BOX_AND_TEXT);
+            }
+        }
+    }
+    
     if (gSelectedOrderFromParty[0] != 0)
         DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_FIRST, &sPartyMenuBoxes[gSelectedOrderFromParty[0] - 1], DRAW_MENU_BOX_AND_TEXT);
     if (gSelectedOrderFromParty[1] != 0)
         DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_SECOND, &sPartyMenuBoxes[gSelectedOrderFromParty[1] - 1], DRAW_MENU_BOX_AND_TEXT);
     if (gSelectedOrderFromParty[2] != 0)
         DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_THIRD, &sPartyMenuBoxes[gSelectedOrderFromParty[2] - 1], DRAW_MENU_BOX_AND_TEXT);
+    if (gSelectedOrderFromParty[3] != 0)
+        DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_FOURTH, &sPartyMenuBoxes[gSelectedOrderFromParty[2] - 1], DRAW_MENU_BOX_AND_TEXT);
     DisplayPartyMenuStdMessage(PARTY_MSG_CHOOSE_MON);
     gTasks[taskId].func = (void (*)(u8))(0x0811fb28 | 1); //Task_HandleChooseMonInput
 }
@@ -338,33 +363,318 @@ void CursorCB_Enter(u8 taskId)
     }
     PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[0]);
     PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[1]);
-    for (i = 0; i < maxBattlers; ++i)
+    
+    u8 result = IsMonInSlotInvalid(gPartyMenu.slotId);
+    
+    if (result)
     {
-        if (gSelectedOrderFromParty[i] == 0)
-        {
-            PlaySE(SE_SELECT);
-            gSelectedOrderFromParty[i] = gPartyMenu.slotId + 1;
-            if (i < 3)
-                DisplayPartyPokemonDescriptionText(i + PARTYBOX_DESC_FIRST, &sPartyMenuBoxes[gPartyMenu.slotId], 1);
-            else
-                DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_FOURTH, &sPartyMenuBoxes[gPartyMenu.slotId], 1);
-
-            if (i == (maxBattlers - 1))
-                MoveCursorToConfirm();
-
-            DisplayPartyMenuStdMessage(PARTY_MSG_CHOOSE_MON);
-            gSelectedOrderFromPartySave[i] = gSelectedOrderFromParty[i];
-            gTasks[taskId].func = (void (*)(u8))(0x0811fb28 | 1); //Task_HandleChooseMonInput
-            return;
-        }
+        PlaySE(SE_FAILURE);
+        if (result == 1)
+            DisplayPartyMenuMessage(&gText_TwoMembersOfTheSameSpecies, 1);
         else
+            DisplayPartyMenuMessage(&gText_NoTwoPokemonHoldSameItem, 1);
+        gTasks[taskId].func = (void (*)(u8))(0x081203b8 | 1); // Task_ReturnToChooseMonAfterText
+        return;
+    }
+    else
+    {
+        for (i = 0; i < maxBattlers; ++i)
         {
-            gSelectedOrderFromPartySave[i] = gSelectedOrderFromParty[i];
+            if (gSelectedOrderFromParty[i] == 0)
+            {
+                PlaySE(SE_SELECT);
+                gSelectedOrderFromParty[i] = gPartyMenu.slotId + 1;
+                if (i < 3)
+                    DisplayPartyPokemonDescriptionText(i + PARTYBOX_DESC_FIRST, &sPartyMenuBoxes[gPartyMenu.slotId], 1);
+                else
+                    DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_FOURTH, &sPartyMenuBoxes[gPartyMenu.slotId], 1);
+
+                if (i == (maxBattlers - 1))
+                    MoveCursorToConfirm();
+                
+                for (int j = 0; j < 6; j++)
+                {
+                    if (MonNotAlreadySelected(j))
+                    {
+                        if (IsMonInSlotInvalid(j))
+                        {
+                            DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_NOT_ABLE_2, &sPartyMenuBoxes[j], DRAW_MENU_BOX_AND_TEXT);
+                        }
+                        else
+                        {
+                            DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_ABLE_3, &sPartyMenuBoxes[j], DRAW_MENU_BOX_AND_TEXT);
+                        }
+                    }
+                }
+
+                if (gSelectedOrderFromParty[0] != 0)
+                    DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_FIRST, &sPartyMenuBoxes[gSelectedOrderFromParty[0] - 1], DRAW_MENU_BOX_AND_TEXT);
+                if (gSelectedOrderFromParty[1] != 0)
+                    DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_SECOND, &sPartyMenuBoxes[gSelectedOrderFromParty[1] - 1], DRAW_MENU_BOX_AND_TEXT);
+                if (gSelectedOrderFromParty[2] != 0)
+                    DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_THIRD, &sPartyMenuBoxes[gSelectedOrderFromParty[2] - 1], DRAW_MENU_BOX_AND_TEXT);
+
+                DisplayPartyMenuStdMessage(PARTY_MSG_CHOOSE_MON);
+                gSelectedOrderFromPartySave[i] = gSelectedOrderFromParty[i];
+                gTasks[taskId].func = (void (*)(u8))(0x0811fb28 | 1); //Task_HandleChooseMonInput
+                return;
+            }
+            else
+            {
+                gSelectedOrderFromPartySave[i] = gSelectedOrderFromParty[i];
+            }
         }
     }
     PlaySE(SE_FAILURE);
     DisplayPartyMenuMessage(str, 1);
     gTasks[taskId].func = (void (*)(u8))(0x081203b8 | 1); // Task_ReturnToChooseMonAfterText
+}
+
+
+u32 IsMonInSlotInvalid(u8 slot)
+{
+    struct Pokemon *mon = &gPlayerParty[slot];
+    u8 maxBattlers;
+    int i;
+    u32 ret = 0;
+    u32 slotSpecies = GetMonData(&gPlayerParty[slot], MON_DATA_SPECIES);
+    u32 slotItem = GetMonData(&gPlayerParty[slot], MON_DATA_HELD_ITEM);
+
+    for (int index = 0; index < 4; index++)
+    {
+        if (gSelectedOrderFromParty[index] == 0) { return 0; } // no further selected mons
+        i = gSelectedOrderFromParty[index] - 1; // slot in party of previously selected pokemon
+        if (i == slot) { continue; }
+        
+        u32 targetSpecies = GetMonData(&gPlayerParty[i], MON_DATA_SPECIES);
+        u32 targetItem = GetMonData(&gPlayerParty[i], MON_DATA_HELD_ITEM);
+
+        switch (slotSpecies)
+        {
+            // mythical mons
+            case SPECIES_MEWTWO:
+            case SPECIES_MEW:
+            case SPECIES_LUGIA:
+            case SPECIES_HOOH:
+            case SPECIES_CELEBI:
+            case SPECIES_MELTAN:
+            case SPECIES_MELMETAL:
+                return 1;
+
+            // form handling
+            case SPECIES_RATTATA:
+            case SPECIES_RATTATAALOLAN:
+                if (targetSpecies == SPECIES_RATICATE || targetSpecies == SPECIES_RATICATEALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_RATICATE:
+            case SPECIES_RATICATEALOLAN:
+                if (targetSpecies == SPECIES_RATICATE || targetSpecies == SPECIES_RATICATEALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_RAICHU:
+            case SPECIES_RAICHUALOLAN:
+                if (targetSpecies == SPECIES_RAICHU || targetSpecies == SPECIES_RAICHUALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_SANDSHREW:
+            case SPECIES_SANDSHREWALOLAN:
+                if (targetSpecies == SPECIES_SANDSHREW || targetSpecies == SPECIES_SANDSHREWALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_SANDSLASH:
+            case SPECIES_SANDSLASHALOLAN:
+                if (targetSpecies == SPECIES_SANDSLASH || targetSpecies == SPECIES_SANDSLASHALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_VULPIX:
+            case SPECIES_VULPIXALOLAN:
+                if (targetSpecies == SPECIES_VULPIX || targetSpecies == SPECIES_VULPIXALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_NINETALES:
+            case SPECIES_NINETALESALOLAN:
+                if (targetSpecies == SPECIES_NINETALES || targetSpecies == SPECIES_NINETALESALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_DIGLETT:
+            case SPECIES_DIGLETTALOLAN:
+                if (targetSpecies == SPECIES_DIGLETT || targetSpecies == SPECIES_DIGLETTALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_DUGTRIO:
+            case SPECIES_DUGTRIOALOLAN:
+                if (targetSpecies == SPECIES_DUGTRIO || targetSpecies == SPECIES_DUGTRIOALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_MEOWTH:
+            case SPECIES_MEOWTHALOLAN:
+            case SPECIES_MEOWTHGALARIAN:
+                if (targetSpecies == SPECIES_MEOWTH || targetSpecies == SPECIES_MEOWTHALOLAN || targetSpecies == SPECIES_MEOWTHGALARIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_PERSIAN:
+            case SPECIES_PERSIANALOLAN:
+                if (targetSpecies == SPECIES_PERSIAN || targetSpecies == SPECIES_PERSIANALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_GEODUDE:
+            case SPECIES_GEODUDEALOLAN:
+                if (targetSpecies == SPECIES_GEODUDE || targetSpecies == SPECIES_GEODUDEALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_GRAVELER:
+            case SPECIES_GRAVELERALOLAN:
+                if (targetSpecies == SPECIES_GRAVELER || targetSpecies == SPECIES_GRAVELERALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_GOLEM:
+            case SPECIES_GOLEMALOLAN:
+                if (targetSpecies == SPECIES_GOLEM || targetSpecies == SPECIES_GOLEMALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_GRIMER:
+            case SPECIES_GRIMERALOLAN:
+                if (targetSpecies == SPECIES_GRIMER || targetSpecies == SPECIES_GRIMERALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_MUK:
+            case SPECIES_MUKALOLAN:
+                if (targetSpecies == SPECIES_MUK || targetSpecies == SPECIES_MUKALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_EXEGGUTOR:
+            case SPECIES_EXEGGUTORALOLAN:
+                if (targetSpecies == SPECIES_EXEGGUTOR || targetSpecies == SPECIES_EXEGGUTORALOLAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_PONYTA:
+            case SPECIES_PONYTAGALARIAN:
+                if (targetSpecies == SPECIES_PONYTA || targetSpecies == SPECIES_PONYTAGALARIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_RAPIDASH:
+            case SPECIES_RAPIDASHGALARIAN:
+                if (targetSpecies == SPECIES_RAPIDASH || targetSpecies == SPECIES_RAPIDASHGALARIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_FARFETCHD:
+            case SPECIES_FARFETCHDGALARIAN:
+                if (targetSpecies == SPECIES_FARFETCHD || targetSpecies == SPECIES_FARFETCHDGALARIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_WEEZING:
+            case SPECIES_WEEZINGGALARIAN:
+                if (targetSpecies == SPECIES_WEEZING || targetSpecies == SPECIES_WEEZINGGALARIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_MRMIME:
+            case SPECIES_MRMIMEGALARIAN:
+                if (targetSpecies == SPECIES_MRMIME || targetSpecies == SPECIES_MRMIMEGALARIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_CORSOLA:
+            case SPECIES_CORSOLAGALARIAN:
+                if (targetSpecies == SPECIES_CORSOLA || targetSpecies == SPECIES_CORSOLAGALARIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_SLOWPOKE:
+            case SPECIES_SLOWPOKEGALARIAN:
+                if (targetSpecies == SPECIES_SLOWPOKE || targetSpecies == SPECIES_SLOWPOKEGALARIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_SLOWBRO:
+            case SPECIES_SLOWBROGALARIAN:
+                if (targetSpecies == SPECIES_SLOWBRO || targetSpecies == SPECIES_SLOWBROGALARIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_SLOWKING:
+            case SPECIES_SLOWKINGGALARIAN:
+                if (targetSpecies == SPECIES_SLOWKING || targetSpecies == SPECIES_SLOWKINGGALARIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_ARTICUNO:
+            case SPECIES_ARTICUNOGALARIAN:
+                if (targetSpecies == SPECIES_ARTICUNO || targetSpecies == SPECIES_ARTICUNOGALARIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_ZAPDOS:
+            case SPECIES_ZAPDOSGALARIAN:
+                if (targetSpecies == SPECIES_ZAPDOS || targetSpecies == SPECIES_ZAPDOSGALARIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_GROWLITHE:
+            case SPECIES_GROWLITHEHISUIAN:
+                if (targetSpecies == SPECIES_GROWLITHE || targetSpecies == SPECIES_GROWLITHEHISUIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_ARCANINE:
+            case SPECIES_ARCANINEHISUIAN:
+                if (targetSpecies == SPECIES_ARCANINE || targetSpecies == SPECIES_ARCANINEHISUIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_VOLTORB:
+            case SPECIES_VOLTORBHISUIAN:
+                if (targetSpecies == SPECIES_VOLTORB || targetSpecies == SPECIES_VOLTORBHISUIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_ELECTRODE:
+            case SPECIES_ELECTRODEHISUIAN:
+                if (targetSpecies == SPECIES_ELECTRODE || targetSpecies == SPECIES_ELECTRODEHISUIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_TYPHLOSION:
+            case SPECIES_TYPHLOSIONHISUIAN:
+                if (targetSpecies == SPECIES_TYPHLOSION || targetSpecies == SPECIES_TYPHLOSIONHISUIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_QWILFISH:
+            case SPECIES_QWILFISHHISUIAN:
+                if (targetSpecies == SPECIES_QWILFISH || targetSpecies == SPECIES_QWILFISHHISUIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_SNEASEL:
+            case SPECIES_SNEASELHISUIAN:
+                if (targetSpecies == SPECIES_SNEASEL || targetSpecies == SPECIES_SNEASELHISUIAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_WOOPER:
+            case SPECIES_WOOPERPALDEAN:
+                if (targetSpecies == SPECIES_WOOPER || targetSpecies == SPECIES_WOOPERPALDEAN)
+                    return 1; // invalid selection
+                break;
+            case SPECIES_TAUROS:
+            case SPECIES_TAUROSPALDEAN1:
+            case SPECIES_TAUROSPALDEAN2:
+            case SPECIES_TAUROSPALDEAN3:
+                if (targetSpecies == SPECIES_TAUROS || targetSpecies == SPECIES_TAUROSPALDEAN1 || targetSpecies == SPECIES_TAUROSPALDEAN2 || targetSpecies == SPECIES_TAUROSPALDEAN3)
+                    return 1; // invalid selection
+                break;
+            default:
+                if (targetSpecies == slotSpecies)
+                    return 1; // invalid selection
+                break;
+        }        
+
+        if (targetItem && targetItem == slotItem) { return 2; } // 2 mons can't hold the same item
+    }
+    
+    return 0;
+}
+
+u32 MonNotAlreadySelected(u8 slot)
+{
+    int i;
+    
+    slot++;
+    
+    for (i = 0; i < 4; i++)
+    {
+        if (gSelectedOrderFromParty[i] == slot)
+            return FALSE;
+    }
+    
+    return TRUE;
 }
 
 

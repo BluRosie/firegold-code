@@ -7,3 +7,9 @@ No more than four POK\eMON\nmay enter.[PAUSE_UNTIL_PRESS]
 #org @gText_Fourth_PM
 FOURTH
 
+#org @gText_NoTwoPokemonHoldSameItem
+No two POK\eMON can\nhold the same item.[PAUSE_UNTIL_PRESS]
+
+#org @gText_TwoMembersOfTheSameSpecies
+No two POK\eMON can\nbe the same species.[PAUSE_UNTIL_PRESS]
+

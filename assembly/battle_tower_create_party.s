@@ -958,7 +958,8 @@
 .equ articunogalarian, 0x17d
 .equ zapdosgalarian, 0x17e
 .equ moltresgalarian, 0x17f
-.equ cursola, 0x180
+.equ corsolagalarian, 0x180
+.equ cursola, 0x181
 
 /* items */
 .equ masterball, 0x1
