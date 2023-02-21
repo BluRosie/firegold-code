@@ -8,7 +8,7 @@ Alternatively, if you just want it to print to the side of the Continue menu suc
 
 ![](to_the_side.png)
 
-Just revert to commit 4c7db38482e96da1ee9156817f13ec0071671c20 and build using that.
+Just revert to commit [``4c7db384``](https://github.com/BluRosie/firegold-code/commit/4c7db38482e96da1ee9156817f13ec0071671c20) and build using that.
 
 ### Build Instructions
 
