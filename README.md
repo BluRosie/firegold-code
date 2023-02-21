@@ -1,6 +1,8 @@
-## Template
+## start-clock
 
-This template currently builds no code, but has many functions declared and ready to use that aren't very specific to any one application.  Each new branch for code that is inserted into Fire Gold will be based on this branch.
+Inserts a clock into the start menu that reads the RTC and displays day of week and time.  If the desire is just time, revert to [``ebe698d``](https://github.com/BluRosie/firegold-code/commit/ebe698dd3bbbdf43c1779d1b3506bb42455dca0b) and apply from there.
+
+![](start-clock.png)
 
 ### Build Instructions
 
