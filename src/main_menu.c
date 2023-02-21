@@ -1,13 +1,15 @@
 #include "../include/gba/types.h"
+#include "../include/gba/io_reg.h"
+#include "../include/global.h"
 #include "../include/palette.h"
 #include "../include/pokemon.h"
 #include "../include/sprite.h"
 
-#define REG_OFFSET_DISPCNT 0
-#define REG_OFFSET_WINOUT 0x4a
 
-#define DISPCNT_OBJWIN_ON       0x8000
-#define WINOUT_WINOBJ_OBJ   (1 << 12)
+
+#define gMonIconPalettes ((u16 *)(0x083d3740))
+
+
 
 u16 coords_menu[][2] = {
     {132+16,    4+16},
@@ -18,10 +20,65 @@ u16 coords_menu[][2] = {
     {132+16+48, 4+16+58},
 };
 
+/*u8 sPokemonIconPalSlots[] = {10, 11, 12, 13, 14, 15};
+
+void PrintPokemonIconsOnCard(void)
+{
+    u8 i;
+    u8 paletteSlots[6];
+
+    memcpy(paletteSlots, sPokemonIconPalSlots, sizeof(sPokemonIconPalSlots));
+
+    for (i = 0; i < 6; i++)
+    {
+        void *mon = &gPlayerParty[i];
+        u16 species = GetMonData(mon, MON_DATA_SPECIES);
+        u16 pid = GetMonData(mon, MON_DATA_PERSONALITY);
+
+        if (species != 0)
+        {
+            u8 monSpecies = GetMonIconPaletteIndexFromSpecies(species);
+            WriteSequenceToBgTilemapBuffer(1, 16 * i + 448, 2*i + 3, 15, 4, 4, paletteSlots[monSpecies], 1);
+        }
+    }
+}
+
+void LoadMonIconGfx(void)
+{
+    u8 i;
+
+    u16 palettes[PARTY_SIZE*16];
+
+    CpuCopy16(gMonIconPalettes, palettes, sizeof(palettes));
+
+    LoadPalette(palettes, 80, 192);
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        void *mon = &gPlayerParty[i];
+        u16 species = GetMonData(mon, MON_DATA_SPECIES);
+        u16 pid = GetMonData(mon, MON_DATA_PERSONALITY);
+        if (species != 0)
+        {
+            LoadBgTiles(1, GetMonIconTiles(species, 0), 512, 16 * i + 32);
+        }
+    }
+}*/
+
+
+
 void PrintMonIcons(void)
 {
+    //LoadMonIconGfx();
+    //PrintPokemonIconsOnCard();
+
+    // object approach instead
     LoadMonIconPalettes();
     //ResetSpriteData();
+
+    SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
+    SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
+    SetGpuRegBits(REG_OFFSET_WININ, WININ_WIN0_OBJ);
+
     for (int i = 0; i < 6; i++)
     {
         void *mon = &gPlayerParty[i];
@@ -42,9 +99,6 @@ void PrintMonIcons(void)
         }
     }
 
-    SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
-    SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
-    
     for (int i = 0; i < 6; i++)
     {
         void *mon = &gPlayerParty[i];
@@ -64,7 +118,6 @@ void PrintMonIcons(void)
             gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
         }
     }
-
 }
 
 

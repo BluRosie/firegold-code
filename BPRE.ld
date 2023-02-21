@@ -1896,3 +1896,4 @@ PrintDexCount = 0x0800cf3c|1;
 PrintBadgeCount = 0x0800cfc4|1;
 
 Task_PrintMainMenuText = 0x0800c7a0 |1;
+WriteSequenceToBgTilemapBuffer = 0x08002590|1;
