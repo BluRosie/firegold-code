@@ -1,0 +1,115 @@
+#dynamic 0x800000
+
+// move player when he initially walks into the room
+#org @walkingIn
+applymovement 0xFF @walkInMovement
+
+// main loop
+#org @mainLoop
+compare 0x43cb 1
+if 0x1 goto @grabSingleSimpleStreak
+compare 0x43cb 2
+if 0x1 goto @grabSingleChallengeStreak
+compare 0x43cb 3
+if 0x1 goto @grabDoubleSimpleStreak
+compare 0x43cb 4
+if 0x1 goto @grabDoubleChallengeStreak
+//compare 0x43cb 5
+//if 0x1 goto @grabMultiSimpleStreak
+//compare 0x43cb 6
+//if 0x1 goto @grabMultiChallengeStreak
+//compare 0x43cb 7
+//if 0x1 goto @grabFactorySimpleStreak
+//compare 0x43cb 8
+//if 0x1 goto @grabFactoryChallengeStreak
+
+// return from all the above
+#org @printStreak
+
+msgbox @upNextIsBattleN 6
+multichoice 0 0 0x71 1
+compare LASTRESULT 0x1 // Rest
+if 0x1 goto @saveAndRest
+compare LASTRESULT 0x2 // Quit
+if 0x1 goto @quitTheRun
+// continue the run
+applymovement 0xFF @afterBattleMovementPlayer
+// fuck the opponent at the moment
+trainerbattle 0x3 0 0 @challengeText @defeatText
+compare LASTRESULT 0x2 // B_OUTCOME_PLAYER_LOST
+if 0x1 goto @quitTheRun
+goto @mainLoop
+
+
+
+#org @saveAndRest
+msgbox @savingTheGame 0x6
+end
+
+
+#org @quitTheRun
+msgbox @yourRunIsOver 0x6
+end
+
+
+
+#org @yourRunIsOver
+= Your run is over.\nNow returning to main desk[...]
+
+#org @savingTheGame
+= Now saving...\nI look forward to your return!
+
+#org @challengeText
+= I will beat you!
+
+#org @defeatText
+= I can't believe I lost[...]
+
+
+#org @grabSingleSimpleStreak
+buffernumber 0 0x43cc
+goto @printStreak
+
+#org @grabSingleChallengeStreak
+buffernumber 0 0x43ce
+goto @printStreak
+
+#org @grabDoubleSimpleStreak
+buffernumber 0 0x43d0
+goto @printStreak
+
+#org @grabDoubleChallengeStreak
+buffernumber 0 0x43d2
+goto @printStreak
+
+
+
+
+
+
+#org @upNextIsBattleN
+= Up next is battle [buffer1].\nWhat would you like to do?
+
+
+#org @walkInMovement
+#raw 0x12 //Step Left (Normal)
+#raw 0x12 //Step Left (Normal)
+#raw 0x11 //Step Up (Normal)
+#raw 0x11 //Step Up (Normal)
+#raw 0x11 //Step Up (Normal)
+#raw 0x2 //Face Left
+#raw 0xFE //End of Movements
+
+//also beforeBattleMovementOpponent
+#org @afterBattleMovementPlayer
+#raw 0x12 //Step Left (Normal)
+#raw 0xFE //End of Movements
+
+#org @beforeBattleMovementPlayer
+#raw 0x13 //Step Right
+#raw 0xFE //End of Movements
+
+#org @afterBattleMovementOpponent
+#raw 0x13 //Step Right
+#raw 0x2 //Face Left
+#raw 0xFE //End of Movements
