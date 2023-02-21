@@ -1,6 +1,6 @@
-## Template
+## new-roamer-handling
 
-This template currently builds no code, but has many functions declared and ready to use that aren't very specific to any one application.  Each new branch for code that is inserted into Fire Gold will be based on this branch.
+Fire Gold handles roamers by storing solely their HP values, PID, and status afflicted, and then restoring it upon encounter with *any* Pokémon of the same species. This works because of how the roamer system functions in Fire Gold, with level scripts whenever you take a first step into the grass to determine if the roamer should start an encounter.
 
 ### Build Instructions
 
