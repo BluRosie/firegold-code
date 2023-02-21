@@ -1894,3 +1894,5 @@ PrintPlayerName = 0x0800ce70|1;
 PrintPlayTime = 0x0800ced4|1;
 PrintDexCount = 0x0800cf3c|1;
 PrintBadgeCount = 0x0800cfc4|1;
+
+Task_PrintMainMenuText = 0x0800c7a0 |1;

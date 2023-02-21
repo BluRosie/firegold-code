@@ -2,4 +2,5 @@
 #SetTradedMonPokedexFlags 080507A0 1
 
 #PrintContinueStats 0800ce58 0
-PrintMonIcons_hook 0800C8D0 1
+#PrintMonIcons_hook 0800C6CC 2
+Task_WaitFadeAndPrintMainMenuText 0800C780 1

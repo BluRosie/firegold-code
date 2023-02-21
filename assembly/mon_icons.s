@@ -3,15 +3,17 @@
 
 .global PrintMonIcons_hook
 PrintMonIcons_hook:
-    mov r1, #2
-    bl 0x08003F20
-    mov r0, #2
-    mov r1, #3
-    bl 0x08003F20
+add r0, r0, r4
+lsl r0, r0, #3
+add r1, r0, r1
+mov r2, #8
+
+    push {r0-r7}
     
-    //bl PrintMonIcons
+    bl PrintMonIcons
     
-    ldr r0, =0x0800C994|1
+    pop {r0-r7}
+    ldr r0, =0x0800C6D4|1
     bx r0
 
 .pool
