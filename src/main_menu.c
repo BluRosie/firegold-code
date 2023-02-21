@@ -12,12 +12,12 @@
 
 
 u16 coords_menu[][2] = {
-    {132+16,    4+16},
-    {132+16+48, 4+16},
-    {132+16,    4+16+28},
-    {132+16+48, 4+16+28},
-    {132+16,    4+16+58},
-    {132+16+48, 4+16+58},
+    {40,      16+58+32},
+    {40+32,   16+58+32},
+    {40+32*2, 16+58+32},
+    {40+32*3, 16+58+32},
+    {40+32*4, 16+58+32},
+    {40+32*5, 16+58+32},
 };
 
 /*u8 sPokemonIconPalSlots[] = {10, 11, 12, 13, 14, 15};
@@ -79,6 +79,8 @@ void PrintMonIcons(void)
     SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
     SetGpuRegBits(REG_OFFSET_WININ, WININ_WIN0_OBJ);
 
+
+    // two loops is fine tbh
     for (int i = 0; i < 6; i++)
     {
         void *mon = &gPlayerParty[i];

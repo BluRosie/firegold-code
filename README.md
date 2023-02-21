@@ -1,6 +1,14 @@
-## Template
+## continue-screen-icons
 
-This template currently builds no code, but has many functions declared and ready to use that aren't very specific to any one application.  Each new branch for code that is inserted into Fire Gold will be based on this branch.
+This code takes the party that the player has and prints it to the continue screen.  This also sacrifices the possibility of the Mystery Gift option, but that remains unused in hacks as-is.
+
+![](animated_icons.gif)
+
+Alternatively, if you just want it to print to the side of the Continue menu such that it overlaps a little with the borders and preserves the Mystery Gift option:
+
+![](to_the_side.png)
+
+Just revert to commit 4c7db38482e96da1ee9156817f13ec0071671c20 and build using that.
 
 ### Build Instructions
 

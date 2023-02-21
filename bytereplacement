@@ -7,3 +7,14 @@
 
 # fuck gpu register blending
 #0800CCEE 00 00 00 00
+
+# expand continue down a bit
+08234624 0e
+# move new game down a bit
+0823462A 11
+# fuck mystery gift
+0806e2bc 70 47
+# move window selection down
+0800CCCA 80
+0800CCCE 80 22 12 02 A0
+0823462E 51 01
