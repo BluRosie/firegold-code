@@ -136,10 +136,11 @@ struct SaveBlock1
     /*0x1000*/ //u16 vars[VARS_COUNT];
     /*0x1200*/ //u32 gameStats[NUM_GAME_STATS];
     /*0x1300*/ //struct QuestLog questLog[QUEST_LOG_SCENE_COUNT];
-    /*0x2CA0*/ //u16 easyChatProfile[EASY_CHAT_BATTLE_WORDS_COUNT];
-    /*0x2CAC*/ //u16 easyChatBattleStart[EASY_CHAT_BATTLE_WORDS_COUNT];
-    /*0x2CB8*/ //u16 easyChatBattleWon[EASY_CHAT_BATTLE_WORDS_COUNT];
-    /*0x2CC4*/ //u16 easyChatBattleLost[EASY_CHAT_BATTLE_WORDS_COUNT];
+               u8 padding_EE0[0x2CA0-0xEE0];
+    /*0x2CA0*/ u16 easyChatProfile[6];
+    /*0x2CAC*/ u16 easyChatBattleStart[6];
+    /*0x2CB8*/ u16 easyChatBattleWon[6];
+    /*0x2CC4*/ u16 easyChatBattleLost[6];
     /*0x2CD0*/ //struct Mail mail[MAIL_COUNT];
     /*0x2F10*/ //u8 additionalPhrases[NUM_ADDITIONAL_PHRASE_BYTES];
     /*0x2F18*/ //OldMan oldMan; // unused

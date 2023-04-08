@@ -34,3 +34,5 @@ CursorCB_NoEntry 08124278 1
 ClearSelectedPartyOrder 081274fc 0
 CursorCB_Enter 08124154 1
 DisplayPartyPokemonDataForChooseMultiple 0811f388 1
+
+ShowEasyChatMessage 080bda7c 0

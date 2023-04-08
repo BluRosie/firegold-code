@@ -1,10 +1,12 @@
 #include "../include/global.h"
 
 #include "../include/alloc.h"
+#include "../include/constants/easy_chat.h"
 #include "../include/constants/songs.h"
 #include "../include/constants/species.h"
 #include "../include/event_data.h"
 #include "../include/pokemon.h"
+#include "../include/save.h"
 #include "../include/sound.h"
 
 
@@ -711,4 +713,96 @@ void DisplayPartyPokemonDataForChooseMultiple(u8 slot)
         }
         DisplayPartyPokemonDescriptionData(slot, PARTYBOX_DESC_ABLE_3);
     }
+}
+
+
+#define gSpecialVar_0x8004 (*(u16 *)0x020370c0)
+#define gStringVar4 ((u8 *)0x02021d18)
+#define gStringVarDefeatText ((u8 *)0x0203FF40)
+#define NUM_EC_SPEECHES 10
+
+u16 EasyChatBattleTowerWin[NUM_EC_SPEECHES][6] =
+{
+    {EC_WORD_MY, EC_WORD_POKEMON, EC_WORD_DEFEATED, EC_WORD_DON_T, EC_WORD_UNDERSTAND, EC_WORD_IT},
+    {EC_WORD_WEREN_T, EC_WORD_MY, EC_WORD_POKEMON, EC_WORD_JUST, EC_WORD_THE, EC_WORD_BEST},
+    {EC_WORD_I_AM, EC_WORD_DEFEATED, EC_WORD_AS_IF, EC_WORD_BUT, EC_WORD_AN, EC_WORD_EGG},
+    {EC_WORD_YOU_RE, EC_WORD_VERY, EC_WORD_STRONG, EC_WORD_FOR, EC_WORD_A, EC_WORD_KID},
+    {EC_WORD_YOU_RE, EC_WORD_THE, EC_WORD_OPPONENT, EC_WORD_OF, EC_WORD_ALL, EC_WORD_TIME},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+};
+
+u16 EasyChatBattleTowerIntro[NUM_EC_SPEECHES][6] =
+{
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
+};
+
+
+void ShowEasyChatMessage(void)
+{
+    u16 *easyChatWords;
+    int columns, rows;
+    int dontShowMessage = 0, printToOtherArea = 0;
+    switch (gSpecialVar_0x8004)
+    {
+    case 0:
+        easyChatWords = gSaveBlock1->easyChatProfile;
+        columns = 2;
+        rows = 2;
+        break;
+    case 1:
+        easyChatWords = gSaveBlock1->easyChatBattleStart;
+        if (EC_DoesEasyChatStringFitOnLine(gSaveBlock1->easyChatBattleStart, 3, 2, 18))
+        {
+            columns = 2;
+            rows = 3;
+        }
+        else
+        {
+            columns = 3;
+            rows = 2;
+        }
+        break;
+    case 2:
+        easyChatWords = gSaveBlock1->easyChatBattleWon;
+        columns = 3;
+        rows = 2;
+        break;
+    case 3:
+        easyChatWords = gSaveBlock1->easyChatBattleLost;
+        columns = 3;
+        rows = 2;
+        break;
+    case 4:
+        easyChatWords = EasyChatBattleTowerIntro[Random() % NUM_EC_SPEECHES];
+        columns = 3;
+        rows = 2;
+        dontShowMessage = 1;
+        break;
+    case 5:
+        easyChatWords = EasyChatBattleTowerWin[Random() % NUM_EC_SPEECHES];
+        columns = 3;
+        rows = 2;
+        dontShowMessage = 1;
+        printToOtherArea = 1;
+        break;
+    default:
+        return;
+    }
+
+    ConvertEasyChatWordsToString(printToOtherArea == 0 ? gStringVar4 : gStringVarDefeatText, easyChatWords, columns, rows);
+    if (!dontShowMessage)
+        ShowFieldAutoScrollMessage(gStringVar4);
 }
