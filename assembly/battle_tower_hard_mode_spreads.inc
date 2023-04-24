@@ -1,5 +1,4 @@
-.thumb
-.thumb_func
+.arm
 .align 2
 
 // included from "battle_tower_create_party.s"
@@ -7,6 +6,7 @@
 
 // fire gold battle tower hard mode spreads
 
+.global PokemonTableStartHardMode
 PokemonTableStartHardMode:
 .hword 1, 50, venusaur, wiseglasses, energyball, sludgebomb, earthpower, leechseed
 .hword 2, 50, venusaur, blacksludge, leechseed, toxic, protect, gigadrain
@@ -1616,3 +1616,7 @@ PokemonTableStartHardModeSpreads:
 /* 798 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
 /* 799 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
 /* 800 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
+
+.thumb
+.thumb_func
+.align 2

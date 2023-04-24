@@ -5,7 +5,7 @@
 
 .equ BattleType,        0x02022B4C
 .equ TrainerBuffer,     0x020386AE
-.equ TrainerData,       0x0203C028
+.equ TrainerData,       0x0203b0E0
 .equ TrainerTable,      0x0823EAC8
 
 
@@ -14,7 +14,7 @@
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -52,7 +52,7 @@ ReturnFBF0:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -90,7 +90,7 @@ ReturnFC68:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -128,7 +128,7 @@ Return11320:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -167,7 +167,7 @@ Return11368:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -213,7 +213,7 @@ Return1169C:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -251,7 +251,7 @@ Return156FC:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -287,7 +287,7 @@ Return25904:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -323,7 +323,7 @@ Return25988:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -359,7 +359,7 @@ Return37D2C:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -395,7 +395,7 @@ Return37F00:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -432,7 +432,7 @@ Return437B8:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -469,7 +469,7 @@ Return44008:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -509,7 +509,7 @@ Return7FE60:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -545,7 +545,7 @@ Return7FF90:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -592,7 +592,7 @@ ReturnC6F20:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -628,7 +628,7 @@ ReturnD8084:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -664,7 +664,7 @@ ReturnD8134:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -700,7 +700,7 @@ Return1137F0:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -736,7 +736,7 @@ Return115200:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -773,7 +773,7 @@ Return12C020:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */
@@ -811,7 +811,7 @@ Return11670:
 /*
 ----------------------------------------------------------
 This routine changes the address to load Trainer Data from
-to be the Battle Tower Trainer RAM (0x0203C028) if the
+to be the Battle Tower Trainer RAM (0x0203b0d8) if the
 index number of the current trainer is 0x0.
 ----------------------------------------------------------
 */

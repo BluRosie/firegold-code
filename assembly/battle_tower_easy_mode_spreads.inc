@@ -1,5 +1,4 @@
-.thumb
-.thumb_func
+.arm
 .align 2
 
 // included from "battle_tower_create_party.s"
@@ -7,6 +6,7 @@
 
 // fire gold battle tower easy mode spreads
 
+.global PokemonTableStartEasyMode
 PokemonTableStartEasyMode:
     .hword  1, 50, bayleef, occaberry, magicalleaf, ancientpower, leechseed, lightscreen
     .hword  2, 50, quilava, passhoberry, lavaplume, rollout, smokescreen, willowisp
@@ -171,3 +171,7 @@ PokemonTableStartEasyModeSpreads:
     /* wartortle  */ .byte bold, 0, 0, 0, maxivs, 255, 0, 255, 0, 0, 0, pokeball, abilityone, 0, 0, 0
     /* dragonair  */ .byte modest, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
     /* pupitar    */ .byte adamant, 0, 0, 0, maxivs, 170, 170, 170, 0, 0, 0, pokeball, abilityone, 0, 0, 0
+
+.thumb
+.thumb_func
+.align 2

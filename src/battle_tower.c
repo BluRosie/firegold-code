@@ -48,7 +48,7 @@ u32 MonNotAlreadySelected(u8 slot);
 #define BATTLE_TOWER_TYPE_DOUBLE_EASY 3
 #define BATTLE_TOWER_TYPE_DOUBLE_HARD 4
 #define BATTLE_TOWER_TYPE_MULTI_EASY 5
-#define BATTLE_TOWER_TYPE_MULTI_HARD 5
+#define BATTLE_TOWER_TYPE_MULTI_HARD 6
 
 #define BATTLE_TOWER_TYPE_EASY_BIT 0x01
 
@@ -167,10 +167,10 @@ u8 CheckBattleEntriesAndGetMessage(void)
 
 void ReducePlayerPartyToThree(void)
 {
-    struct Pokemon * party = Alloc(4 * sizeof(struct Pokemon));
+    struct Pokemon * party = Alloc(6 * sizeof(struct Pokemon));
     int i;
     
-    if (!gSelectedOrderFromParty[0])
+    if (!gSelectedOrderFromParty[0]) // needs to be initialized from save
     {
         for (i = 0; i < 4; i++)
         {
@@ -805,4 +805,118 @@ void ShowEasyChatMessage(void)
     ConvertEasyChatWordsToString(printToOtherArea == 0 ? gStringVar4 : gStringVarDefeatText, easyChatWords, columns, rows);
     if (!dontShowMessage)
         ShowFieldAutoScrollMessage(gStringVar4);
+}
+
+
+
+
+
+
+
+
+
+struct BattleTowerTrainerClass
+{
+    u8 class;
+    u8 gender;
+    u8 picture;
+    u8 index;
+}; // size = 0x4
+
+
+struct TrainerBattleStructure
+{
+    u8 partyFlags;
+    u8 trainerClass;
+    u8 encounterMusic_Gender;
+    u8 trainerPic;
+    u8 trainername[12];
+    u16 items[4];
+    u32 doubleBattle;
+    u32 aiFlags;
+    u32 partySize;
+    void *party;
+}; // size = 0x28
+
+
+struct BattleTowerTrainerSets
+{
+    u16 index; // technically iv but we overwrite it
+    u16 level;
+    u16 species;
+    u16 item;
+    u16 moves[4];
+}; // size = 0x10
+
+
+
+extern struct TrainerBattleStructure TowerData;
+extern struct BattleTowerTrainerSets TowerPokemonParty[];
+
+extern struct BattleTowerTrainerSets PokemonTableStartEasyMode[];
+extern struct BattleTowerTrainerSets PokemonTableStartHardMode[];
+
+
+extern struct BattleTowerTrainerClass ClassTableStart[10]; // 10 total trainer classes
+extern u8 MaleNamesStart[32][12];
+
+
+void CreateBattleTowerTrainerParty()
+{
+    int i;
+    
+    // step 1 - create trainer entry in RAM
+    
+    u32 classIndex = Random() % 10;
+    u32 trainerGender = ClassTableStart[classIndex].gender;
+    u32 nameIndex = Random() % 32;
+
+
+    TowerData.partyFlags = 3; // custom moves + items
+    TowerData.trainerClass = ClassTableStart[classIndex].class;
+    TowerData.encounterMusic_Gender = trainerGender;
+    TowerData.trainerPic = ClassTableStart[classIndex].picture;
+    
+    for (i = 0; i < 12; i++)
+    {
+        TowerData.trainername[i] = MaleNamesStart[nameIndex][i]; // interesting
+    }
+    
+    for (i = 0; i < 4; i++)
+    {
+        TowerData.items[i] = 0;
+    }
+    
+    if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_DOUBLE_EASY)
+    {
+        TowerData.doubleBattle = 1;
+        TowerData.aiFlags = 0xBF; // don't attack your doubles partner
+        TowerData.partySize = 4;
+    }
+    else
+    {
+        TowerData.doubleBattle = 0;
+        TowerData.aiFlags = 0x3F;
+        TowerData.partySize = 3;
+    }
+    
+    TowerData.party = TowerPokemonParty;
+    
+    
+    // step 2 - create party in RAM
+    for (i = 0; i < TowerData.partySize; i++)
+    {
+        u32 easyMode = (VarGet(VAR_BATTLE_TOWER_TYPE) != 0 && VarGet(VAR_BATTLE_TOWER_TYPE) & 1);
+        
+        if (easyMode)
+        {
+            u32 randIndex = Random() % NUM_OF_EASY_MODE_SPREADS;
+            TowerPokemonParty[i] = PokemonTableStartEasyMode[randIndex];
+        }
+        else
+        {
+            u32 randIndex = Random() % NUM_OF_HARD_MODE_SPREADS;
+            TowerPokemonParty[i] = PokemonTableStartHardMode[randIndex];
+        }
+    }
 }
