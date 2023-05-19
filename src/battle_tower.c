@@ -41,6 +41,7 @@ u32 MonNotAlreadySelected(u8 slot);
 #define NUM_OF_HARD_MODE_SPREADS 530
 
 #define VAR_BATTLE_TOWER_TYPE 0x43CB
+#define VAR_BATTLE_TOWER_OBJ_ID 0x4010
 
 #define BATTLE_TOWER_TYPE_NONE 0
 #define BATTLE_TOWER_TYPE_SINGLE_EASY 1
@@ -810,17 +811,12 @@ void ShowEasyChatMessage(void)
 
 
 
-
-
-
-
-
 struct BattleTowerTrainerClass
 {
     u8 class;
     u8 gender;
     u8 picture;
-    u8 index;
+    u8 owId;
 }; // size = 0x4
 
 
@@ -857,8 +853,10 @@ extern struct BattleTowerTrainerSets PokemonTableStartEasyMode[];
 extern struct BattleTowerTrainerSets PokemonTableStartHardMode[];
 
 
-extern struct BattleTowerTrainerClass ClassTableStart[10]; // 10 total trainer classes
-extern u8 MaleNamesStart[32][12];
+extern struct BattleTowerTrainerClass ClassTableStart[32]; // 32 total trainer classes
+extern u8 NamesStart[][5][12]; // indexed by classIndex
+
+
 
 
 void CreateBattleTowerTrainerParty()
@@ -867,10 +865,18 @@ void CreateBattleTowerTrainerParty()
     
     // step 1 - create trainer entry in RAM
     
-    u32 classIndex = Random() % 10;
+    u32 classIndex = VarGet(VAR_BATTLE_TOWER_OBJ_ID);
     u32 trainerGender = ClassTableStart[classIndex].gender;
-    u32 nameIndex = Random() % 32;
+    u32 nameIndex = Random() % 5;
 
+    for (i = 0; i < 32; i++)
+    {
+        if (ClassTableStart[i].owId == classIndex)
+        {
+            classIndex = i;
+            break;
+        }
+    }
 
     TowerData.partyFlags = 3; // custom moves + items
     TowerData.trainerClass = ClassTableStart[classIndex].class;
@@ -879,7 +885,7 @@ void CreateBattleTowerTrainerParty()
     
     for (i = 0; i < 12; i++)
     {
-        TowerData.trainername[i] = MaleNamesStart[nameIndex][i]; // interesting
+        TowerData.trainername[i] = NamesStart[classIndex][nameIndex][i]; // interesting
     }
     
     for (i = 0; i < 4; i++)

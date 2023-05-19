@@ -1366,42 +1366,9 @@
 
 .include "battle_tower_easy_mode_spreads.inc"
 .include "battle_tower_hard_mode_spreads.inc"
+//.include "battle_tower_trainer_definitions.inc"
 
 
-
-
-
-/* Put 00 4A 10 47 XX XX XX 08 at 0x43680 (hook via r2)*/
-
-/*
-----------------------------------------------------------
-This routine will check to see if we are using Trainer 0.
-
-If we are, then we will load custom Trainer Data into a
-free RAM space and we will use that data instead of what
-is normally supposed to be in the table.
-
-We will randomly determine the Trainer Class here, give
-them a random appropriate name, give them the proper
-sprite, and give them a randomly determined party.
-
-At this point, r0 = Trainer ID.
-
-First, we check to see if the current Trainer ID is 0x0.
-If not, then we load the Trainer Class from the regular
-table and then we leave.
-
-If so, then we get a random number between 0 and 10, which
-will be the index number of the entry in a table which
-determines the Trainer class, gender and sprite.
-
-Then, we determine six unique random numbers between 0 and
-18, which will determine which Pokemon the Trainer has in
-their party. We always generate six Pokemon, if we are in
-3v3 mode, the party length is set to three and the game
-only uses the first three Pokemon generated.
-----------------------------------------------------------
-*/
 
 read_trainer_data_if_zero:
     push {lr}
@@ -1413,222 +1380,7 @@ read_trainer_data_if_zero:
 
 GenerateData:
     push {r0-r7}
-
     bl CreateBattleTowerTrainerParty
-    
-    b GoByeBye
-
-
-    ldr r2, .TowerData
-    push {r0-r7}
-
-
-
-    mov r6, r2
-    mov r1, #0x3
-    strb r1, [r6]       /* Unknown Byte */
-    
-GetTrainerClass:
-    bl RandomNumber
-    mov r1, #0xA        /* # of Trainer Classes */
-    bl Modulus2
-    ldr r1, .ClassTable
-    mov r8, r0          /* r8 = Entry of Class table */
-    lsl r0, r0, #0x2    /* Multiply by four */
-    add r1, r1, r0
-    ldrb r2, [r1]       /* r2 = Trainer Class */
-    ldrb r3, [r1, #0x1] /* r3 = Gender */
-    ldrb r4, [r1, #0x2] /* r4 = Sprite ID */
-    strb r2, [r6, #0x1] /* Trainer Class */
-    strb r3, [r6, #0x2] /* Gender */
-    strb r4, [r6, #0x3] /* Sprite ID */
-
-GetName:
-    push {r1-r3}
-    bl RandomNumber
-    mov r1, #NUM_TRAINER_NAMES_PER_CLASS
-    bl Modulus2
-    pop {r1-r3} 
-    cmp r3, #0x1        /* 0x1 = Male */
-    beq GetMaleName
-    ldr r1, .FemaleNames
-    b NameLoopStart
-
-GetMaleName:
-    ldr r1, .MaleNames
-
-NameLoopStart:
-    mov r2, #0xC        /* Name length */
-    mul r2, r0
-    add r1, r1, r2
-    add r6, r6, #0x4    /* Trainer Name */
-    mov r3, #0x0        /* Counter */
-
-NameLoop:
-    ldrb r0, [r1]
-    strb r0, [r6]
-    add r1, r1, #0x1
-    add r6, r6, #0x1        
-    cmp r3, #0xB
-    beq SetHeldItems
-    add r3, r3, #0x1
-    b NameLoop
-
-SetHeldItems:
-    mov r0, #0x0        /* No Items */
-    strh r0, [r6]       /* 0x10 = Item 1 */
-    strh r0, [r6, #0x2] /* 0x12 = Item 2 */
-    strh r0, [r6, #0x4] /* 0x14 = Item 3 */
-    strh r0, [r6, #0x8] /* 0x16 = Item 4 */
-
-SetBattleType:
-    mov r0, #0x0
-    add r6, r6, #0x8
-    str r0, [r6]        /* 0x18 = Battle Type */
-    
-SetAIScripts:
-    mov r0, #0x3F       /* First Three Scripts */
-    add r6, r6, #0x4
-    str r0, [r6]        /* 0x1C = AI Scripts */
-
-PartyLengthSet:
-    ldr r0, .ModeFlag   /* Flag 0x200, if set use six Pokemon */
-    bl FlagCheck
-    cmp r0, #0x0
-    beq SetThree
-    mov r0, #0x6
-    b GenerateParty
-
-SetThree:
-    ldr r0, =VAR_BATTLE_TOWER_TYPE
-    bl VarGet_r7
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    bge SetFour
-    mov r0, #0x3
-    b GenerateParty
-
-SetFour:                /* multi battles still require 4 mons */
-    mov r0, #0x4
-
-GenerateParty:
-    add r6, r6, #0x4
-    str r0, [r6]        /* 0x20 = Party Length */
-    ldr r0, .PokemonData
-    add r6, r6, #0x4
-    str r0, [r6]        /* 0x24 = Party Pointer */
-    push {r0-r1,r4-r7}
-    bl GetRandomPokemon
-    mov r2, r0
-    
-GetSecond:
-    bl GetRandomPokemon
-    cmp r0, r2
-    beq GetSecond
-    mov r3, r0
-
-GetThird:
-    bl GetRandomPokemon
-    cmp r0, r2
-    beq GetThird
-    cmp r0, r3
-    beq GetThird
-    mov r4, r0
-
-GetFourth:
-    bl GetRandomPokemon
-    cmp r0, r2
-    beq GetFourth
-    cmp r0, r3
-    beq GetFourth
-    cmp r0, r4
-    beq GetFourth
-    mov r5, r0
-
-GetFifth:
-    bl GetRandomPokemon
-    cmp r0, r2
-    beq GetFifth
-    cmp r0, r3
-    beq GetFifth
-    cmp r0, r4
-    beq GetFifth
-    cmp r0, r5
-    beq GetFifth
-    mov r6, r0
-
-GetSixth:
-    bl GetRandomPokemon
-    cmp r0, r2
-    beq GetSixth
-    cmp r0, r3
-    beq GetSixth
-    cmp r0, r4
-    beq GetSixth
-    cmp r0, r5
-    beq GetSixth
-    cmp r0, r6
-    beq GetSixth
-    mov r7, r0
-
-PutTogether:
-    lsl r2, r2, #0x10
-    lsl r3, r3, #0x8
-    orr r2, r3
-    orr r2, r4
-    lsl r5, r5, #0x10
-    lsl r6, r6, #0x8
-    orr r5, r6
-    orr r5, r7
-    mov r3, r5
-    pop {r0-r1,r4-r7}
-    mov r4, r2          /* First Three Numbers */
-    mov r7, #0x0
-
-LoadThePokemon:
-    //ldr r1, .ClassTable
-    //mov r0, r8
-    //lsl r0, r0, #0x2    /* Multiply by four */
-    //add r1, r1, r0
-    //mov r1, #0 //ldrb r1, [r1, #0x3] /* Pokemon Pool Entry */
-    //mov r0, #0x90
-    //lsl r0, r0, #0x1    /* 0x120 = 0x10 * 0x12, Entry * Length = Offset */
-    //mul r0, r1
-
-    ldr r0, =VAR_BATTLE_TOWER_TYPE
-    bl VarGet_r6
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    beq LoadEasyTable
-    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
-    beq LoadEasyTable
-    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
-    beq LoadEasyTable
-    ldr r0, .PokemonTableHard
-    b afterTable
-
-LoadEasyTable:
-    ldr r0, .PokemonTableEasy
-
-afterTable:
-    //add r0, r0, r1     /* Table to get data from */
-    lsl r1, r4, #0x18
-    lsr r1, r1, #0x18    /* Rightmost */
-    ldr r2, .PokemonData /* RAM Address to store to */
-    mov r5, #0x30
-    mul r5, r7           /* second run */
-    add r2, r2, r5
-    bl StoreTheParty // (u16 *pokemonTable, u16 index, u16 *destinationStorage)
-    lsl r1, r4, #0x10
-    lsr r1, r1, #0x18   /* Middle */
-    add r2, r2, #0x10
-    bl StoreTheParty
-    lsr r1, r4, #0x10   /* Leftmost */
-    add r2, r2, #0x10
-    bl StoreTheParty
-    cmp r7, #0x1
-    beq GoByeBye
-    mov r7, #0x1
-    mov r4, r3 // second half
-    b LoadThePokemon
 
 GoByeBye:
     pop {r0-r7}
@@ -1641,183 +1393,277 @@ GoByeBye:
     and r0, r1
     pop {pc}
 
-RandomNumber:
-    ldr r7, .Random
-    bx r7
+.TrainerData:
+    .word 0x0823EAC8
 
-Modulus2:
-    ldr r7, .Modulus2
-    bx r7
-
-FlagCheck:
-    ldr r7, .FlagCheck
-    bx r7
-
-VarGet_r6:
-    ldr r6, =0x806E568 | 1 // VarGet
-    bx r6
-
-VarGet_r7:
-    ldr r7, =0x806E568 | 1 // VarGet
-    bx r7
-
-GetRandomPokemon:
-    push {r2-r7, lr}
-    ldr r0, =VAR_BATTLE_TOWER_TYPE
-    bl VarGet_r6
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    beq LoadEasyDenom
-    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
-    beq LoadEasyDenom
-    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
-    beq LoadEasyDenom
-    bl RandomNumber
-    ldr r1, =NUM_OF_HARD_MODE_SPREADS
-    b afterLoadDenom
-LoadEasyDenom:
-    bl RandomNumber
-    mov r1, #NUM_OF_EASY_MODE_SPREADS
-afterLoadDenom:
-    bl Modulus2
-    pop {r2-r7, pc}
-
-StoreTheParty:          // (u16 *pokemonTable, u16 index, u16 *destinationStorage)
-    push {r0-r7, lr}
-    //mov r4, #0x10
-    //mul r1, r4
-    lsl r1, #4 // size of each entry
-    add r1, r1, r0
-    ldrh r4, [r1]       /* EV Spread */
-    strh r4, [r2]
-    ldrh r4, [r1, #0x2] /* Level */
-    strh r4, [r2, #0x2] 
-    ldrh r4, [r1, #0x4] /* Species */
-    strh r4, [r2, #0x4] 
-    ldrh r4, [r1, #0x6] /* Held Item */
-    strh r4, [r2, #0x6]
-    ldrh r4, [r1, #0x8] /* Move 1 */
-    strh r4, [r2, #0x8]
-    ldrh r4, [r1, #0xA] /* Move 2 */
-    strh r4, [r2, #0xA]
-    ldrh r4, [r1, #0xC] /* Move 3 */
-    strh r4, [r2, #0xC]
-    ldrh r4, [r1, #0xE] /* Move 4 */
-    strh r4, [r2, #0xE] 
-    pop {r0-r7, pc}
-
-.align 2
-.TrainerData:           .word 0x0823EAC8
-.TowerData:             .word 0x0203b0E0
-.Random:                .word 0x08044EC9
-.Modulus2:              .word 0x081E4685
-.ClassTable:            .word ClassTableStart
-.MaleNames:             .word MaleNamesStart
-.FemaleNames:           .word FemaleNamesStart
-.ModeFlag:              .word 0x00000200
-.FlagCheck:             .word 0x0806E6D1
-.PokemonData:           .word 0x0203b110
-.PokemonTableEasy:      .word PokemonTableStartEasyMode
-.PokemonTableHard:      .word PokemonTableStartHardMode
-
-.pool
 
 /* --------------------------------- */
 
 .align 2
+
 
 .global ClassTableStart
 ClassTableStart:
-    .byte cooltrainerm, male, cooltrainerm_pic, 0
-    .byte cooltrainerf, female, cooltrainerf_pic, 0
-    .byte expertm, male, expertm_pic, 1
-    .byte expertf, female, expertf_pic, 1
-    .byte gentleman, male, gentleman_pic, 2
-    .byte pokemaniac, male, pokemaniac_pic, 3
-    .byte pkmnbreederm, male, pkmnbreederm_pic, 4
-    .byte pkmnbreederf, female, pkmnbreederf_pic, 4
-    .byte dragontamer, male, dragontamer_pic, 5
-    .byte hexmaniac, female, hexmaniac_pic, 6
-    
-.align 2
+//.byte class, gender, image, 0
+.byte /* Youngster */          0x39,   male,  82,  18
+.byte /* Lass */               0x3B, female,  84,  22
+.byte /* School Kid[m] */      0x19,   male,  29, 211
+.byte /* Camper */             0x3D,   male,  86,  39
+.byte /* Picnicker */          0x3E, female,  87,  40
+.byte /* Guitarist */          0x11,   male,  17,  26
+.byte /* Pokéfan[m] */         0x1B,   male,  32,  30
+.byte /* Pokéfan[f] */         0x1B, female,  33,  31
+.byte /* Bug Catcher */        0x3A,   male,  83,  20
+.byte /* Fisherman */          0x45,   male,  94,  57
+.byte /* Ruin Maniac */        0x68,   male, 145, 162
+.byte /* Beauty */             0x49, female,  98,  29
+.byte /* Bird Keeper */        0x4F,   male, 104, 157
+.byte /* Sailor */             0x3C,   male,  85,  62
+.byte /* Hiker */              0x41,   male,  90,  56
+.byte /* Blackbelt */          0x50,   male, 105,  54
+.byte /* Crush Girl */         0x63, female, 139, 176
+.byte /* Psychic[m] */         0x15,   male, 100, 166
+.byte /* Psychic[f] */         0x15, female, 138, 167
+.byte /* Pokémon Breeder[f] */ 0x65, female, 141, 171
+.byte /* Gentleman */          0x58,   male, 123,  61
+.byte /* Scientist */          0x52,   male, 107,  55
+.byte /* Cool Trainer[m] */    0x56,   male, 110,  41
+.byte /* Cool Trainer[f] */    0x56, female, 111,  42
+.byte /* Pokémon Ranger[m] */  0x66,   male, 142, 163
+.byte /* Pokémon Ranger[f] */  0x66, female, 143, 164
+.byte /* Juggler */            0x4D,   male, 102, 160
+.byte /* Officer */            0x09,   male,   8,  60
+.byte /* Gamer */              0x48,   male,  97,  32
+.byte /* Pokémaniac */         0x3F,   male,  88, 161
+.byte /* Lady */               0x69, female, 146, 175
+.byte /* Palmer */             0x0F,   male,  60, 152
 
 /* --------------------------------- */
 
 .align 2
 
-.global MaleNamesStart
-MaleNamesStart:
-    .byte L, E, O, N, A, R, D, O, Done, Done, Done, Done
-    .byte A, L, E, X, A, N, D, E, R, Done, Done, Done
-    .byte H, E, C, T, O, R, Done, Done, Done, Done, Done, Done
-    .byte D, W, I, G, H, T, Done, Done, Done, Done, Done, Done
-    .byte P, E, T, E, R, Done, Done, Done, Done, Done, Done, Done
-    .byte R, O, B, E, R, T, Done, Done, Done, Done, Done, Done
-    .byte K, O, B, E, Done, Done, Done, Done, Done, Done, Done, Done
-    .byte O, R, I, O, N, Done, Done, Done, Done, Done, Done, Done
-    .byte J, A, S, P, E, R, Done, Done, Done, Done, Done, Done
-    .byte Q, U, I, N, C, Y, Done, Done, Done, Done, Done, Done
-    .byte A, K, I, H, I, T, O, Done, Done, Done, Done, Done
-    .byte T, E, R, R, A, N, C, E, Done, Done, Done, Done
-    .byte S, U, M, A, N, Done, Done, Done, Done, Done, Done, Done
-    .byte O, M, A, R, Done, Done, Done, Done, Done, Done, Done, Done
-    .byte J, A, C, K, S, O, N, Done, Done, Done, Done, Done
-    .byte K, E, V, I, N, Done, Done, Done, Done, Done, Done, Done
-    .byte J, O, S, E, P, H, Done, Done, Done, Done, Done, Done
-    .byte M, A, T, T, H, E, W, Done, Done, Done, Done, Done
-    .byte D, A, R, I, U, S, Done, Done, Done, Done, Done, Done
-    .byte C, A, L, V, I, N, Done, Done, Done, Done, Done, Done
-    .byte T, A, Y, S, H, A, W, N, Done, Done, Done, Done
-    .byte M, E, L, Done, Done, Done, Done, Done, Done, Done, Done, Done
-    .byte D, A, V, E, Done, Done, Done, Done, Done, Done, Done, Done
-    .byte V, I, N, C, E, N, T, Done, Done, Done, Done, Done
-    .byte E, R, N, E, S, T, O, Done, Done, Done, Done, Done
-    .byte E, T, H, A, N, Done, Done, Done, Done, Done, Done, Done
-    .byte G, E, O, F, F, E, R, Y, Done, Done, Done, Done
-    .byte B, A, R, B, A, R, O, Done, Done, Done, Done, Done
-    .byte N, E, L, S, O, N, Done, Done, Done, Done, Done, Done
-    .byte L, A, R, S, Done, Done, Done, Done, Done, Done, Done, Done
-    .byte T, A, K, U, M, I, Done, Done, Done, Done, Done, Done
-    .byte M, I, K, E, Done, Done, Done, Done, Done, Done, Done, Done
 
-.align 2
 
-/* --------------------------------- */
+.global NamesStart
+NamesStart:
+/* Youngster */
+.byte J, i, m, Done, Done, Done, Done, Done, Done, Done, Done, Done
+.byte E, r, r, o, l, l, Done, Done, Done, Done, Done, Done
+.byte C, a, s, i, m, i, r, Done, Done, Done, Done, Done
+.byte K, a, i, d, e, n, Done, Done, Done, Done, Done, Done
+.byte K, o, l, b, y, Done, Done, Done, Done, Done, Done, Done
 
-.align 2
+/* Lass */
+.byte C, a, m, e, r, o, n, Done, Done, Done, Done, Done
+.byte P, e, a, c, h, e, s, Done, Done, Done, Done, Done
+.byte Y, a, s, m, i, n, Done, Done, Done, Done, Done, Done
+.byte K, a, r, i, s, s, a, Done, Done, Done, Done, Done
+.byte L, i, l, i, a, n, a, Done, Done, Done, Done, Done
 
-FemaleNamesStart:
-    .byte A, M, A, N, D, A, Done, Done, Done, Done, Done, Done
-    .byte T, E, N, I, L, L, E, Done, Done, Done, Done, Done
-    .byte A, R, I, E, L, L, A, Done, Done, Done, Done, Done
-    .byte B, I, A, N, C, A, Done, Done, Done, Done, Done, Done
-    .byte R, E, B, E, C, C, A, Done, Done, Done, Done, Done
-    .byte T, E, N, K, O, Done, Done, Done, Done, Done, Done, Done
-    .byte R, E, I, M, U, Done, Done, Done, Done, Done, Done, Done
-    .byte L, U, C, I, L, L, E, Done, Done, Done, Done, Done
-    .byte J, U, N, E, Done, Done, Done, Done, Done, Done, Done, Done
-    .byte P, R, U, N, E, L, L, A, Done, Done, Done, Done
-    .byte W, E, N, D, Y, Done, Done, Done, Done, Done, Done, Done
-    .byte P, E, T, R, A, Done, Done, Done, Done, Done, Done, Done
-    .byte A, N, U, J, A, Done, Done, Done, Done, Done, Done, Done
-    .byte H, A, R, R, I, E, T, T, E, Done, Done, Done
-    .byte J, O, R, D, A, N, N, A, Done, Done, Done, Done
-    .byte H, A, N, N, A, H, Done, Done, Done, Done, Done, Done
-    .byte M, A, C, K, E, N, Z, I, E, Done, Done, Done
-    .byte S, O, R, I, E, L, Done, Done, Done, Done, Done, Done
-    .byte D, A, R, I, A, Done, Done, Done, Done, Done, Done, Done
-    .byte Y, O, L, A, N, D, A, Done, Done, Done, Done, Done
-    .byte A, L, E, X, A, N, D, R, A, Done, Done, Done
-    .byte B, R, I, A, N, N, E, Done, Done, Done, Done, Done
-    .byte C, A, R, O, L, I, N, E, Done, Done, Done, Done
-    .byte O, C, T, A, V, I, A, Done, Done, Done, Done, Done
-    .byte J, A, S, M, I, N, E, Done, Done, Done, Done, Done
-    .byte F, A, T, I, M, A, Done, Done, Done, Done, Done, Done
-    .byte M, I, R, A, N, D, A, Done, Done, Done, Done, Done
-    .byte B, O, N, N, I, E, Done, Done, Done, Done, Done, Done
-    .byte J, E, S, S, I, C, A, Done, Done, Done, Done, Done
-    .byte A, M, B, E, R, Done, Done, Done, Done, Done, Done, Done
-    .byte S, A, M, A, N, T, H, A, Done, Done, Done, Done
-    .byte U, M, A, Done, Done, Done, Done, Done, Done, Done, Done, Done
+/* School Kid[m] */
+.byte F, o, s, t, e, r, Done, Done, Done, Done, Done, Done
+.byte K, e, n, Done, Done, Done, Done, Done, Done, Done, Done, Done
+.byte O, w, e, n, Done, Done, Done, Done, Done, Done, Done, Done
+.byte J, o, n, a, s, Done, Done, Done, Done, Done, Done, Done
+.byte K, e, o, n, Done, Done, Done, Done, Done, Done, Done, Done
+
+/* Camper */
+.byte B, e, r, n, a, r, d, Done, Done, Done, Done, Done
+.byte H, e, r, b, e, r, t, Done, Done, Done, Done, Done
+.byte C, o, l, b, e, r, t, Done, Done, Done, Done, Done
+.byte F, r, e, d, d, y, Done, Done, Done, Done, Done, Done
+.byte A, n, d, r, e, Done, Done, Done, Done, Done, Done, Done
+
+/* Picnicker */
+.byte M, a, g, g, i, e, Done, Done, Done, Done, Done, Done
+.byte M, e, l, a, n, i, e, Done, Done, Done, Done, Done
+.byte A, n, n, Done, Done, Done, Done, Done, Done, Done, Done, Done
+.byte I, g, n, a, Done, Done, Done, Done, Done, Done, Done, Done
+.byte T, o, n, y, a, Done, Done, Done, Done, Done, Done, Done
+
+/* Guitarist */
+.byte M, a, l, c, o, l, m, Done, Done, Done, Done, Done
+.byte T, a, d, Done, Done, Done, Done, Done, Done, Done, Done, Done
+.byte C, o, n, c, o, r, d, Done, Done, Done, Done, Done
+.byte B, e, r, n, i, e, Done, Done, Done, Done, Done, Done
+.byte C, u, r, t, i, s, Done, Done, Done, Done, Done, Done
+
+/* Pokéfan[m] */
+.byte E, w, a, n, Done, Done, Done, Done, Done, Done, Done, Done
+.byte K, a, n, e, Done, Done, Done, Done, Done, Done, Done, Done
+.byte T, h, e, o, Done, Done, Done, Done, Done, Done, Done, Done
+.byte S, i, m, o, n, Done, Done, Done, Done, Done, Done, Done
+.byte T, u, r, n, e, r, Done, Done, Done, Done, Done, Done
+
+/* Pokéfan[f] */
+.byte A, l, e, x, i, a, Done, Done, Done, Done, Done, Done
+.byte L, u, n, a, Done, Done, Done, Done, Done, Done, Done, Done
+.byte C, e, l, e, n, e, Done, Done, Done, Done, Done, Done
+.byte E, u, r, o, p, a, Done, Done, Done, Done, Done, Done
+.byte P, a, n, d, o, r, a, Done, Done, Done, Done, Done
+
+/* Bug Catcher */
+.byte F, l, o, y, d, Done, Done, Done, Done, Done, Done, Done
+.byte H, o, f, f, m, a, n, Done, Done, Done, Done, Done
+.byte A, m, a, d, e, u, s, Done, Done, Done, Done, Done
+.byte C, a, m, u, i, Done, Done, Done, Done, Done, Done, Done
+.byte O, r, l, a, n, d, o, Done, Done, Done, Done, Done
+
+/* Fisherman */
+.byte K, i, e, f, e, r, Done, Done, Done, Done, Done, Done
+.byte B, a, s, i, l, Done, Done, Done, Done, Done, Done, Done
+.byte F, a, r, l, e, y, Done, Done, Done, Done, Done, Done
+.byte M, a, r, k, Done, Done, Done, Done, Done, Done, Done, Done
+.byte D, e, l, a, n, e, y, Done, Done, Done, Done, Done
+
+/* Ruin Maniac */
+.byte H, e, r, n, i, k, Done, Done, Done, Done, Done, Done
+.byte A, u, b, r, y, Done, Done, Done, Done, Done, Done, Done
+.byte S, a, m, u, e, l, Done, Done, Done, Done, Done, Done
+.byte P, e, n, n, Done, Done, Done, Done, Done, Done, Done, Done
+.byte I, s, a, d, o, r, e, Done, Done, Done, Done, Done
+
+/* Beauty */
+.byte T, i, f, f, a, n, y, Done, Done, Done, Done, Done
+.byte B, r, i, t, n, e, y, Done, Done, Done, Done, Done
+.byte H, a, r, m, o, n, y, Done, Done, Done, Done, Done
+.byte N, a, d, i, a, Done, Done, Done, Done, Done, Done, Done
+.byte B, e, c, k, y, Done, Done, Done, Done, Done, Done, Done
+
+/* Bird Keeper */
+.byte B, e, r, n, i, e, Done, Done, Done, Done, Done, Done
+.byte C, u, r, t, i, s, Done, Done, Done, Done, Done, Done
+.byte S, h, a, w, n, Done, Done, Done, Done, Done, Done, Done
+.byte K, e, n, n, i, t, h, Done, Done, Done, Done, Done
+.byte S, a, l, l, y, Done, Done, Done, Done, Done, Done, Done
+
+/* Sailor */
+.byte L, a, y, t, o, n, Done, Done, Done, Done, Done, Done
+.byte G, o, d, w, i, n, Done, Done, Done, Done, Done, Done
+.byte C, a, s, p, e, r, Done, Done, Done, Done, Done, Done
+.byte D, e, r, r, i, a, n, Done, Done, Done, Done, Done
+.byte C, a, r, l, o, Done, Done, Done, Done, Done, Done, Done
+
+/* Hiker */
+.byte E, v, e, r, e, t, t, Done, Done, Done, Done, Done
+.byte R, a, i, d, e, n, Done, Done, Done, Done, Done, Done
+.byte M, o, n, t, y, Done, Done, Done, Done, Done, Done, Done
+.byte R, o, c, k, y, Done, Done, Done, Done, Done, Done, Done
+.byte L, y, l, e, Done, Done, Done, Done, Done, Done, Done, Done
+
+/* Blackbelt */
+.byte C, l, e, m, e, n, t, Done, Done, Done, Done, Done
+.byte M, a, s, o, n, Done, Done, Done, Done, Done, Done, Done
+.byte J, e, r, i, c, h, o, Done, Done, Done, Done, Done
+.byte H, a, r, r, i, s, Done, Done, Done, Done, Done, Done
+.byte S, o, r, e, n, Done, Done, Done, Done, Done, Done, Done
+
+/* Crush Girl */
+.byte K, o, d, i, Done, Done, Done, Done, Done, Done, Done, Done
+.byte A, i, l, e, e, n, Done, Done, Done, Done, Done, Done
+.byte T, r, i, n, a, Done, Done, Done, Done, Done, Done, Done
+.byte A, l, t, a, Done, Done, Done, Done, Done, Done, Done, Done
+.byte I, n, g, r, i, d, Done, Done, Done, Done, Done, Done
+
+/* Psychic[m] */
+.byte A, l, p, h, a, Done, Done, Done, Done, Done, Done, Done
+.byte B, e, t, a, Done, Done, Done, Done, Done, Done, Done, Done
+.byte E, s, s, i, e, Done, Done, Done, Done, Done, Done, Done
+.byte D, e, n, v, e, r, Done, Done, Done, Done, Done, Done
+.byte B, e, r, k, l, e, y, Done, Done, Done, Done, Done
+
+/* Psychic[f] */
+.byte A, m, e, l, i, a, Done, Done, Done, Done, Done, Done
+.byte C, e, l, i, n, e, Done, Done, Done, Done, Done, Done
+.byte J, i, l, i, a, n, Done, Done, Done, Done, Done, Done
+.byte I, r, e, n, e, Done, Done, Done, Done, Done, Done, Done
+.byte S, y, l, v, i, e, Done, Done, Done, Done, Done, Done
+
+/* Pokémon Breeder[f] */
+.byte A, d, r, i, a, n, a, Done, Done, Done, Done, Done
+.byte S, o, n, y, a, Done, Done, Done, Done, Done, Done, Done
+.byte T, a, t, y, a, n, a, Done, Done, Done, Done, Done
+.byte Z, o, r, y, a, Done, Done, Done, Done, Done, Done, Done
+.byte A, n, t, o, n, i, a, Done, Done, Done, Done, Done
+
+/* Gentleman */
+.byte Z, a, n, t, e, Done, Done, Done, Done, Done, Done, Done
+.byte G, i, l, i, a, m, Done, Done, Done, Done, Done, Done
+.byte J, o, a, c, h, i, m, Done, Done, Done, Done, Done
+.byte K, a, r, s, t, o, n, Done, Done, Done, Done, Done
+.byte B, o, y, c, e, Done, Done, Done, Done, Done, Done, Done
+
+/* Scientist */
+.byte J, e, a, n, Done, Done, Done, Done, Done, Done, Done, Done
+.byte B, r, a, d, Done, Done, Done, Done, Done, Done, Done, Done
+.byte I, r, w, i, n, Done, Done, Done, Done, Done, Done, Done
+.byte F, l, y, n, n, Done, Done, Done, Done, Done, Done, Done
+.byte T, y, r, e, l, l, Done, Done, Done, Done, Done, Done
+
+/* Cool Trainer[m] */
+.byte Y, a, r, d, l, e, y, Done, Done, Done, Done, Done
+.byte S, t, a, v, r, o, s, Done, Done, Done, Done, Done
+.byte Z, a, n, e, Done, Done, Done, Done, Done, Done, Done, Done
+.byte G, a, r, v, y, Done, Done, Done, Done, Done, Done, Done
+.byte C, r, u, z, Done, Done, Done, Done, Done, Done, Done, Done
+
+/* Cool Trainer[f] */
+.byte K, i, m, Done, Done, Done, Done, Done, Done, Done, Done, Done
+.byte M, a, c, y, Done, Done, Done, Done, Done, Done, Done, Done
+.byte F, a, u, n, Done, Done, Done, Done, Done, Done, Done, Done
+.byte P, a, m, e, l, a, Done, Done, Done, Done, Done, Done
+.byte D, a, n, i, e, l, a, Done, Done, Done, Done, Done
+
+/* Pokémon Ranger[m] */
+.byte D, o, y, l, e, Done, Done, Done, Done, Done, Done, Done
+.byte D, u, k, e, Done, Done, Done, Done, Done, Done, Done, Done
+.byte D, e, a, c, o, n, Done, Done, Done, Done, Done, Done
+.byte F, i, o, r, e, Done, Done, Done, Done, Done, Done, Done
+.byte A, l, m, i, a, Done, Done, Done, Done, Done, Done, Done
+
+/* Pokémon Ranger[f] */
+.byte M, e, n, a, Done, Done, Done, Done, Done, Done, Done, Done
+.byte M, e, r, c, y, Done, Done, Done, Done, Done, Done, Done
+.byte E, v, i, t, a, Done, Done, Done, Done, Done, Done, Done
+.byte O, b, l, i, v, i, a, Done, Done, Done, Done, Done
+.byte A, l, m, i, a, Done, Done, Done, Done, Done, Done, Done
+
+/* Juggler */
+.byte F, r, a, n, c, i, s, Done, Done, Done, Done, Done
+.byte P, r, e, s, c, o, t, Done, Done, Done, Done, Done
+.byte F, r, a, n, k, Done, Done, Done, Done, Done, Done, Done
+.byte A, l, m, a, Done, Done, Done, Done, Done, Done, Done, Done
+.byte E, l, i, s, e, Done, Done, Done, Done, Done, Done, Done
+
+/* Officer */
+.byte H, u, g, h, Done, Done, Done, Done, Done, Done, Done, Done
+.byte K, e, g, a, n, Done, Done, Done, Done, Done, Done, Done
+.byte R, e, g, g, i, e, Done, Done, Done, Done, Done, Done
+.byte K, e, g, a, n, Done, Done, Done, Done, Done, Done, Done
+.byte C, h, e, s, t, e, r, Done, Done, Done, Done, Done
+
+/* Gamer */
+.byte N, e, i, l, Done, Done, Done, Done, Done, Done, Done, Done
+.byte S, e, r, g, e, i, Done, Done, Done, Done, Done, Done
+.byte R, a, l, p, h, Done, Done, Done, Done, Done, Done, Done
+.byte C, o, n, w, a, y, Done, Done, Done, Done, Done, Done
+.byte R, i, v, e, r, Done, Done, Done, Done, Done, Done, Done
+
+/* Pokémaniac */
+.byte U, p, t, o, n, Done, Done, Done, Done, Done, Done, Done
+.byte E, m, i, l, Done, Done, Done, Done, Done, Done, Done, Done
+.byte M, a, r, q, u, e, z, Done, Done, Done, Done, Done
+.byte A, r, n, o, l, d, Done, Done, Done, Done, Done, Done
+.byte L, e, r, o, y, Done, Done, Done, Done, Done, Done, Done
+
+/* Lady */
+.byte I, s, a, b, e, l, Done, Done, Done, Done, Done, Done
+.byte N, i, c, h, o, l, e, Done, Done, Done, Done, Done
+.byte J, u, a, n, i, t, a, Done, Done, Done, Done, Done
+.byte A, m, o, r, y, Done, Done, Done, Done, Done, Done, Done
+.byte J, u, l, i, a, n, a, Done, Done, Done, Done, Done
+
+
 
 .align 2
 
