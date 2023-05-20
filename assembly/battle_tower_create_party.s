@@ -566,6 +566,14 @@
 .equ psyshock, 0x1fd
 .equ psystrike, 0x1fe
 
+.equ ragingbull, 0x1de
+.equ tripledive, 0x1a4
+.equ ragefist, 0x1b9
+.equ hyperdrill, 0x1b5
+.equ twinbeam, 0x192
+.equ hydrosteam, 0x1a0
+.equ chillingreception, 0x198
+
 /* letters for names */
 .equ A, 0xBB
 .equ B, 0xBC
@@ -961,6 +969,26 @@
 .equ corsolagalarian, 0x180
 .equ cursola, 0x181
 
+.equ tauroscombat, 0x14c
+.equ taurosblaze, 0x14d
+.equ taurosaqua, 0x14e
+.equ wugtrio, 0x118
+.equ annihilape, 0x157
+.equ toedscruel, 0x116
+.equ clodsire, 0x138
+.equ dudunsparce, 0x155
+.equ farigiraf, 0x156
+.equ screamtail, 0x11b
+.equ fluttermane, 0x11c
+.equ sandyshocks, 0x11a
+.equ greattusk, 0x119
+.equ irontreads, 0x11d
+.equ ironbundle, 0x136
+.equ ironthorns, 0x135
+.equ walkingwake, 0x16b
+
+.equ latios, 408
+
 /* items */
 .equ masterball, 0x1
 .equ ultraball, 0x2
@@ -1208,6 +1236,7 @@
 .equ goodrod, 0x107
 .equ superrod, 0x108
 .equ ssticket, 0x109
+.equ boosterenergy, 0x10a
 .equ oldseamap, 0x112
 .equ unownreport, 0x113
 .equ gsball, 0x114
@@ -1662,6 +1691,13 @@ NamesStart:
 .byte J, u, a, n, i, t, a, Done, Done, Done, Done, Done
 .byte A, m, o, r, y, Done, Done, Done, Done, Done, Done, Done
 .byte J, u, l, i, a, n, a, Done, Done, Done, Done, Done
+
+/* Palmer */
+.byte P, a, l, m, e, r, Done, Done, Done, Done, Done, Done
+.byte P, a, l, m, e, r, Done, Done, Done, Done, Done, Done
+.byte P, a, l, m, e, r, Done, Done, Done, Done, Done, Done
+.byte P, a, l, m, e, r, Done, Done, Done, Done, Done, Done
+.byte P, a, l, m, e, r, Done, Done, Done, Done, Done, Done
 
 
 

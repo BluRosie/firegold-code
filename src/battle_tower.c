@@ -38,7 +38,7 @@ u32 MonNotAlreadySelected(u8 slot);
 
 
 #define NUM_OF_EASY_MODE_SPREADS 75
-#define NUM_OF_HARD_MODE_SPREADS 530
+#define NUM_OF_HARD_MODE_SPREADS 567
 
 #define VAR_BATTLE_TOWER_TYPE 0x43CB
 #define VAR_BATTLE_TOWER_OBJ_ID 0x4010
@@ -851,6 +851,7 @@ extern struct BattleTowerTrainerSets TowerPokemonParty[];
 
 extern struct BattleTowerTrainerSets PokemonTableStartEasyMode[];
 extern struct BattleTowerTrainerSets PokemonTableStartHardMode[];
+extern struct BattleTowerTrainerSets PalmerMons[];
 
 
 extern struct BattleTowerTrainerClass ClassTableStart[32]; // 32 total trainer classes
@@ -907,14 +908,50 @@ void CreateBattleTowerTrainerParty()
     }
     
     TowerData.party = TowerPokemonParty;
-    
+
+    if (classIndex == 31) // palmer
+    {
+        u32 roundTwo = 0;
+        
+        if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_DOUBLE_EASY && VarGet(0x43ce) > 40) // streak over 35 means round two, doesn't appear until 70 though
+            roundTwo = 1;
+        else if (VarGet(VAR_BATTLE_TOWER_TYPE) < BATTLE_TOWER_TYPE_DOUBLE_EASY && VarGet(0x43d2) > 40)
+            roundTwo = 1;
+        
+        if (!roundTwo)
+        {
+            if (!TowerData.doubleBattle)
+            {
+                baseIndex = 0+800;
+            }
+            else
+            {
+                baseIndex = 3+800;
+            }
+        }
+        else
+        {
+            if (!TowerData.doubleBattle)
+            {
+                baseIndex = 7+800;
+            }
+            else
+            {
+                baseIndex = 10+800;
+            }
+        }
+    }
     
     // step 2 - create party in RAM
     for (i = 0; i < TowerData.partySize; i++)
     {
         u32 easyMode = (VarGet(VAR_BATTLE_TOWER_TYPE) != 0 && VarGet(VAR_BATTLE_TOWER_TYPE) & 1);
         
-        if (easyMode)
+        if (classIndex == 31) // palmer
+        {
+            TowerPokemonParty[i] = PokemonTableStartHardMode[baseIndex + i]; // palmer specific mons are >800
+        }
+        else if (easyMode)
         {
             u32 randIndex = Random() % NUM_OF_EASY_MODE_SPREADS;
             TowerPokemonParty[i] = PokemonTableStartEasyMode[randIndex];

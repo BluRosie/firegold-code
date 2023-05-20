@@ -80,10 +80,10 @@ PokemonTableStartHardMode:
 .hword 70, 50, golduck, expertbelt, honeclaws, hydropump, blizzard, crosschop
 .hword 71, 50, golduck, choicespecs, surf, psychic, icebeam, focusblast
 .hword 72, 50, golduck, muscleband, waterfall, zenheadbutt, swagger, psychup
-.hword 73, 50, primeape, lifeorb, closecombat, punishment, uturn, rockslide
-.hword 74, 50, primeape, choiceband, closecombat, outrage, uturn, stoneedge
-.hword 75, 50, primeape, salacberry, closecombat, endure, reversal, rocktomb
-.hword 76, 50, primeape, choiceband, closecombat, earthquake, irontail, rockslide
+.hword 73, 50, annihilape, lifeorb, closecombat, ragefist, uturn, rockslide
+.hword 74, 50, annihilape, choiceband, closecombat, ragefist, uturn, stoneedge
+.hword 75, 50, annihilape, salacberry, ragefist, endure, reversal, rocktomb
+.hword 76, 50, annihilape, leftovers, bulkup, drainpunch, ragefist, earthquake
 .hword 77, 50, arcanine, choiceband, flareblitz, closecombat, wildcharge, crunch
 .hword 78, 50, arcanine, choiceband, flareblitz, closecombat, playrough, outrage
 .hword 79, 50, arcanine, weaknesspolicy, flamethrower, extremespeed, dragonpulse, roar
@@ -539,43 +539,47 @@ PokemonTableStartHardMode:
 .hword 529, 50, perrserker, choiceband, ironhead, playrough, crosschop, gunkshot
 .hword 530, 50, perrserker, quickclaw, fakeout, ironhead, seedbomb, crosschop
 
+.hword 531, 50, tauroscombat, choiceband, ragingbull, earthquake, rockslide, zenheadbutt                      
+.hword 532, 50, tauroscombat, sitrusberry, ragingbull, earthquake, ironhead, substitute                       
+.hword 533, 50, taurosblaze, choiceband, ragingbull, closecombat, earthquake, wildcharge                      
+.hword 534, 50, taurosblaze, sitrusberry, ragingbull, brickbreak, rockslide, substitute                       
+.hword 535, 50, taurosaqua, choiceband, ragingbull, closecombat, rockslide, earthquake                        
+.hword 536, 50, taurosaqua, sitrusberry, ragingbull, brickbreak, earthquake, substitute                       
+.hword 537, 50, wugtrio, focussash, tripledive, dig, suckerpunch, reversal                                    
+.hword 538, 50, wugtrio, expertbelt, tripledive, dig, foulplay, blizzard                                      
+.hword 539, 50, toedscruel, yacheberry, earthpower, gigadrain, spore, trickroom                               
+.hword 540, 50, toedscruel, expertbelt, earthpower, gigadrain, flashcannon, dazzlinggleam                     
+.hword 541, 50, clodsire, leftovers, toxic, earthquake, recover, stealthrock                                  
+.hword 542, 50, clodsire, leftovers, earthquake, poisonjab, yawn, stealthrock                                 
+.hword 543, 50, dudunsparce, sitrusberry, coil, roost, hyperdrill, drillrun                                   
+.hword 544, 50, dudunsparce, muscleband, glare, hyperdrill, drillrun, rockslide                               
+.hword 545, 50, dudunsparce, widelens, glare, airslash, blizzard, fireblast                                   
+.hword 546, 50, dudunsparce, leftovers, glare, rockslide, airslash, roost                                     
+.hword 547, 50, farigiraf, weaknesspolicy, earthquake, lowkick, twinbeam, thunderbolt                         
+.hword 548, 50, farigiraf, sitrusberry, nastyplot, twinbeam, thunderbolt, hypervoice                          
+.hword 549, 50, farigiraf, leftovers, trickroom, twinbeam, foulplay, earthquake                               
+.hword 550, 50, farigiraf, wikiberry, trickroom, darkpulse, twinbeam, thunderbolt                             
+.hword 551, 50, screamtail, boosterenergy, dazzlinggleam, disable, encore, psychic                            
+.hword 552, 50, screamtail, boosterenergy, calmmind, dazzlinggleam, flamethrower, thunderbolt                 
+.hword 553, 50, fluttermane, boosterenergy, moonblast, shadowball, energyball, powergem                       
+.hword 554, 50, fluttermane, boosterenergy, moonblast, shadowball, mysticalfire, thunderbolt                  
+.hword 555, 50, sandyshocks, boosterenergy, earthpower, thunderbolt, irondefense, bodypress                   
+.hword 556, 50, sandyshocks, boosterenergy, earthpower, thunderbolt, powergem, thunderwave                    
+.hword 557, 50, greattusk, boosterenergy, closecombat, headlongrush, headsmash, knockoff                      
+.hword 558, 50, greattusk, boosterenergy, closecombat, earthquake, icefang, thunderfang                       
+.hword 559, 50, irontreads, boosterenergy, ironhead, earthquake, knockoff, wildcharge                         
+.hword 560, 50, irontreads, boosterenergy, ironhead, earthquake, voltswitch, rockslide                        
+.hword 561, 50, ironbundle, boosterenergy, hydropump, blizzard, freezedry, encore                             
+.hword 562, 50, ironbundle, boosterenergy, hydropump, icebeam, freezedry, uturn                               
+.hword 563, 50, ironthorns, boosterenergy, wildcharge, rockblast, pinmissile, dragondance                      
+.hword 564, 50, ironthorns, boosterenergy, wildcharge, earthquake, rockslide, icepunch                        
+.hword 565, 50, walkingwake, boosterenergy, hydrosteam, snarl, icebeam, flamethrower                          
+.hword 566, 50, walkingwake, boosterenergy, hydrosteam, dracometeor, flamethrower, sunnyday                   
+
+
 // come back to these later
-.hword 531, 50, 0, 0, 0, 0, 0, 0
-.hword 532, 50, 0, 0, 0, 0, 0, 0
-.hword 533, 50, 0, 0, 0, 0, 0, 0
-.hword 534, 50, 0, 0, 0, 0, 0, 0
-.hword 535, 50, 0, 0, 0, 0, 0, 0
-.hword 536, 50, 0, 0, 0, 0, 0, 0
-.hword 537, 50, 0, 0, 0, 0, 0, 0
-.hword 538, 50, 0, 0, 0, 0, 0, 0
-.hword 539, 50, 0, 0, 0, 0, 0, 0
-.hword 540, 50, 0, 0, 0, 0, 0, 0
-.hword 541, 50, 0, 0, 0, 0, 0, 0
-.hword 542, 50, 0, 0, 0, 0, 0, 0
-.hword 543, 50, 0, 0, 0, 0, 0, 0
-.hword 544, 50, 0, 0, 0, 0, 0, 0
-.hword 545, 50, 0, 0, 0, 0, 0, 0
-.hword 546, 50, 0, 0, 0, 0, 0, 0
-.hword 547, 50, 0, 0, 0, 0, 0, 0
-.hword 548, 50, 0, 0, 0, 0, 0, 0
-.hword 549, 50, 0, 0, 0, 0, 0, 0
-.hword 550, 50, 0, 0, 0, 0, 0, 0
-.hword 551, 50, 0, 0, 0, 0, 0, 0
-.hword 552, 50, 0, 0, 0, 0, 0, 0
-.hword 553, 50, 0, 0, 0, 0, 0, 0
-.hword 554, 50, 0, 0, 0, 0, 0, 0
-.hword 555, 50, 0, 0, 0, 0, 0, 0
-.hword 556, 50, 0, 0, 0, 0, 0, 0
-.hword 557, 50, 0, 0, 0, 0, 0, 0
-.hword 558, 50, 0, 0, 0, 0, 0, 0
-.hword 559, 50, 0, 0, 0, 0, 0, 0
-.hword 560, 50, 0, 0, 0, 0, 0, 0
-.hword 561, 50, 0, 0, 0, 0, 0, 0
-.hword 562, 50, 0, 0, 0, 0, 0, 0
-.hword 563, 50, 0, 0, 0, 0, 0, 0
-.hword 564, 50, 0, 0, 0, 0, 0, 0
-.hword 565, 50, 0, 0, 0, 0, 0, 0
-.hword 566, 50, 0, 0, 0, 0, 0, 0
+
+
 .hword 567, 50, 0, 0, 0, 0, 0, 0
 .hword 568, 50, 0, 0, 0, 0, 0, 0
 .hword 569, 50, 0, 0, 0, 0, 0, 0
@@ -811,7 +815,25 @@ PokemonTableStartHardMode:
 .hword 799, 50, 0, 0, 0, 0, 0, 0
 .hword 800, 50, 0, 0, 0, 0, 0, 0
 
+// palmer mons
 
+.hword 801, 50, slowking, leftovers, calmmind, psyshock, scald, slackoff
+.hword 802, 50, rhyperior, choiceband, rockwrecker, earthquake, thunderpunch, crunch
+.hword 803, 50, dragonite, weaknesspolicy, outrage, thunderpunch, firepunch, extremespeed
+
+.hword 804, 50, slowking, leftovers, trickroom, scald, flamethrower, icebeam
+.hword 805, 50, rhyperior, assaultvest, hihorsepower, rockslide, thunderpunch, protect
+.hword 806, 50, annihilape, sitrusberry, bulkup, drainpunch, ragefist, protect
+.hword 807, 50, dragonite, weaknesspolicy, dragondance, firepunch, icepunch, thunderpunch
+
+.hword 808, 50, irontreads, boosterenergy, earthquake, ironhead, knockoff, voltswitch
+.hword 809, 50, moltresgalarian, weaknesspolicy, nastyplot, airslash, roost, fierywrath
+.hword 810, 50, suicune, leftovers, calmmind, scald, icebeam, snarl
+
+.hword 811, 50, irontreads, boosterenergy, earthquake, rockslide, ironhead, voltswitch
+.hword 812, 50, moltresgalarian, weaknesspolicy, nastyplot, airslash, protect, fierywrath
+.hword 813, 50, latios, souldew, protect, icebeam, psyshock, calmmind
+.hword 814, 50, suicune, leftovers, scald, protect, snarl, tailwind
 
 
 
@@ -888,10 +910,10 @@ PokemonTableStartHardModeSpreads:
 /* golduck */ .byte serious, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
 /* golduck */ .byte modest, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
 /* golduck */ .byte adamant, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilitytwo, 0, 0, 0
-/* primeape */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
-/* primeape */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilitytwo, 0, 0, 0
-/* primeape */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilitytwo, 0, 0, 0
-/* primeape */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* annihilape */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* annihilape */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* annihilape */ .byte adamant, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* annihilape */ .byte adamant, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
 /* arcanine */ .byte adamant, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
 /* arcanine */ .byte adamant, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
 /* arcanine */ .byte serious, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
@@ -1346,42 +1368,44 @@ PokemonTableStartHardModeSpreads:
 /* perrserker */ .byte adamant, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
 /* perrserker */ .byte adamant, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
 /* perrserker */ .byte adamant, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 531 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 532 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 533 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 534 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 535 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 536 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 537 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 538 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 539 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 540 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 541 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 542 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 543 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 544 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 545 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 546 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 547 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 548 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 549 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 550 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 551 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 552 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 553 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 554 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 555 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 556 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 557 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 558 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 559 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 560 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 561 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 562 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 563 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 564 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 565 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
-/* 566 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
+
+/* tauroscombat */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* tauroscombat */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilitytwo, 0, 0, 0
+/* taurosblaze  */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* taurosblaze  */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilitytwo, 0, 0, 0
+/* taurosaqua   */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* taurosaqua   */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilitytwo, 0, 0, 0
+/* wugtrio      */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* wugtrio      */ .byte hasty, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* toedscruel   */ .byte modest, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilityone, 0, 0, 0
+/* toedscruel   */ .byte timid, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
+/* clodsire     */ .byte careful, 0, 0, 0, maxivs, 255, 0, 0, 0, 0, 255, pokeball, abilitytwo, 0, 0, 0
+/* clodsire     */ .byte adamant, 0, 0, 0, maxivs, 255, 255, 0, 0, 0, 0, pokeball, abilitytwo, 0, 0, 0
+/* dudunsparce  */ .byte adamant, 0, 0, 0, maxivs, 255, 255, 0, 0, 0, 0, pokeball, abilityone, 0, 0, 0
+/* dudunsparce  */ .byte adamant, 0, 0, 0, maxivs, 255, 255, 0, 0, 0, 0, pokeball, abilityone, 0, 0, 0
+/* dudunsparce  */ .byte modest, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilityone, 0, 0, 0
+/* dudunsparce  */ .byte sassy, 0, 0, 0, maxivs, 255, 0, 0, 0, 0, 255, pokeball, abilityone, 0, 0, 0
+/* farigiraf    */ .byte quiet, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
+/* farigiraf    */ .byte modest, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilityone, 0, 0, 0
+/* farigiraf    */ .byte quiet, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
+/* farigiraf    */ .byte quiet, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilityone, 0, 0, 0
+/* screamtail   */ .byte bold, 0, 0, 0, maxivs, 255, 0, 255, 0, 0, 0, pokeball, abilityone, 0, 0, 0
+/* screamtail   */ .byte modest, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
+/* fluttermane  */ .byte modest, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
+/* fluttermane  */ .byte modest, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
+/* sandyshocks  */ .byte timid, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
+/* sandyshocks  */ .byte modest, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
+/* greattusk    */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* greattusk    */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* irontreads   */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* irontreads   */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* ironbundle   */ .byte timid, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
+/* ironbundle   */ .byte timid, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
+/* ironthorns   */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* ironthorns   */ .byte jolly, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0
+/* walkingwake  */ .byte timid, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
+/* walkingwake  */ .byte timid, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
+
 /* 567 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
 /* 568 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
 /* 569 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
@@ -1616,6 +1640,27 @@ PokemonTableStartHardModeSpreads:
 /* 798 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
 /* 799 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
 /* 800 */ .byte 0, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilitytwo, 0, 0, 0
+
+// palmer mon spreads should be good on this too
+
+/* slowking */ .byte modest, 0, 0, 0, maxivs, 248, 0, 92, 0, 168, 0, pokeball, abilitytwo, 0, 0, 0
+/* rhyperior */ .byte adamant, 0, 0, 0, maxivs, 4, 252, 0, 252, 0, 0, pokeball, abilitytwo, 0, 0, 0
+/* dragonite */ .byte jolly, 0, 0, 0, maxivs, 4, 252, 0, 252, 0, 0, pokeball, abilitytwo, 0, 0, 0
+
+/* slowking */ .byte quiet, 0, 0, 0, maxivs, 212, 0, 0, 0, 252, 44, pokeball, abilitytwo, 0, 0, 0
+/* rhyperior */ .byte adamant, 0, 0, 0, maxivs, 252, 16, 0, 0, 0, 240, pokeball, abilityone, 0, 0, 0
+/* annihilape */ .byte adamant, 0, 0, 0, maxivs, 252, 196, 12, 20, 0, 28, pokeball, abilityone, 0, 0, 0
+/* dragonite */ .byte jolly, 0, 0, 0, maxivs, 0, 252, 0, 252, 0, 4, pokeball, abilitytwo, 0, 0, 0
+
+/* irontreads */ .byte jolly, 0, 0, 0, maxivs, 0, 252, 0, 252, 0, 4, pokeball, abilityone, 0, 0, 0
+/* galarianmoltres */ .byte timid, 0, 0, 0, maxivs, 0, 0, 0, 252, 252, 4, pokeball, abilityone, 0, 0, 0
+/* suicune */ .byte calm, 0, 0, 0, maxivs, 252, 0, 40, 0, 0, 216, pokeball, abilityone, 0, 0, 0
+
+/* irontreads */ .byte jolly, 0, 0, 0, maxivs, 0, 252, 0, 252, 0, 4, pokeball, abilityone, 0, 0, 0
+/* galarianmoltres */ .byte timid, 0, 0, 0, maxivs, 0, 0, 0, 252, 252, 4, pokeball, abilityone, 0, 0, 0
+/* latios */ .byte timid, 0, 0, 0, maxivs, 0, 0, 4, 252, 252, 0, pokeball, abilityone, 0, 0, 0
+/* suicune */ .byte bold, 0, 0, 0, maxivs, 252, 0, 40, 56, 52, 108, pokeball, abilityone, 0, 0, 0
+
 
 .thumb
 .thumb_func
