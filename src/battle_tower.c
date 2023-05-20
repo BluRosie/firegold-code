@@ -908,6 +908,8 @@ void CreateBattleTowerTrainerParty()
     }
     
     TowerData.party = TowerPokemonParty;
+    
+    u32 baseIndex;
 
     if (classIndex == 31) // palmer
     {
