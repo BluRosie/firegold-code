@@ -864,6 +864,7 @@ extern u8 NamesStart[][5][12]; // indexed by classIndex
 void CreateBattleTowerTrainerParty()
 {
     int i;
+    u8 palmerOrder[4] = {0,0,0,0};
     
     // step 1 - create trainer entry in RAM
     
@@ -915,6 +916,7 @@ void CreateBattleTowerTrainerParty()
     if (classIndex == 31) // palmer
     {
         u32 roundTwo = 0;
+        u32 maxRange = (TowerData.doubleBattle != 0 ? 4 : 3);
         
         if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_DOUBLE_EASY && VarGet(0x43ce) > 40) // streak over 35 means round two, doesn't appear until 70 though
             roundTwo = 1;
@@ -943,6 +945,31 @@ void CreateBattleTowerTrainerParty()
                 baseIndex = 10+800;
             }
         }
+        
+        
+        for (i = 0; i < maxRange; i++)
+        {
+            int j;
+            u32 foundSlot = 0;
+            u8 newNum;
+            while (foundSlot == 0)
+            {
+                foundSlot = 0;
+                newNum = Random() % maxRange;
+                for (j = 0; j < i; j++)
+                {
+                    if (palmerOrder[j] == newNum)
+                    {
+                        break;
+                    }
+                }
+                if (j == i)
+                {
+                    palmerOrder[i] = newNum;
+                    foundSlot = 1;
+                }
+            }
+        }
     }
     
     // step 2 - create party in RAM
@@ -952,7 +979,7 @@ void CreateBattleTowerTrainerParty()
         
         if (classIndex == 31) // palmer
         {
-            TowerPokemonParty[i] = PokemonTableStartHardMode[baseIndex + i]; // palmer specific mons are >800
+            TowerPokemonParty[i] = PokemonTableStartHardMode[baseIndex + palmerOrder[i]]; // palmer specific mons are >800
         }
         else if (easyMode)
         {
