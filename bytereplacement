@@ -7,9 +7,12 @@
 # disable dma
 0804C064 00 21
 
-# hook from battle script
+# hook from battle script to force set
 081D8727 28
 
 # fix setpartytolevel50 in the rom already
 09D4031C 00
 09D4038C A0 86 01 00 70 CA 01 00 48 E8 01 00 A4 2C 02 00 5A 62 02 00
+
+# hook from battle script to skip printing prize money
+081D8868 28

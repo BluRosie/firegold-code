@@ -42,3 +42,5 @@ DisableExp 08021CFA 1
 DisablePrizeMoney1 080259E8 0
 DisablePrizeMoney2 08054BE0 0
 DisablePrizeMoney3 08032B44 0
+
+RunFromBattleForTrainers 080146C4 0

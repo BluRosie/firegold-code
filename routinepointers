@@ -1,2 +1,5 @@
 ##example
 #TagTeamExecutionCompleteHook 802E384
+
+ContinueScriptOverWhiteout 080800EC
+ContinueScriptOverWhiteout 080800F0

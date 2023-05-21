@@ -101,10 +101,10 @@ skipDisablePrize2:
 
 .global DisablePrizeMoney3
 DisablePrizeMoney3:
-    ldr r0, =(0x83fb432)
+    ldr r0, =(0x083fb432) // win
     cmp r2, r0
     beq checkflag3
-    ldr r0, =(0x83fb4f6)
+    ldr r0, =(0x083fb4be) // whited out
     cmp r2, r0
     beq checkflag3
     b noskip3
@@ -125,6 +125,59 @@ noskip3:
 skipDisablePrize3:
     ldr r0, =(0x8032B4C +1)
     bx r0
+
+.pool
+
+
+
+.global ContinueScriptOverWhiteout
+ContinueScriptOverWhiteout:
+push {r0,r2}
+ldr r0, =Flag
+ldr r2, =0x0806E6D1
+bl bx_r2
+cmp r0, #0x1
+beq sub_flag_on
+pop {r0,r2}
+mov r0, #0x1 @Original response
+pop {r1}
+bx r1
+
+sub_flag_on:
+pop {r0, r2}
+mov r0, #0x0 @Hacked response
+pop {r1}
+bx r1
+
+.pool
+
+.align 2
+
+
+.global RunFromBattleForTrainers
+RunFromBattleForTrainers:
+push {r1-r3}
+
+ldr r0, =Flag
+ldr r2, =0x0806E6D1
+bl bx_r2
+
+pop {r1-r3}
+
+cmp r0, #1
+beq JumpBackToWildBattle
+
+ldrb r0, [r1]
+cmp r0, #3
+bne JumpBackToWildBattle
+
+ldr r0, =0x081d8924 // BS_PrintCantRunFromTrainer
+ldr r1, =0x080146CC | 1
+bx r1
+
+JumpBackToWildBattle:
+ldr r0, =0x080146EC|1
+bx r0
 
 .pool
 
