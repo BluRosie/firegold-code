@@ -3,3 +3,6 @@
 
 gText_FourPkmnAreNeeded 0845A354
 sDescriptionStringTable 08121CE0
+
+# this is funny and cursed but works
+gForceSetInBattleScripts 081D8728

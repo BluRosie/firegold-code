@@ -3,6 +3,7 @@
 import os
 import shutil
 import sys
+import subprocess
 
 ############
 # Options go here.
@@ -95,6 +96,18 @@ def ClearFromTo(rom, from_: int, to_: int):
     for i in range(0, to_ - from_):
         rom.write(b'\xFF')
 
+
+def RunCommand(cmd: [str]):
+    """Runs the command line command."""
+    try:
+        subprocess.check_output(cmd)
+    except subprocess.CalledProcessError as e:
+        try:
+            print(e.output.decode(), file=sys.stderr)
+        except:
+            print(e)
+        sys.exit(1)
+
 ##############
 # Functions end here.
 ##############
@@ -116,6 +129,11 @@ def main():
     except FileNotFoundError:
         print('Error: Could not find source rom: "' + ROM_NAME + '".\n'
               + 'Please make sure a rom with this name exists in the root.')
+
+    print('Disabling bag.')
+
+    cmd = ['armips', 'armips/disable_bag.s']
+    RunCommand(cmd)
 
 
 if __name__ == '__main__':
