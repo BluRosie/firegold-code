@@ -119,46 +119,47 @@ u8 CheckBattleEntriesAndGetMessage(void)
 {
     u8 i, j;
     struct Pokemon *party = gPlayerParty;
-    u8 *order = gSelectedOrderFromParty;
+    //u8 *order = gSelectedOrderFromParty;
     u32 limit = 0;
     
     switch (gPartyMenu.chooseMonsBattleType)
     {
+    default:
     case CHOOSE_MONS_FOR_BATTLE_TOWER:
         if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_MULTI_EASY)
         {
-            if (order[1] == 0)
+            if (gSelectedOrderFromParty[1] == 0)
                 return PARTY_MSG_TWO_MONS_ARE_NEEDED;
             limit = 2;
         }
         else if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_DOUBLE_EASY)
         {
-            if (order[3] == 0)
+            if (gSelectedOrderFromParty[3] == 0)
                 return PARTY_MSG_FOUR_MONS_ARE_NEEDED;
             limit = 4;
         }
         else
         {
-            if (order[2] == 0)
+            if (gSelectedOrderFromParty[2] == 0)
                 return PARTY_MSG_THREE_MONS_ARE_NEEDED;
             limit = 3;
         }
 
         for (i = 0; i < limit; ++i)
         {
-            sPartyMenuInternal->data[15] = GetMonData(&party[order[i] - 1], MON_DATA_SPECIES);
-            sPartyMenuInternal->data[14] = GetMonData(&party[order[i] - 1], MON_DATA_HELD_ITEM);
+            sPartyMenuInternal->data[15] = GetMonData(&party[gSelectedOrderFromParty[i] - 1], MON_DATA_SPECIES);
+            sPartyMenuInternal->data[14] = GetMonData(&party[gSelectedOrderFromParty[i] - 1], MON_DATA_HELD_ITEM);
             for (j = i + 1; j < limit; ++j)
             {
-                if (sPartyMenuInternal->data[15] == GetMonData(&party[order[j] - 1], MON_DATA_SPECIES))
+                if (sPartyMenuInternal->data[15] == GetMonData(&party[gSelectedOrderFromParty[j] - 1], MON_DATA_SPECIES))
                     return PARTY_MSG_MONS_CANT_BE_SAME;
-                if (sPartyMenuInternal->data[14] != 0 && sPartyMenuInternal->data[14] == GetMonData(&party[order[j] - 1], MON_DATA_HELD_ITEM))
+                if (sPartyMenuInternal->data[14] != 0 && sPartyMenuInternal->data[14] == GetMonData(&party[gSelectedOrderFromParty[j] - 1], MON_DATA_HELD_ITEM))
                     return PARTY_MSG_NO_SAME_HOLD_ITEMS;
             }
         }
         break;
     case CHOOSE_MONS_FOR_UNION_ROOM_BATTLE:
-        if (order[1] == 0)
+        if (gSelectedOrderFromParty[1] == 0)
             return PARTY_MSG_TWO_MONS_ARE_NEEDED;
         break;
     }
