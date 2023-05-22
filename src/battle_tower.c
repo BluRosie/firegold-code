@@ -398,7 +398,7 @@ void CursorCB_Enter(u8 taskId)
                 if (i == (maxBattlers - 1))
                     MoveCursorToConfirm();
                 
-                for (int j = 0; j < 6; j++)
+                for (int j = 0; j < gPlayerPartyCount; j++)
                 {
                     if (MonNotAlreadySelected(j))
                     {
