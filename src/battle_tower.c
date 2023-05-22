@@ -1135,9 +1135,9 @@ void CreateBattleTowerTrainerParty()
         u32 roundTwo = 0;
         u32 maxRange = (TowerData.doubleBattle != 0 ? 4 : 3);
         
-        if (VarGet(VAR_BATTLE_TOWER_TYPE) >= BATTLE_TOWER_TYPE_DOUBLE_EASY && VarGet(0x43ce) > 40) // streak over 35 means round two, doesn't appear until 70 though
+        if (VarGet(VAR_BATTLE_TOWER_TYPE) == BATTLE_TOWER_TYPE_SINGLE_HARD && VarGet(0x43ce) > 40) // streak over 35 means round two, doesn't appear until 70 though
             roundTwo = 1;
-        else if (VarGet(VAR_BATTLE_TOWER_TYPE) < BATTLE_TOWER_TYPE_DOUBLE_EASY && VarGet(0x43d2) > 40)
+        else if (VarGet(VAR_BATTLE_TOWER_TYPE) == BATTLE_TOWER_TYPE_DOUBLE_HARD && VarGet(0x43d2) > 40)
             roundTwo = 1;
         
         if (!roundTwo)
