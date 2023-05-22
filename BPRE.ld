@@ -1901,8 +1901,8 @@ ConvertEasyChatWordsToString = 0x080bd89c | 1;
 ShowFieldAutoScrollMessage = 0x08069464 | 1;
 
 
-TowerData = 0x0203b0E0;
-TowerPokemonParty = 0x0203b110;
+TowerData = 0x0203FEC0;
+TowerPokemonParty = 0x0203FE80;
 
 CommitWindow = 0x080cdcb4|1;
 PrintTotalRecord = 0x080cd9f4 | 1;

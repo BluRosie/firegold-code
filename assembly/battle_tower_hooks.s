@@ -5,7 +5,7 @@
 
 .equ BattleType,        0x02022B4C
 .equ TrainerBuffer,     0x020386AE
-.equ TrainerData,       0x0203b0E0
+.equ TrainerData,       0x0203FEC0
 .equ TrainerTable,      0x0823EAC8
 
 
