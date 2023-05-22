@@ -13,3 +13,29 @@ No two POK\eMON can\nhold the same item.[PAUSE_UNTIL_PRESS]
 #org @gText_TwoMembersOfTheSameSpecies
 No two POK\eMON can\nbe the same species.[PAUSE_UNTIL_PRESS]
 
+#org @gText_BattleTowerStreaks
+[PLAYER]'s Battle Tower Records[END]
+
+#org @gText_BattlePointsColon
+Battle Points: 
+
+#org @gText_CurrentRecord
+Current[ALIGN][38]Record
+
+#org @gText_SingleSimple
+Single (Simple)
+
+#org @gText_SingleChallenge
+Single (Chal.)
+
+#org @gText_DoubleSimple
+Double (Simple)
+
+#org @gText_DoubleChallenge
+Double (Chal.)
+
+#org @gText_BP
+BP
+
+#org @gText_BattlePoints
+Battle Pts.

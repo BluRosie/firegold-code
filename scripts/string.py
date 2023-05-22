@@ -105,6 +105,8 @@ SpecialBuffers = {
     "Br_Z": ["39"],
     "Br_SPACE": ["00"],
     "Br_NEWLINE": ["FE"],
+    
+    "END": ["FF"],
 }
 
 

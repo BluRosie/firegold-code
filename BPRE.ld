@@ -865,7 +865,7 @@ IsEnoughMoney = 0x809FD88 | 1;
 AddMoney = 0x809FDA0 | 1;
 GetMoney = 0x809FD58 | 1;
 RemoveMoney = 0x809FDD8 | 1;
-PrintMoneyAmountInMoneyBox = 0x809FE40 | 1;
+//PrintMoneyAmountInMoneyBox = 0x809FE40 | 1;
 
 /* PokeMart Functions */
 Task_ShopMenu = 0x809AC10 | 1;
@@ -1903,3 +1903,7 @@ ShowFieldAutoScrollMessage = 0x08069464 | 1;
 
 TowerData = 0x0203b0E0;
 TowerPokemonParty = 0x0203b110;
+
+CommitWindow = 0x080cdcb4|1;
+PrintTotalRecord = 0x080cd9f4 | 1;
+PrintOpponentBattleRecord = 0x080cdad0 | 1;

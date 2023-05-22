@@ -115,7 +115,8 @@ struct SaveBlock1
     /*0x0032*/ //u16 mapLayoutId;
     /*0x0034*/ //u8 playerPartyCount;
     /*0x0038*/ //struct Pokemon playerParty[PARTY_SIZE];
-    /*0x0290*/ //u32 money;
+               u8 padding_4[0x290-0xC];
+    /*0x0290*/ u32 money;
     /*0x0294*/ //u16 coins;
     /*0x0296*/ //u16 registeredItem; // registered for use with SELECT button
     /*0x0298*/ //struct ItemSlot pcItems[PC_ITEMS_COUNT];
@@ -130,7 +131,7 @@ struct SaveBlock1
     /*0x0638*/ //u16 trainerRematchStepCounter;
     /*0x063A*/ //u8 ALIGNED(2) trainerRematches[MAX_REMATCH_ENTRIES];
     /*0x06A0*/ //struct ObjectEvent objectEvents[OBJECT_EVENTS_COUNT];
-               u8 padding[0x8E0-4-8]; // padding to get object event templates where they need to be
+               u8 padding[0x8E0-0x294]; // padding to get object event templates where they need to be
     /*0x08E0*/ struct ObjectEventTemplate objectEventTemplates[16];
     /*0x0EE0*/ //u8 flags[NUM_FLAG_BYTES];
     /*0x1000*/ //u16 vars[VARS_COUNT];
@@ -167,6 +168,21 @@ struct SaveBlock1
     /*0x3D38*/ //struct TrainerTower trainerTower[NUM_TOWER_CHALLENGE_TYPES];
 }; // size: 0x3D68
 
+struct LinkBattleRecord
+{
+    u8 name[8];
+    u16 trainerId;
+    u16 wins;
+    u16 losses;
+    u16 draws;
+};
+
+struct LinkBattleRecords
+{
+    struct LinkBattleRecord entries[5];
+    u8 languages[5];
+};
+
 struct SaveBlock2
 {
     /*0x000*/ u8 playerName[7 + 1];
@@ -184,6 +200,9 @@ struct SaveBlock2
               u16 optionsBattleStyle:1; // OPTIONS_BATTLE_STYLE_[SHIFT/SET]
               u16 optionsBattleSceneOff:1; // whether battle animations are disabled
               u16 regionMapZoom:1; // whether the map is zoomed in
+              u8 padding_x16[2];
+              u8 padding_x18[0xA98 - 0x18];
+
 //    /*0x018*/ struct Pokedex pokedex;
 //    /*0x090*/ u8 filler_90[0x8+8+8];
 //    /*0x098*/ //struct Time localTimeOffset;
@@ -193,7 +212,7 @@ struct SaveBlock2
 //    /*0x0AD*/ bool8 unkFlag2; // Set FALSE, never read
 //    /*0x0B0*/ struct BattleTowerData battleTower;
 //    /*0x898*/ u16 mapView[0x100];
-//    /*0xA98*/ struct LinkBattleRecords linkBattleRecords;
+    /*0xA98*/ struct LinkBattleRecords linkBattleRecords;
 //    /*0xAF0*/ struct BerryCrush berryCrush;
 //    /*0xB00*/ struct PokemonJumpRecords pokeJump;
 //    /*0xB10*/ struct BerryPickingResults berryPick;

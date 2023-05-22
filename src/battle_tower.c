@@ -8,6 +8,8 @@
 #include "../include/pokemon.h"
 #include "../include/save.h"
 #include "../include/sound.h"
+#include "../include/string_util.h"
+#include "../include/window.h"
 
 
 u32 IsMonInSlotInvalid(u8 slot);
@@ -666,6 +668,222 @@ u32 IsMonInSlotInvalid(u8 slot)
     return 0;
 }
 
+
+
+u32 AreTwoTargetSpeciesIncompatible(u32 slotSpecies, u32 targetSpecies)
+{
+    switch (slotSpecies)
+    {
+        // mythical mons
+        case SPECIES_MEWTWO:
+        case SPECIES_MEW:
+        case SPECIES_LUGIA:
+        case SPECIES_HOOH:
+        case SPECIES_CELEBI:
+        case SPECIES_MELTAN:
+        case SPECIES_MELMETAL:
+            return 1;
+
+        // form handling
+        case SPECIES_RATTATA:
+        case SPECIES_RATTATAALOLAN:
+            if (targetSpecies == SPECIES_RATICATE || targetSpecies == SPECIES_RATICATEALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_RATICATE:
+        case SPECIES_RATICATEALOLAN:
+            if (targetSpecies == SPECIES_RATICATE || targetSpecies == SPECIES_RATICATEALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_RAICHU:
+        case SPECIES_RAICHUALOLAN:
+            if (targetSpecies == SPECIES_RAICHU || targetSpecies == SPECIES_RAICHUALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_SANDSHREW:
+        case SPECIES_SANDSHREWALOLAN:
+            if (targetSpecies == SPECIES_SANDSHREW || targetSpecies == SPECIES_SANDSHREWALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_SANDSLASH:
+        case SPECIES_SANDSLASHALOLAN:
+            if (targetSpecies == SPECIES_SANDSLASH || targetSpecies == SPECIES_SANDSLASHALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_VULPIX:
+        case SPECIES_VULPIXALOLAN:
+            if (targetSpecies == SPECIES_VULPIX || targetSpecies == SPECIES_VULPIXALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_NINETALES:
+        case SPECIES_NINETALESALOLAN:
+            if (targetSpecies == SPECIES_NINETALES || targetSpecies == SPECIES_NINETALESALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_DIGLETT:
+        case SPECIES_DIGLETTALOLAN:
+            if (targetSpecies == SPECIES_DIGLETT || targetSpecies == SPECIES_DIGLETTALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_DUGTRIO:
+        case SPECIES_DUGTRIOALOLAN:
+            if (targetSpecies == SPECIES_DUGTRIO || targetSpecies == SPECIES_DUGTRIOALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_MEOWTH:
+        case SPECIES_MEOWTHALOLAN:
+        case SPECIES_MEOWTHGALARIAN:
+            if (targetSpecies == SPECIES_MEOWTH || targetSpecies == SPECIES_MEOWTHALOLAN || targetSpecies == SPECIES_MEOWTHGALARIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_PERSIAN:
+        case SPECIES_PERSIANALOLAN:
+            if (targetSpecies == SPECIES_PERSIAN || targetSpecies == SPECIES_PERSIANALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_GEODUDE:
+        case SPECIES_GEODUDEALOLAN:
+            if (targetSpecies == SPECIES_GEODUDE || targetSpecies == SPECIES_GEODUDEALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_GRAVELER:
+        case SPECIES_GRAVELERALOLAN:
+            if (targetSpecies == SPECIES_GRAVELER || targetSpecies == SPECIES_GRAVELERALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_GOLEM:
+        case SPECIES_GOLEMALOLAN:
+            if (targetSpecies == SPECIES_GOLEM || targetSpecies == SPECIES_GOLEMALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_GRIMER:
+        case SPECIES_GRIMERALOLAN:
+            if (targetSpecies == SPECIES_GRIMER || targetSpecies == SPECIES_GRIMERALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_MUK:
+        case SPECIES_MUKALOLAN:
+            if (targetSpecies == SPECIES_MUK || targetSpecies == SPECIES_MUKALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_EXEGGUTOR:
+        case SPECIES_EXEGGUTORALOLAN:
+            if (targetSpecies == SPECIES_EXEGGUTOR || targetSpecies == SPECIES_EXEGGUTORALOLAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_PONYTA:
+        case SPECIES_PONYTAGALARIAN:
+            if (targetSpecies == SPECIES_PONYTA || targetSpecies == SPECIES_PONYTAGALARIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_RAPIDASH:
+        case SPECIES_RAPIDASHGALARIAN:
+            if (targetSpecies == SPECIES_RAPIDASH || targetSpecies == SPECIES_RAPIDASHGALARIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_FARFETCHD:
+        case SPECIES_FARFETCHDGALARIAN:
+            if (targetSpecies == SPECIES_FARFETCHD || targetSpecies == SPECIES_FARFETCHDGALARIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_WEEZING:
+        case SPECIES_WEEZINGGALARIAN:
+            if (targetSpecies == SPECIES_WEEZING || targetSpecies == SPECIES_WEEZINGGALARIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_MRMIME:
+        case SPECIES_MRMIMEGALARIAN:
+            if (targetSpecies == SPECIES_MRMIME || targetSpecies == SPECIES_MRMIMEGALARIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_CORSOLA:
+        case SPECIES_CORSOLAGALARIAN:
+            if (targetSpecies == SPECIES_CORSOLA || targetSpecies == SPECIES_CORSOLAGALARIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_SLOWPOKE:
+        case SPECIES_SLOWPOKEGALARIAN:
+            if (targetSpecies == SPECIES_SLOWPOKE || targetSpecies == SPECIES_SLOWPOKEGALARIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_SLOWBRO:
+        case SPECIES_SLOWBROGALARIAN:
+            if (targetSpecies == SPECIES_SLOWBRO || targetSpecies == SPECIES_SLOWBROGALARIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_SLOWKING:
+        case SPECIES_SLOWKINGGALARIAN:
+            if (targetSpecies == SPECIES_SLOWKING || targetSpecies == SPECIES_SLOWKINGGALARIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_ARTICUNO:
+        case SPECIES_ARTICUNOGALARIAN:
+            if (targetSpecies == SPECIES_ARTICUNO || targetSpecies == SPECIES_ARTICUNOGALARIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_ZAPDOS:
+        case SPECIES_ZAPDOSGALARIAN:
+            if (targetSpecies == SPECIES_ZAPDOS || targetSpecies == SPECIES_ZAPDOSGALARIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_GROWLITHE:
+        case SPECIES_GROWLITHEHISUIAN:
+            if (targetSpecies == SPECIES_GROWLITHE || targetSpecies == SPECIES_GROWLITHEHISUIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_ARCANINE:
+        case SPECIES_ARCANINEHISUIAN:
+            if (targetSpecies == SPECIES_ARCANINE || targetSpecies == SPECIES_ARCANINEHISUIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_VOLTORB:
+        case SPECIES_VOLTORBHISUIAN:
+            if (targetSpecies == SPECIES_VOLTORB || targetSpecies == SPECIES_VOLTORBHISUIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_ELECTRODE:
+        case SPECIES_ELECTRODEHISUIAN:
+            if (targetSpecies == SPECIES_ELECTRODE || targetSpecies == SPECIES_ELECTRODEHISUIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_TYPHLOSION:
+        case SPECIES_TYPHLOSIONHISUIAN:
+            if (targetSpecies == SPECIES_TYPHLOSION || targetSpecies == SPECIES_TYPHLOSIONHISUIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_QWILFISH:
+        case SPECIES_QWILFISHHISUIAN:
+            if (targetSpecies == SPECIES_QWILFISH || targetSpecies == SPECIES_QWILFISHHISUIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_SNEASEL:
+        case SPECIES_SNEASELHISUIAN:
+            if (targetSpecies == SPECIES_SNEASEL || targetSpecies == SPECIES_SNEASELHISUIAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_WOOPER:
+        case SPECIES_WOOPERPALDEAN:
+            if (targetSpecies == SPECIES_WOOPER || targetSpecies == SPECIES_WOOPERPALDEAN)
+                return 1; // invalid selection
+            break;
+        case SPECIES_TAUROS:
+        case SPECIES_TAUROSPALDEAN1:
+        case SPECIES_TAUROSPALDEAN2:
+        case SPECIES_TAUROSPALDEAN3:
+            if (targetSpecies == SPECIES_TAUROS || targetSpecies == SPECIES_TAUROSPALDEAN1 || targetSpecies == SPECIES_TAUROSPALDEAN2 || targetSpecies == SPECIES_TAUROSPALDEAN3)
+                return 1; // invalid selection
+            break;
+        default:
+            if (targetSpecies == slotSpecies)
+                return 1; // invalid selection
+            break;
+    }
+    
+    return 0;
+}
+
+
+
 u32 MonNotAlreadySelected(u8 slot)
 {
     int i;
@@ -719,7 +937,6 @@ void DisplayPartyPokemonDataForChooseMultiple(u8 slot)
 
 
 #define gSpecialVar_0x8004 (*(u16 *)0x020370c0)
-#define gStringVar4 ((u8 *)0x02021d18)
 #define gStringVarDefeatText ((u8 *)0x0203FF40)
 #define NUM_EC_SPEECHES 10
 
@@ -983,13 +1200,191 @@ void CreateBattleTowerTrainerParty()
         }
         else if (easyMode)
         {
-            u32 randIndex = Random() % NUM_OF_EASY_MODE_SPREADS;
+            u32 randIndex;
+            _reChooseEasyIndex:
+            randIndex = Random() % NUM_OF_EASY_MODE_SPREADS;
             TowerPokemonParty[i] = PokemonTableStartEasyMode[randIndex];
+            
+            for (int j = 0; j < i; j++) // make sure that no two species are the same
+            {
+                if (AreTwoTargetSpeciesIncompatible(TowerPokemonParty[j].species, TowerPokemonParty[i].species)
+                 || TowerPokemonParty[j].item == TowerPokemonParty[i].item)
+                {
+                    goto _reChooseEasyIndex;
+                }
+            }
         }
         else
         {
-            u32 randIndex = Random() % NUM_OF_HARD_MODE_SPREADS;
+            u32 randIndex;
+            _reChooseHardIndex:
+            randIndex = Random() % NUM_OF_HARD_MODE_SPREADS;
             TowerPokemonParty[i] = PokemonTableStartHardMode[randIndex];
+            
+            for (int j = 0; j < i; j++) // make sure that no two species are the same
+            {
+                if (AreTwoTargetSpeciesIncompatible(TowerPokemonParty[j].species, TowerPokemonParty[i].species)
+                 || TowerPokemonParty[j].item == TowerPokemonParty[i].item)
+                {
+                    goto _reChooseHardIndex;
+                }
+            }
         }
     }
+}
+
+
+extern u8 gText_BattleTowerStreaks[];
+extern u8 gText_BattlePointsColon[];
+extern u8 gText_CurrentRecord[];
+extern u8 gText_SingleSimple[];
+extern u8 gText_SingleChallenge[];
+extern u8 gText_DoubleSimple[];
+extern u8 gText_DoubleChallenge[];
+extern u8 gText_BattlePoints[];
+extern u8 gText_BP[];
+
+
+void PrintBattleRecords(void)
+{
+    u32 left;
+    s32 i;
+
+    FillWindowPixelRect(0, /*PIXEL_FILL(0)*/0, 0, 0, 0xD8, 0x90);
+    
+    if (FlagGet(0x2322) != 0)
+    {
+        u8 buf[4];
+        u32 gString4Pos;
+
+        // print "Battle Tower Streaks"
+        StringExpandPlaceholders(gStringVar4, gText_BattleTowerStreaks);
+        left = 0xD0 - GetStringWidth(FONT_NORMAL, gStringVar4, -1);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, left / 2, 4, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+        
+        // print "Battle Points: NNNNN"
+        StringExpandPlaceholders(gStringVar4, gText_BattlePointsColon);
+        gString4Pos = 15;
+        ConvertIntToDecimalStringN(&gStringVar4[gString4Pos], VarGet(0x43df), 0, 5); // battle points
+        left = 0xD0 - GetStringWidth(FONT_NORMAL, gStringVar4, -1);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, left / 2, 20, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+        
+#define BASE_RECORDS_Y 50
+        // print "Current     Record"
+        StringExpandPlaceholders(gStringVar4, gText_CurrentRecord);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, 0x68, BASE_RECORDS_Y, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+
+        // print "Single (Simple) and friends"
+        StringExpandPlaceholders(gStringVar4, gText_SingleSimple);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, 0, BASE_RECORDS_Y+16, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+        StringExpandPlaceholders(gStringVar4, gText_SingleChallenge);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, 0, BASE_RECORDS_Y+2*16, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+        StringExpandPlaceholders(gStringVar4, gText_DoubleSimple);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, 0, BASE_RECORDS_Y+3*16, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+        StringExpandPlaceholders(gStringVar4, gText_DoubleChallenge);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, 0, BASE_RECORDS_Y+4*16, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+        
+        // print Numbers for streaks
+        StringExpandPlaceholders(gStringVar4, gText_BattlePointsColon);
+        gString4Pos = 0;
+        ConvertIntToDecimalStringN(&gStringVar4[gString4Pos], VarGet(0x43cc), 1, 5); // single simple current
+        left = 0x8E - GetStringWidth(FONT_NORMAL, gStringVar4, -1);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, left, BASE_RECORDS_Y+16, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+
+        gString4Pos = 0;
+        ConvertIntToDecimalStringN(&gStringVar4[gString4Pos], VarGet(0x43cd), 1, 5); // single simple record
+        left = 0x8E + 0x35 - GetStringWidth(FONT_NORMAL, gStringVar4, -1);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, left, BASE_RECORDS_Y+16, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+
+        gString4Pos = 0;
+        ConvertIntToDecimalStringN(&gStringVar4[gString4Pos], VarGet(0x43ce), 1, 5); // single challenge current
+        left = 0x8E - GetStringWidth(FONT_NORMAL, gStringVar4, -1);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, left, BASE_RECORDS_Y+2*16, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+
+        gString4Pos = 0;
+        ConvertIntToDecimalStringN(&gStringVar4[gString4Pos], VarGet(0x43cf), 1, 5); // single challenge record
+        left = 0x8E + 0x35 - GetStringWidth(FONT_NORMAL, gStringVar4, -1);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, left, BASE_RECORDS_Y+2*16, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+
+        gString4Pos = 0;
+        ConvertIntToDecimalStringN(&gStringVar4[gString4Pos], VarGet(0x43d0), 1, 5); // double simple current
+        left = 0x8E - GetStringWidth(FONT_NORMAL, gStringVar4, -1);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, left, BASE_RECORDS_Y+3*16, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+
+        gString4Pos = 0;
+        ConvertIntToDecimalStringN(&gStringVar4[gString4Pos], VarGet(0x43d1), 1, 5); // double simple record
+        left = 0x8E + 0x35 - GetStringWidth(FONT_NORMAL, gStringVar4, -1);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, left, BASE_RECORDS_Y+3*16, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+
+        gString4Pos = 0;
+        ConvertIntToDecimalStringN(&gStringVar4[gString4Pos], VarGet(0x43d2), 1, 5); // double challenge current
+        left = 0x8E - GetStringWidth(FONT_NORMAL, gStringVar4, -1);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, left, BASE_RECORDS_Y+4*16, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+
+        gString4Pos = 0;
+        ConvertIntToDecimalStringN(&gStringVar4[gString4Pos], VarGet(0x43d3), 1, 5); // double challenge record
+        left = 0x8E + 0x35 - GetStringWidth(FONT_NORMAL, gStringVar4, -1);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, left, BASE_RECORDS_Y+4*16, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+    }
+    else
+    {
+        StringExpandPlaceholders(gStringVar4, (void*)0x08418174);
+        left = 0xD0 - GetStringWidth(FONT_NORMAL, gStringVar4, -1);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, left / 2, 4, 0, 2, (void*)0x081a7C4d, 0, gStringVar4);
+        PrintTotalRecord(&gSaveBlock2->linkBattleRecords);
+        AddTextPrinterParameterized4(0, FONT_NORMAL, 0x54, 0x30, 0, 2, (void*)0x081a7C4d, 0, (void*)0x084181a4);
+        for (i = 0; i < 5; i++)
+            PrintOpponentBattleRecord(&gSaveBlock2->linkBattleRecords.entries[i], 0x3D + 14 * i);
+    }
+    CommitWindow(0);
+}
+
+
+// BP windows should just be handleable by this
+void PrintMoneyAmountInMoneyBox(u8 windowId, int amount, u8 speed)
+{
+    u8 *txtPtr;
+    s32 strLength;
+
+    if (FlagGet(0x2322))
+        amount = VarGet(0x43df);
+    
+    ConvertIntToDecimalStringN(gStringVar1, amount, 1, 6);
+    strLength = 6 - StringLength(gStringVar1);
+
+    if (FlagGet(0x2322))
+    {
+        //StringExpandPlaceholders(&gStringVar4[strLength+1], gText_BP);
+        //gStringVar4[strLength] = 0xBC;
+        //gStringVar4[strLength+1] = 0xCA;
+        AddTextPrinterParameterized(windowId, FONT_SMALL, gStringVar1, 64 - GetStringWidth(FONT_SMALL, gStringVar1, 0), 0xC, speed, NULL);
+    }
+    else
+    {
+        txtPtr = gStringVar4;
+
+        while (strLength-- != 0)
+            *(txtPtr++) = 0;
+
+        StringExpandPlaceholders(txtPtr, 0x0841697a);
+        AddTextPrinterParameterized(windowId, FONT_SMALL, gStringVar4, 64 - GetStringWidth(FONT_SMALL, gStringVar4, 0), 0xC, speed, NULL);
+    }
+}
+
+void PrintMoneyAmountInMoneyBoxWithBorder(u8 windowId, u16 tileStart, u8 pallete)
+{
+    u32 amount;
+    
+    DrawStdFrameWithCustomTileAndPalette(windowId, FALSE, tileStart, pallete);
+    if (FlagGet(0x2322))
+    {
+        amount = VarGet(0x43df);
+        AddTextPrinterParameterized(windowId, FONT_NORMAL, gText_BattlePoints, 0, 0, 0xFF, 0);
+    }
+    else
+    {
+        amount = GetMoney(&gSaveBlock1->money);
+        AddTextPrinterParameterized(windowId, FONT_NORMAL, 0x08419ce7, 0, 0, 0xFF, 0);
+    }
+    PrintMoneyAmountInMoneyBox(windowId, amount, 0);
 }

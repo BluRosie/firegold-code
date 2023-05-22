@@ -44,3 +44,6 @@ DisablePrizeMoney2 08054BE0 0
 DisablePrizeMoney3 08032B44 0
 
 RunFromBattleForTrainers 080146C4 0
+PrintBattleRecords 080cdbe4 0
+PrintMoneyAmountInMoneyBox 0809fe40 3
+PrintMoneyAmountInMoneyBoxWithBorder 0809ff48 3
