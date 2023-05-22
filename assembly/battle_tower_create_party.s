@@ -1383,7 +1383,7 @@
 .equ water, 0xb
 .equ grass, 0xc
 .equ electric, 0xd
-.equ psychic, 0xe
+.equ typepsychic, 0xe // conflicts with normal psychic
 .equ ice, 0xf
 .equ dragon, 0x10
 .equ dark, 0x11
