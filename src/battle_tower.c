@@ -938,40 +938,12 @@ void DisplayPartyPokemonDataForChooseMultiple(u8 slot)
 
 #define gSpecialVar_0x8004 (*(u16 *)0x020370c0)
 #define gStringVarDefeatText ((u8 *)0x0203FF40)
-#define NUM_EC_SPEECHES 10
-
-u16 EasyChatBattleTowerWin[NUM_EC_SPEECHES][6] =
-{
-    {EC_WORD_MY, EC_WORD_POKEMON, EC_WORD_DEFEATED, EC_WORD_DON_T, EC_WORD_UNDERSTAND, EC_WORD_IT},
-    {EC_WORD_WEREN_T, EC_WORD_MY, EC_WORD_POKEMON, EC_WORD_JUST, EC_WORD_THE, EC_WORD_BEST},
-    {EC_WORD_I_AM, EC_WORD_DEFEATED, EC_WORD_AS_IF, EC_WORD_BUT, EC_WORD_AN, EC_WORD_EGG},
-    {EC_WORD_YOU_RE, EC_WORD_VERY, EC_WORD_STRONG, EC_WORD_FOR, EC_WORD_A, EC_WORD_KID},
-    {EC_WORD_YOU_RE, EC_WORD_THE, EC_WORD_OPPONENT, EC_WORD_OF, EC_WORD_ALL, EC_WORD_TIME},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-};
-
-u16 EasyChatBattleTowerIntro[NUM_EC_SPEECHES][6] =
-{
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-    {EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION, EC_WORD_QUESTION},
-};
 
 
 void ShowEasyChatMessage(void)
 {
     u16 *easyChatWords;
+    u16 easyChatWordsAlt[6];
     int columns, rows;
     int dontShowMessage = 0, printToOtherArea = 0;
     switch (gSpecialVar_0x8004)
@@ -1004,14 +976,24 @@ void ShowEasyChatMessage(void)
         columns = 3;
         rows = 2;
         break;
-    case 4:
-        easyChatWords = EasyChatBattleTowerIntro[Random() % NUM_EC_SPEECHES];
+    case 4: // pre battle
+        easyChatWordsAlt[0] = ((EC_GROUP_GREETINGS << 9) | Random() % EC_NUM_OF_GREETINGS);
+        easyChatWordsAlt[1] = ((EC_GROUP_POKEMON << 9) | Random() % 252) + 1; // random mon 1-252
+        easyChatWordsAlt[2] = ((EC_GROUP_ACTIONS << 9) | Random() % EC_NUM_OF_ACTIONS);
+        easyChatWordsAlt[3] = ((EC_GROUP_BATTLE << 9) | Random() % EC_NUM_OF_BATTLE);
+        easyChatWordsAlt[4] = ((EC_GROUP_ENDINGS << 9) | Random() % EC_NUM_OF_ENDINGS);
+        easyChatWordsAlt[5] = ((EC_GROUP_STATUS << 9) | Random() % EC_NUM_OF_STATUS);
         columns = 3;
         rows = 2;
         dontShowMessage = 1;
         break;
-    case 5:
-        easyChatWords = EasyChatBattleTowerWin[Random() % NUM_EC_SPEECHES];
+    case 5: // defeat text
+        easyChatWordsAlt[0] = ((EC_GROUP_VOICES << 9) | Random() % EC_NUM_VOICES);
+        easyChatWordsAlt[1] = ((EC_GROUP_BATTLE << 9) | Random() % EC_NUM_OF_BATTLE);
+        easyChatWordsAlt[2] = ((EC_GROUP_SPEECH << 9) | Random() % EC_NUM_OF_SPEECH);
+        easyChatWordsAlt[3] = ((EC_GROUP_GREETINGS << 9) | Random() % EC_NUM_OF_GREETINGS);
+        easyChatWordsAlt[4] = ((EC_GROUP_POKEMON << 9) | Random() % 252) + 1;
+        easyChatWordsAlt[5] = ((EC_GROUP_ACTIONS << 9) | Random() % EC_NUM_OF_ACTIONS);
         columns = 3;
         rows = 2;
         dontShowMessage = 1;
@@ -1021,7 +1003,7 @@ void ShowEasyChatMessage(void)
         return;
     }
 
-    ConvertEasyChatWordsToString(printToOtherArea == 0 ? gStringVar4 : gStringVarDefeatText, easyChatWords, columns, rows);
+    ConvertEasyChatWordsToString(printToOtherArea == 0 ? gStringVar4 : gStringVarDefeatText, dontShowMessage == 1 ? &easyChatWordsAlt[0] : easyChatWords, columns, rows);
     if (!dontShowMessage)
         ShowFieldAutoScrollMessage(gStringVar4);
 }
