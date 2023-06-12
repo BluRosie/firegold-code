@@ -244,6 +244,8 @@ extern const u8 gText_Fourth_PM[];
 extern const u8 gText_NoMoreThanFourMayEnter[];
 extern const u8 gText_NoTwoPokemonHoldSameItem[];
 extern const u8 gText_TwoMembersOfTheSameSpecies[];
+extern const u8 gText_MythicalsNotAllowed[];
+extern const u8 gText_EggsCantBattle[];
 
 
 // committing absolute crimes
@@ -312,7 +314,7 @@ void CursorCB_NoEntry(u8 taskId)
         {
             if (IsMonInSlotInvalid(i))
             {
-                DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_NOT_ABLE_2, &sPartyMenuBoxes[i], DRAW_MENU_BOX_AND_TEXT);
+                DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_NOT_ABLE, &sPartyMenuBoxes[i], DRAW_MENU_BOX_AND_TEXT);
             }
             else
             {
@@ -375,7 +377,11 @@ void CursorCB_Enter(u8 taskId)
     if (result)
     {
         PlaySE(SE_FAILURE);
-        if (result == 1)
+        if (result == 3)
+            DisplayPartyMenuMessage(&gText_EggsCantBattle, 1);
+        else if (result == 2)
+            DisplayPartyMenuMessage(&gText_MythicalsNotAllowed, 1);
+        else if (result == 1)
             DisplayPartyMenuMessage(&gText_TwoMembersOfTheSameSpecies, 1);
         else
             DisplayPartyMenuMessage(&gText_NoTwoPokemonHoldSameItem, 1);
@@ -404,7 +410,7 @@ void CursorCB_Enter(u8 taskId)
                     {
                         if (IsMonInSlotInvalid(j))
                         {
-                            DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_NOT_ABLE_2, &sPartyMenuBoxes[j], DRAW_MENU_BOX_AND_TEXT);
+                            DisplayPartyPokemonDescriptionText(PARTYBOX_DESC_NOT_ABLE, &sPartyMenuBoxes[j], DRAW_MENU_BOX_AND_TEXT);
                         }
                         else
                         {
@@ -445,10 +451,14 @@ u32 IsMonInSlotInvalid(u8 slot)
     u32 ret = 0;
     u32 slotSpecies = GetMonData(&gPlayerParty[slot], MON_DATA_SPECIES);
     u32 slotItem = GetMonData(&gPlayerParty[slot], MON_DATA_HELD_ITEM);
+    u32 slotIsEgg = GetMonData(&gPlayerParty[slot], MON_DATA_IS_EGG);
+    
+    if (slotIsEgg)
+        return 3;
 
     for (int index = 0; index < 4; index++)
     {
-        if (gSelectedOrderFromParty[index] == 0) { return 0; } // no further selected mons
+        //if (gSelectedOrderFromParty[index] == 0) { return 0; } // no further selected mons
         i = gSelectedOrderFromParty[index] - 1; // slot in party of previously selected pokemon
         if (i == slot) { continue; }
         
@@ -465,7 +475,7 @@ u32 IsMonInSlotInvalid(u8 slot)
             case SPECIES_CELEBI:
             case SPECIES_MELTAN:
             case SPECIES_MELMETAL:
-                return 1;
+                return 2;
 
             // form handling
             case SPECIES_RATTATA:
@@ -907,7 +917,8 @@ void DisplayPartyPokemonDataForChooseMultiple(u8 slot)
     u8 *order = gSelectedOrderFromParty;
     u8 maxBattlers;
 
-    if (!GetBattleEntryEligibility(mon))
+    //if (!GetBattleEntryEligibility(mon))
+    if (IsMonInSlotInvalid(slot))
         DisplayPartyPokemonDescriptionData(slot, PARTYBOX_DESC_NOT_ABLE);
     else
     {

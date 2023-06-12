@@ -2,16 +2,22 @@
 Four [PKMN] are needed.
 
 #org @gText_NoMoreThanFourMayEnter
-No more than four POK\eMON\nmay enter.[PAUSE_UNTIL_PRESS]
+No more than four Pok\emon\nmay enter.[PAUSE_UNTIL_PRESS]
 
 #org @gText_Fourth_PM
 FOURTH
 
 #org @gText_NoTwoPokemonHoldSameItem
-No two POK\eMON can\nhold the same item.[PAUSE_UNTIL_PRESS]
+No two Pok\emon can\nhold the same item.[PAUSE_UNTIL_PRESS]
 
 #org @gText_TwoMembersOfTheSameSpecies
-No two POK\eMON can\nbe the same species.[PAUSE_UNTIL_PRESS]
+No two Pok\emon can\nbe the same species.[PAUSE_UNTIL_PRESS]
+
+#org @gText_MythicalsNotAllowed
+This Pok\emon can't be entered![PAUSE_UNTIL_PRESS]
+
+#org @gText_EggsCantBattle
+Eggs can't battle![PAUSE_UNTIL_PRESS]
 
 #org @gText_BattleTowerStreaks
 [PLAYER]'s Battle Tower Records[END]
