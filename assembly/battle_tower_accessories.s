@@ -191,3 +191,28 @@ bx_r2:
 
 bx_r3:
 	bx r3
+
+
+.global EnsureRunIsSuccessful
+EnsureRunIsSuccessful:
+ldr r0, =Flag
+ldr r2, =(0x806E6D0 +1) @checkflag 0xFF *0x2 + 4 = 0x202
+bl bx_r2
+cmp r0, #0
+beq ReturnBackToMain
+
+mov r6, #1
+ldr r1, =0x0801687A|1
+bx r1
+
+ReturnBackToMain:
+mov r6, #0
+ldr r1, =0x02023BE4
+mov r0, #0x58
+mul r0, r4
+add r1, r0, r1
+
+ldr r2, =0x08016758|1
+bx r2
+
+.pool
