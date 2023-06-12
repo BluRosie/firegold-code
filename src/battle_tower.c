@@ -1017,6 +1017,18 @@ void ShowEasyChatMessage(void)
     ConvertEasyChatWordsToString(printToOtherArea == 0 ? gStringVar4 : gStringVarDefeatText, dontShowMessage == 1 ? &easyChatWordsAlt[0] : easyChatWords, columns, rows);
     if (!dontShowMessage)
         ShowFieldAutoScrollMessage(gStringVar4);
+    else // is in battle tower
+    {
+        u8 *txtPtr = printToOtherArea == 0 ? gStringVar4 : gStringVarDefeatText;
+        u32 i = 0;
+        
+        while (txtPtr[i] != 0xFF)
+        {
+            if (txtPtr[i] > 0xD4 && txtPtr[i] <= 0xEE)
+                txtPtr[i] -= (0xD5-0xBB); // convert lowercase to normal
+            i++;
+        }
+    }
 }
 
 
