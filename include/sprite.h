@@ -4,12 +4,6 @@
 #define MAX_SPRITES 64
 #define SPRITE_INVALID_TAG 0xFFFF
 
-struct Coords16
-{
-    s16 x;
-    s16 y;
-};
-
 struct SpriteSheet
 {
     const void *data;  // Raw uncompressed pixel data

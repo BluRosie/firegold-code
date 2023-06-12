@@ -2,7 +2,9 @@
 #define GUARD_POKEMON_H
 
 #include "constants/global.h"
+#include "main.h"
 #include "sprite.h"
+#include "task.h"
 
 #define MON_DATA_PERSONALITY        0
 #define MON_DATA_OT_ID              1
@@ -243,10 +245,44 @@ struct BaseStats
             u8 noFlip : 1;
 };
 
+struct PartyMenu
+{
+    MainCallback exitCallback;
+    TaskFunc task;
+    u8 menuType:4;
+    u8 layout:2;
+    u8 chooseMonsBattleType:2;
+    s8 slotId;
+    s8 slotId2;
+    u8 action;
+    u16 bagItem;
+    s16 data[2];
+};
+
+struct PartyMenuInternal
+{
+    TaskFunc task;
+    MainCallback exitCallback;
+    u32 chooseMultiple:1;
+    u32 lastSelectedSlot:3;  // Used to return to same slot when going left/right bewtween columns
+    u32 spriteIdConfirmPokeball:7;
+    u32 spriteIdCancelPokeball:7;
+    u32 messageId:14;
+    u8 windowId[3];
+    u8 actions[8];
+    u8 numActions;
+    u16 palBuffer[BG_PLTT_SIZE / sizeof(u16)];
+    s16 data[16];
+};
+
 extern struct Pokemon gPlayerParty[PARTY_SIZE];
 extern struct Pokemon gEnemyParty[PARTY_SIZE];
 extern const struct BaseStats gBaseStats[];
 extern const u32 gExperienceTables[8][101];
+
+extern struct PartyMenu gPartyMenu;
+
+extern struct PartyMenuInternal *sPartyMenuInternal;
 
 extern u8 gPlayerPartyCount;
 
