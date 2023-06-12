@@ -1216,6 +1216,96 @@ void CreateBattleTowerTrainerParty()
 }
 
 
+struct BattleTowerSpread
+{
+    u8 nature;
+    u8 padding_x1[3];
+    u8 ivMode;
+    u8 hpEv;
+    u8 atkEv;
+    u8 defEv;
+    u8 spdEv;
+    u8 spatkEv;
+    u8 spdefEv;
+    u8 ballId;
+    u8 abilityBit;
+    u8 padding_xD[3];
+};
+
+
+extern u8 HiddenPowerTable[][6];
+extern struct BattleTowerSpread PokemonTableStartEasyModeSpreads[];
+extern struct BattleTowerSpread PokemonTableStartHardModeSpreads[];
+
+
+void SetBattleTowerSpreadStats(struct Pokemon *pokemon, u32 tableId)
+{
+    u32 work;
+    struct BattleTowerSpread *spreads;
+    
+    u32 easyMode = (VarGet(VAR_BATTLE_TOWER_TYPE) != 0 && VarGet(VAR_BATTLE_TOWER_TYPE) & 1);
+    
+    if (easyMode)
+        spreads = PokemonTableStartEasyModeSpreads;
+    else
+        spreads = PokemonTableStartHardModeSpreads;
+    
+    // things that need to be set:
+    // hp ev, atk ev, def, spd, spatk, spdef
+    // ballType
+    // ability bit
+    // set nature
+    // all 6 iv's depending on hiddenAbilityType
+    // set friendship to 255
+    work = spreads[tableId].hpEv;
+    SetMonData(pokemon, MON_DATA_HP_EV, &work);
+    work = spreads[tableId].atkEv;
+    SetMonData(pokemon, MON_DATA_ATK_EV, &work);
+    work = spreads[tableId].defEv;
+    SetMonData(pokemon, MON_DATA_DEF_EV, &work);
+    work = spreads[tableId].spdEv;
+    SetMonData(pokemon, MON_DATA_SPEED_EV, &work);
+    work = spreads[tableId].spatkEv;
+    SetMonData(pokemon, MON_DATA_SPATK_EV, &work);
+    work = spreads[tableId].spdefEv;
+    SetMonData(pokemon, MON_DATA_SPDEF_EV, &work);
+    
+    work = spreads[tableId].ballId;
+    SetMonData(pokemon, MON_DATA_POKEBALL, &work);
+    
+    work = spreads[tableId].abilityBit;
+    SetMonData(pokemon, MON_DATA_ABILITY_NUM, &work);
+    
+    work = GetMonData(pokemon, MON_DATA_PERSONALITY, 0);
+    if ((work % 25) != spreads[tableId].nature) // force a certain nature
+    {
+        work -= (work % 25);
+        work += spreads[tableId].nature;
+    }
+    SetMonData(pokemon, MON_DATA_PERSONALITY, &work);
+    
+    if (spreads[tableId].ivMode != 31)
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            work = HiddenPowerTable[spreads[tableId].ivMode][i];
+            SetMonData(pokemon, MON_DATA_HP_IV+i, &work);
+        }
+    }
+    else
+    {
+        work = 31;
+        for (int i = 0; i < 6; i++)
+        {
+            SetMonData(pokemon, MON_DATA_HP_IV+i, &work);
+        }
+    }
+    
+    work = 255;
+    SetMonData(pokemon, MON_DATA_FRIENDSHIP, &work);
+}
+
+
 extern u8 gText_BattleTowerStreaks[];
 extern u8 gText_BattlePointsColon[];
 extern u8 gText_CurrentRecord[];

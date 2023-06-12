@@ -836,8 +836,12 @@ PokemonTableStartHardMode:
 .hword 814, 50, suicune, leftovers, scald, protect, snarl, tailwind
 
 
+.align 4
 
+
+.global PokemonTableStartHardModeSpreads
 PokemonTableStartHardModeSpreads:
+/* buffer */ .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 /* venusaur */ .byte modest, 0, 0, 0, maxivs, 255, 0, 0, 0, 255, 0, pokeball, abilityone, 0, 0, 0
 /* venusaur */ .byte bold, 0, 0, 0, maxivs, 170, 0, 170, 0, 0, 170, pokeball, abilityone, 0, 0, 0
 /* venusaur */ .byte lonely, 0, 0, 0, maxivs, 0, 255, 0, 255, 0, 0, pokeball, abilityone, 0, 0, 0

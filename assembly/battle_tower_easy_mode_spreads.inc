@@ -95,7 +95,11 @@ would normally.
 ---------------------------------------------------------------------------------------
 */
 
+.align 4
+
+.global PokemonTableStartEasyModeSpreads
 PokemonTableStartEasyModeSpreads:
+    /* buffer     */ .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     /* bayleef    */ .byte docile, 0, 0, 0, maxivs, 170, 0, 170, 0, 170, 0, pokeball, abilityone, 0, 0, 0
     /* quilava    */ .byte modest, 0, 0, 0, maxivs, 0, 0, 0, 255, 255, 0, pokeball, abilityone, 0, 0, 0
     /* croconaw   */ .byte adamant, 0, 0, 0, maxivs, 255, 255, 0, 0, 0, 0, pokeball, abilityone, 0, 0, 0

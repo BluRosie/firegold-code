@@ -1738,258 +1738,263 @@ LoadItem:
     add r2, r5, #0x0
     bl Encrypt
 
-LoadHPEV:
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    beq LoadEasyOne
-    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
-    beq LoadEasyOne
-    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
-    beq LoadEasyOne
-    ldr r2, .PokemonDataHardSpreads
-    b LoadEasyOne_after
-LoadEasyOne:
-    ldr r2, .PokemonDataEasySpreads
-LoadEasyOne_after:
-    lsl r0, r6, #0x4
-    add r2, r0
-    add r2, #0x5
-    mov r1, #0x1A       /* HP EV */
-    mov r0, r4
-    bl Encrypt
+    mov r0, r4 // PartyPokemon
+    mov r1, r6 // TableIndex
+    bl SetBattleTowerSpreadStats
 
-LoadAtkEV:
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    beq LoadEasyTwo
-    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
-    beq LoadEasyTwo
-    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
-    beq LoadEasyTwo
-    ldr r2, .PokemonDataHardSpreads
-    b LoadEasyThree_after
-LoadEasyTwo:
-    ldr r2, .PokemonDataEasySpreads
-LoadEasyTwo_after:
-    lsl r0, r6, #0x4
-    add r2, r0
-    add r2, #0x6
-    mov r1, #0x1B       /* Attack EV */
-    mov r0, r4
-    bl Encrypt
-
-LoadDefEV:
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    beq LoadEasyThree
-    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
-    beq LoadEasyThree
-    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
-    beq LoadEasyThree
-    ldr r2, .PokemonDataHardSpreads
-    b LoadEasyThree_after
-LoadEasyThree:
-    ldr r2, .PokemonDataEasySpreads
-LoadEasyThree_after:
-    lsl r0, r6, #0x4
-    add r2, r0
-    add r2, #0x7
-    mov r1, #0x1C       /* Defence EV */
-    mov r0, r4
-    bl Encrypt
-
-LoadSpeedEV:
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    beq LoadEasyFour
-    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
-    beq LoadEasyFour
-    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
-    beq LoadEasyFour
-    ldr r2, .PokemonDataHardSpreads
-    b LoadEasyFour_after
-LoadEasyFour:
-    ldr r2, .PokemonDataEasySpreads
-LoadEasyFour_after:
-    lsl r0, r6, #0x4
-    add r2, r0
-    add r2, #0x8
-    mov r1, #0x1D       /* Speed EV */
-    mov r0, r4
-    bl Encrypt
-
-LoadSAtkEV:
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    beq LoadEasyFive
-    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
-    beq LoadEasyFive
-    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
-    beq LoadEasyFive
-    ldr r2, .PokemonDataHardSpreads
-    b LoadEasyFive_after
-LoadEasyFive:
-    ldr r2, .PokemonDataEasySpreads
-LoadEasyFive_after:
-    lsl r0, r6, #0x4
-    add r2, r0
-    add r2, #0x9
-    mov r1, #0x1E       /* Special Attack EV */
-    mov r0, r4
-    bl Encrypt
-
-LoadSDefEV:
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    beq LoadEasySix
-    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
-    beq LoadEasySix
-    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
-    beq LoadEasySix
-    ldr r2, .PokemonDataHardSpreads
-    b LoadEasySix_after
-LoadEasySix:
-    ldr r2, .PokemonDataEasySpreads
-LoadEasySix_after:
-    lsl r0, r6, #0x4
-    add r2, r0
-    add r2, #0xA
-    mov r1, #0x1F       /* Special Defence EV */
-    mov r0, r4
-    bl Encrypt
-
-LoadBall:
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    beq LoadEasySeven
-    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
-    beq LoadEasySeven
-    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
-    beq LoadEasySeven
-    ldr r2, .PokemonDataHardSpreads
-    b LoadEasySeven_after
-LoadEasySeven:
-    ldr r2, .PokemonDataEasySpreads
-LoadEasySeven_after:
-    lsl r0, r6, #0x4
-    add r2, r0
-    add r2, #0xB
-    mov r1, #0x26       /* Poke Ball Type */
-    mov r0, r4
-    bl Encrypt
-
-LoadAbility:
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    beq LoadEasyEight
-    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
-    beq LoadEasyEight
-    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
-    beq LoadEasyEight
-    ldr r2, .PokemonDataHardSpreads
-    b LoadEasyEight_after
-LoadEasyEight:
-    ldr r2, .PokemonDataEasySpreads
-LoadEasyEight_after:
-    lsl r0, r6, #0x4
-    add r2, r0
-    add r2, #0xC
-    mov r1, #0x2E       /* Ability Bit */
-    mov r0, r4
-    bl Encrypt
-
-StartNatureLoop:
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    beq LoadEasyNine
-    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
-    beq LoadEasyNine
-    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
-    beq LoadEasyNine
-    ldr r2, .PokemonDataHardSpreads
-    b LoadEasyNine_after
-LoadEasyNine:
-    ldr r2, .PokemonDataEasySpreads
-LoadEasyNine_after:
-    lsl r0, r6, #0x4
-    add r2, r0
-    ldrb r5, [r2, #0x0]
-    cmp r5, #0x0
-    beq LoadIVs
-    ldr r0, [r4, #0x0]
-    ldr r1, [r4, #0x4]
-    eor r1, r0, r1
-    str r1, [r4, #0x4]
-
-NatureLoop:
-    ldr r0, [r4, #0x0]
-    add r0, r0, #0x18
-    str r0, [r4, #0x0]
-    mov r1, #0x19
-    bl Modulus
-    cmp r0, r5
-    bne NatureLoop
-
-EndNatureLoop:
-    ldr r0, [r4, #0x0]
-    ldr r1, [r4, #0x4]
-    eor r1, r0, r1
-    str r1, [r4, #0x4]
-
-LoadIVs:
-    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
-    beq LoadEasyTen
-    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
-    beq LoadEasyTen
-    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
-    beq LoadEasyTen
-    ldr r2, .PokemonDataHardSpreads
-    b LoadEasyTen_after
-LoadEasyTen:
-    ldr r2, .PokemonDataEasySpreads
-LoadEasyTen_after:
-    lsl r0, r6, #0x4
-    add r2, r2, r0
-    ldrb r6, [r2, #0x4]
-    push {r6}
-    cmp r6, #0x1F       /* Max IVs */
-    beq StartIVLoop
-    
-GetType:
-    mov r5, #0x6
-    mul r5, r6
-    ldr r6, .HiddenTable
-    add r6, r6, r5
-    mov r5, #0x27       /* HP IV */
-    
-TableLoop:
-    mov r0, r4
-    mov r1, r5
-    ldrb r2, [r6]       /* IV in Table */
-    push {r2}
-    mov r2, sp
-    bl Encrypt
-    pop {r2}
-    add r5, r5, #0x1
-    add r6, r6, #0x1
-    cmp r5, #0x2D
-    beq SetFriendship
-    b TableLoop
-
-StartIVLoop:
-    mov r5, #0x27       /* HP IV */
-
-IVLoop:
-    mov r0, r4
-    mov r1, r5
-    mov r2, sp
-    bl Encrypt
-    add r5, r5, #0x1
-    cmp r5, #0x2D
-    bne IVLoop
-
-SetFriendship:
-    mov r0, r4
-    mov r1, #0x20       /* Friendship Points */
-    mov r2, #0xFF       /* 255 = Max Friendship */
-    push {r2}
-    mov r2, sp
-    bl Encrypt
-    pop {r2}
-
-End:
-    pop {r6}
+//LoadHPEV:
+//    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+//    beq LoadEasyOne
+//    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
+//    beq LoadEasyOne
+//    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
+//    beq LoadEasyOne
+//    ldr r2, .PokemonDataHardSpreads
+//    b LoadEasyOne_after
+//LoadEasyOne:
+//    ldr r2, .PokemonDataEasySpreads
+//LoadEasyOne_after:
+//    lsl r0, r6, #0x4
+//    add r2, r0
+//    add r2, #0x5
+//    mov r1, #0x1A       /* HP EV */
+//    mov r0, r4
+//    bl Encrypt
+//
+//LoadAtkEV:
+//    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+//    beq LoadEasyTwo
+//    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
+//    beq LoadEasyTwo
+//    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
+//    beq LoadEasyTwo
+//    ldr r2, .PokemonDataHardSpreads
+//    b LoadEasyThree_after
+//LoadEasyTwo:
+//    ldr r2, .PokemonDataEasySpreads
+//LoadEasyTwo_after:
+//    lsl r0, r6, #0x4
+//    add r2, r0
+//    add r2, #0x6
+//    mov r1, #0x1B       /* Attack EV */
+//    mov r0, r4
+//    bl Encrypt
+//
+//LoadDefEV:
+//    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+//    beq LoadEasyThree
+//    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
+//    beq LoadEasyThree
+//    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
+//    beq LoadEasyThree
+//    ldr r2, .PokemonDataHardSpreads
+//    b LoadEasyThree_after
+//LoadEasyThree:
+//    ldr r2, .PokemonDataEasySpreads
+//LoadEasyThree_after:
+//    lsl r0, r6, #0x4
+//    add r2, r0
+//    add r2, #0x7
+//    mov r1, #0x1C       /* Defence EV */
+//    mov r0, r4
+//    bl Encrypt
+//
+//LoadSpeedEV:
+//    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+//    beq LoadEasyFour
+//    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
+//    beq LoadEasyFour
+//    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
+//    beq LoadEasyFour
+//    ldr r2, .PokemonDataHardSpreads
+//    b LoadEasyFour_after
+//LoadEasyFour:
+//    ldr r2, .PokemonDataEasySpreads
+//LoadEasyFour_after:
+//    lsl r0, r6, #0x4
+//    add r2, r0
+//    add r2, #0x8
+//    mov r1, #0x1D       /* Speed EV */
+//    mov r0, r4
+//    bl Encrypt
+//
+//LoadSAtkEV:
+//    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+//    beq LoadEasyFive
+//    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
+//    beq LoadEasyFive
+//    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
+//    beq LoadEasyFive
+//    ldr r2, .PokemonDataHardSpreads
+//    b LoadEasyFive_after
+//LoadEasyFive:
+//    ldr r2, .PokemonDataEasySpreads
+//LoadEasyFive_after:
+//    lsl r0, r6, #0x4
+//    add r2, r0
+//    add r2, #0x9
+//    mov r1, #0x1E       /* Special Attack EV */
+//    mov r0, r4
+//    bl Encrypt
+//
+//LoadSDefEV:
+//    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+//    beq LoadEasySix
+//    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
+//    beq LoadEasySix
+//    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
+//    beq LoadEasySix
+//    ldr r2, .PokemonDataHardSpreads
+//    b LoadEasySix_after
+//LoadEasySix:
+//    ldr r2, .PokemonDataEasySpreads
+//LoadEasySix_after:
+//    lsl r0, r6, #0x4
+//    add r2, r0
+//    add r2, #0xA
+//    mov r1, #0x1F       /* Special Defence EV */
+//    mov r0, r4
+//    bl Encrypt
+//
+//LoadBall:
+//    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+//    beq LoadEasySeven
+//    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
+//    beq LoadEasySeven
+//    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
+//    beq LoadEasySeven
+//    ldr r2, .PokemonDataHardSpreads
+//    b LoadEasySeven_after
+//LoadEasySeven:
+//    ldr r2, .PokemonDataEasySpreads
+//LoadEasySeven_after:
+//    lsl r0, r6, #0x4
+//    add r2, r0
+//    add r2, #0xB
+//    mov r1, #0x26       /* Poke Ball Type */
+//    mov r0, r4
+//    bl Encrypt
+//
+//LoadAbility:
+//    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+//    beq LoadEasyEight
+//    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
+//    beq LoadEasyEight
+//    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
+//    beq LoadEasyEight
+//    ldr r2, .PokemonDataHardSpreads
+//    b LoadEasyEight_after
+//LoadEasyEight:
+//    ldr r2, .PokemonDataEasySpreads
+//LoadEasyEight_after:
+//    lsl r0, r6, #0x4
+//    add r2, r0
+//    add r2, #0xC
+//    mov r1, #0x2E       /* Ability Bit */
+//    mov r0, r4
+//    bl Encrypt
+//
+//StartNatureLoop:
+//    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+//    beq LoadEasyNine
+//    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
+//    beq LoadEasyNine
+//    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
+//    beq LoadEasyNine
+//    ldr r2, .PokemonDataHardSpreads
+//    b LoadEasyNine_after
+//LoadEasyNine:
+//    ldr r2, .PokemonDataEasySpreads
+//LoadEasyNine_after:
+//    lsl r0, r6, #0x4
+//    add r2, r0
+//    ldrb r5, [r2, #0x0]
+//    cmp r5, #0x0
+//    beq LoadIVs
+//    ldr r0, [r4, #0x0]
+//    ldr r1, [r4, #0x4]
+//    eor r1, r0, r1
+//    str r1, [r4, #0x4]
+//
+//NatureLoop:
+//    ldr r0, [r4, #0x0]
+//    add r0, r0, #0x18
+//    str r0, [r4, #0x0]
+//    mov r1, #0x19
+//    bl Modulus
+//    cmp r0, r5
+//    bne NatureLoop
+//
+//EndNatureLoop:
+//    ldr r0, [r4, #0x0]
+//    ldr r1, [r4, #0x4]
+//    eor r1, r0, r1
+//    str r1, [r4, #0x4]
+//
+//LoadIVs:
+//    cmp r0, #BATTLE_TOWER_TYPE_DOUBLE_EASY
+//    beq LoadEasyTen
+//    cmp r0, #BATTLE_TOWER_TYPE_SINGLE_EASY
+//    beq LoadEasyTen
+//    cmp r0, #BATTLE_TOWER_TYPE_MULTI_EASY
+//    beq LoadEasyTen
+//    ldr r2, .PokemonDataHardSpreads
+//    b LoadEasyTen_after
+//LoadEasyTen:
+//    ldr r2, .PokemonDataEasySpreads
+//LoadEasyTen_after:
+//    lsl r0, r6, #0x4
+//    add r2, r2, r0
+//    ldrb r6, [r2, #0x4]
+//    push {r6}
+//    cmp r6, #0x1F       /* Max IVs */
+//    beq StartIVLoop
+//    
+//GetType:
+//    mov r5, #0x6
+//    mul r5, r6
+//    ldr r6, .HiddenTable
+//    add r6, r6, r5
+//    mov r5, #0x27       /* HP IV */
+//    
+//TableLoop:
+//    mov r0, r4
+//    mov r1, r5
+//    ldrb r2, [r6]       /* IV in Table */
+//    push {r2}
+//    mov r2, sp
+//    bl Encrypt
+//    pop {r2}
+//    add r5, r5, #0x1
+//    add r6, r6, #0x1
+//    cmp r5, #0x2D
+//    beq SetFriendship
+//    b TableLoop
+//
+//StartIVLoop:
+//    mov r5, #0x27       /* HP IV */
+//
+//IVLoop:
+//    mov r0, r4
+//    mov r1, r5
+//    mov r2, sp
+//    bl Encrypt
+//    add r5, r5, #0x1
+//    cmp r5, #0x2D
+//    bne IVLoop
+//
+//SetFriendship:
+//    mov r0, r4
+//    mov r1, #0x20       /* Friendship Points */
+//    mov r2, #0xFF       /* 255 = Max Friendship */
+//    push {r2}
+//    mov r2, sp
+//    bl Encrypt
+//    pop {r2}
+//
+//End:
+//    pop {r6}
+    mov r0, r4 // PartyPokemon
     bl RecalculateStats
     ldr r1, .Return
     bx r1
@@ -2003,23 +2008,24 @@ RecalculateStats:
     ldr r1, .Recalculate
     bx r1
 
-Modulus:
-    ldr r3, .Modulus
-    bx r3
+//Modulus:
+//    ldr r3, .Modulus
+//    bx r3
 
 .align 2
 .Return:                    .word 0x08011639
-.PokemonDataEasySpreads:    .word PokemonTableStartEasyModeSpreads
-.PokemonDataHardSpreads:    .word PokemonTableStartHardModeSpreads
+.PokemonDataEasySpreads:    .word PokemonTableStartHardModeSpreads
+.PokemonDataHardSpreads:    .word PokemonTableStartEasyModeSpreads
 .Encrypt:                   .word 0x0804037D
 .Recalculate:               .word 0x0803E47D
-.Modulus:                   .word 0x081E4685
+//.Modulus:                   .word 0x081E4685
 .HiddenTable:               .word HiddenPowerTable
 
 /* --------------------------------- */
 
 .align 2
 
+.global HiddenPowerTable
 HiddenPowerTable:
     .byte 31, 31, 30, 30, 30, 30        /* Fighting */
     .byte 31, 31, 31, 30, 30, 30        /* Flying */
