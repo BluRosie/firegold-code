@@ -1890,3 +1890,16 @@ GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;
 CreateMon = 0x0803DA54|1;
 
+gPlayerFacingPosition = 0x02039a04;
+MapGridGetMetatileIdAt = 0x08058E48 | 1;
+MapGridSetMetatileIdAt = 0x08058FA4 | 1;
+MapGridGetElevationAt = 0x08058d44 | 1;
+PlayerGetDestCoords = 0x0805c538 | 1;
+MetatileAtCoordsIsGrassTile = 0x08097874 | 1;
+EnableObjectGroundEffectsByXY = 0x0805f378 | 1;
+DrawWholeMapView = 0x0805a684 | 1;
+gFieldEffectArguments = 0x020386e0;
+
+sSpriteTemplate_FldEff_CutGrass = 0x083d414c;
+sCutGrassSpriteArrayPtr = 0x02039870;
+CutMoveRuinValleyCheck = 0x080ccd84 | 1;

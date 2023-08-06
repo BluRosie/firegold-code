@@ -1,2 +1,5 @@
 #examples:
 #SetTradedMonPokedexFlags 080507A0 1
+
+SetCutGrassMetatileAt 08097b50 2
+FldEff_CutGrass 08097a48 0
