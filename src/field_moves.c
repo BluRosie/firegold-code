@@ -31,7 +31,7 @@ u16 sCutGrassMetatileMapping[][2] =
     {0x370, 0x1},      // long long grass natl park (but there is still special handling)
     {0x393, 0x1},      // long long grass safari zone (but there is still special handling)
     {0x282, 0x281},    // snow grass
-    {0x281, 0x281},    // snow grass after it's been stepped in
+    {0x283, 0x281},    // snow grass after it's been stepped in
     {0x39B, 1},        // long long grass bottom
     {0x371, 1},        // long long grass bottom
     {0xFFFF, 0xFFFF},
