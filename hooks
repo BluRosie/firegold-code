@@ -3,3 +3,5 @@
 
 SetCutGrassMetatileAt 08097b50 2
 FldEff_CutGrass 08097a48 0
+CursorCB_FieldMove 081245a4 1
+SetPartyMonFieldSelectionActions 081229fc 3

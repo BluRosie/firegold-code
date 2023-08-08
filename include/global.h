@@ -21,6 +21,8 @@ struct Coords16
     s16 y;
 };
 
+#define	ALIGN4 __attribute__((aligned(4)))
+
 extern struct MapPosition gPlayerFacingPosition;
 
 #endif // GUARD_GLOBAL_H
