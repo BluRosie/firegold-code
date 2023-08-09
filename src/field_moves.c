@@ -111,7 +111,7 @@ void SetCutGrassMetatileAt(s16 x, s16 y)
 #define CUT_GRASS_SPRITE_COUNT 8
 
 // when god judges his children, will he look kindly upon me?
-extern u32 *gFieldEffectArguments;
+extern u32 gFieldEffectArguments[];
 // gPlayerFacingPosition in global fuck it
 extern u8 *sCutGrassSpriteArrayPtr;
 
@@ -407,6 +407,8 @@ struct
 
 bool8 SetUpFieldMove_Headbutt();
 bool8 SetUpFieldMove_RockClimb();
+bool8 SetUpFieldMove_Whirlpool();
+bool8 SetUpFieldMove_SweetScent();
 
 
 struct
@@ -415,18 +417,18 @@ struct
     u8 msgId;
 } const sFieldMoveCursorCallbacks[] =
 {
-    [FIELD_MOVE_FLASH]        = {0x080c9b2d,               PARTY_MSG_CANT_USE_HERE},
-    [FIELD_MOVE_CUT]          = {SetUpFieldMove_Cut,       PARTY_MSG_NOTHING_TO_CUT},
-    [FIELD_MOVE_FLY]          = {0x08124a8d,               PARTY_MSG_CANT_USE_HERE},
-    [FIELD_MOVE_STRENGTH]     = {0x080d07ed,               PARTY_MSG_CANT_USE_HERE},
-    [FIELD_MOVE_SURF]         = {0x08124999,               PARTY_MSG_CANT_SURF_HERE},
-    [FIELD_MOVE_ROCK_SMASH]   = {0x080c99d9,               PARTY_MSG_CANT_USE_HERE},
-    [FIELD_MOVE_WATERFALL]    = {0x08124af9,               PARTY_MSG_CANT_USE_HERE},
-    [FIELD_MOVE_TELEPORT]     = {0x080f66f1,               PARTY_MSG_CANT_USE_HERE},
-    [FIELD_MOVE_DIG]          = {0x080c9a79,               PARTY_MSG_CANT_USE_HERE},
-    [FIELD_MOVE_MILK_DRINK]   = {0x080e5685,               PARTY_MSG_NOT_ENOUGH_HP},
-    [FIELD_MOVE_SOFT_BOILED]  = {0x080e5685,               PARTY_MSG_NOT_ENOUGH_HP},
-    [FIELD_MOVE_SWEET_SCENT]  = {0x080de0c9,               PARTY_MSG_CANT_USE_HERE},
+    [FIELD_MOVE_FLASH]        = {0x080c9b2d,                PARTY_MSG_CANT_USE_HERE},
+    [FIELD_MOVE_CUT]          = {SetUpFieldMove_Cut,        PARTY_MSG_NOTHING_TO_CUT},
+    [FIELD_MOVE_FLY]          = {0x08124a8d,                PARTY_MSG_CANT_USE_HERE},
+    [FIELD_MOVE_STRENGTH]     = {0x080d07ed,                PARTY_MSG_CANT_USE_HERE},
+    [FIELD_MOVE_SURF]         = {0x08124999,                PARTY_MSG_CANT_SURF_HERE},
+    [FIELD_MOVE_ROCK_SMASH]   = {0x080c99d9,                PARTY_MSG_CANT_USE_HERE},
+    [FIELD_MOVE_WATERFALL]    = {0x08124af9,                PARTY_MSG_CANT_USE_HERE},
+    [FIELD_MOVE_TELEPORT]     = {0x080f66f1,                PARTY_MSG_CANT_USE_HERE},
+    [FIELD_MOVE_DIG]          = {0x080c9a79,                PARTY_MSG_CANT_USE_HERE},
+    [FIELD_MOVE_MILK_DRINK]   = {0x080e5685,                PARTY_MSG_NOT_ENOUGH_HP},
+    [FIELD_MOVE_SOFT_BOILED]  = {0x080e5685,                PARTY_MSG_NOT_ENOUGH_HP},
+    [FIELD_MOVE_SWEET_SCENT]  = {SetUpFieldMove_SweetScent, PARTY_MSG_CANT_USE_HERE},
     //[FIELD_MOVE_HEADBUTT]     = {SetUpFieldMove_Headbutt,  PARTY_MSG_CANT_USE_HERE},
     //[FIELD_MOVE_ROCK_CLIMB]   = {SetUpFieldMove_RockClimb, PARTY_MSG_CANT_USE_HERE},
     //[FIELD_MOVE_WHIRLPOOL]    = {SetUpFieldMove_Whirlpool, PARTY_MSG_CANT_USE_HERE},
@@ -569,4 +571,78 @@ void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
     else
         AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, CURSOR_OPTION_ITEM);
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, CURSOR_OPTION_CANCEL1);
+}
+
+
+/////////////////////////////////////
+//           SWEET SCENT           //
+/////////////////////////////////////
+
+
+bool8 SetUpFieldMove_SweetScent(void)
+{
+    if (gSaveBlock1->location.mapGroup == 44 && gSaveBlock1->location.mapNum >= 83 && gSaveBlock1->location.mapNum <= 95) // sweet scent can not be used in ruins of alph
+        return FALSE;
+    gFieldCallback2 = 0x081248b1;
+    gPostMenuFieldCallback = 0x080de0e9;
+    return TRUE;
+}
+
+
+/////////////////////////////////////
+//               DIG               //
+/////////////////////////////////////
+
+
+void PostFadeInDigSetup(void)
+{
+    // leftover debug code but who cares
+    //if (FlagGet(0x215B))
+    //{
+    //    PlaySE(8);
+    //    FlagClear(0x215B);
+    //}
+    //else
+    {
+        MapGridSetMetatileIdAt(4+7, 2+7, 0x2E3);
+        MapGridSetMetatileIdAt(5+7, 2+7, 0x2E3);
+        MapGridSetMetatileIdAt(4+7, 1+7, 0x308);
+        MapGridSetMetatileIdAt(4+7, 0+7, 0x300);
+        PlaySE(8);
+        DrawWholeMapView();
+        FlagSet(0x215B);
+    }
+    ScriptContext2_Disable();
+}
+
+
+bool8 SetUpFieldMove_Dig(void)
+{
+    if (gSaveBlock1->location.mapGroup == 44 && gSaveBlock1->location.mapNum == 84 && gSaveBlock1->pos.x == 4 && gSaveBlock1->pos.y == 2 && GetPlayerFacingDirection() == DIR_NORTH && !FlagGet(0x215B))
+    {
+        gFieldCallback2 = 0x081248b1;
+        gPostMenuFieldCallback = 0x080c9aad;
+        return TRUE;
+    }
+    else if (CanUseEscapeRopeOnCurrMap() == TRUE)
+    {
+        gFieldCallback2 = 0x081248b1;
+        gPostMenuFieldCallback = 0x080c9aad;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+void FieldCallback_Dig(void)
+{
+    if (gSaveBlock1->location.mapGroup == 44 && gSaveBlock1->location.mapNum == 84 && gSaveBlock1->pos.x == 4 && gSaveBlock1->pos.y == 2 && GetPlayerFacingDirection() == DIR_NORTH && !FlagGet(0x215B))
+    {
+        PostFadeInDigSetup();
+    }
+    else
+    {
+        Overworld_ResetStateAfterDigEscRope();
+        FieldEffectStart(38);
+    }
+    gFieldEffectArguments[0] = GetCursorSelectionMonId();
 }

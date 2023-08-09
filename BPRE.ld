@@ -1916,3 +1916,6 @@ AppendToList = 0x0806fec8 | 1;
 ItemIsMail = 0x080980f8 | 1;
 Menu_GetCursorPos = 0x0810f98c | 1;
 SetUsedFieldMoveQuestLogEvent = 0x08124bb0 | 1;
+CanUseEscapeRopeOnCurrMap = 0x080a1b8c | 1;
+Overworld_ResetStateAfterDigEscRope = 0x08054d70 | 1;
+GetPlayerFacingDirection = 0x0805c6c4 | 1;
