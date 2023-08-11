@@ -986,7 +986,7 @@ GetPlayerFacing = 0x805C6C4 | 1;
 GetPlayerMovementDirection = 0x805C6E4 | 1;
 PlayerGetZCoord = 0x805C700 | 1;
 StopPlayerAvatar = 0x805C780 | 1;
-//GetPlayerAvatarGraphicsIdByStateId = 0x805C808 | 1;
+GetPlayerAvatarGraphicsIdByStateId = 0x805C808 | 1;
 PartyHasMonWithSurfOriginal = 0x805C83C | 1;
 IsPlayerSurfingNorth = 0x805C88C | 1;
 IsPlayerFacingSurfableFishableWater = 0x805C8B0 | 1;
@@ -1156,6 +1156,7 @@ GetTaskCount = 0x80776B8 | 1;
 oac_nullsub_0 = 0x810BB88 | 1;
 CpuFastSet = 0x81E3B60 | 1;
 CpuSet = 0x81E3B64 | 1;
+FindTaskIdByFunc = 0x08077688 | 1;
 
 
 /*Event Object Movement Functions*/
@@ -1191,7 +1192,7 @@ LockSelectedEventObject = 0x806966C | 1;
 ClearPlayerHeldMovementAndUnfreezeEventObjects = 0x80696C0 | 1;
 
 /*Field Effects Functions*/
-FieldEffectStart = 0x8083444 | 1;
+//FieldEffectStart = 0x8083444 | 1;
 FieldEffectScript_LoadFadedPalette = 0x8083614 | 1;
 FieldEffectFreeGraphicsResources = 0x80836B4 | 1;
 FieldEffectStop = 0x80836D8 | 1;
@@ -1924,3 +1925,27 @@ RunScriptImmediately = 0x08069b48 | 1;
 ScriptContext_SetupScript = 0x08069ae4 | 1;
 GetInFrontOfPlayerPosition = 0x0806ce38 | 1;
 MapGridGetMetatileAttributeAt = 0x08058f48 | 1;
+
+FieldEffectActiveListAdd = 0x080837D0 | 1;
+gFieldEffectScriptPointers = 0x081D96AC;
+sFldEffScrcmdTable = 0x083CBE30;
+
+SetSpritePosToOffsetMapCoords = 0x08063bc4 | 1;
+FreezeObjectEvents = 0x08068974 | 1;
+SetPlayerAvatarStateMask = 0x0805c970 | 1;
+ObjectEventIsMovementOverridden = 0x08063c70 | 1;
+ObjectEventClearHeldMovementIfFinished = 0x08063d7c | 1;
+StartPlayerAvatarSummonMonForFieldMoveAnim = 0x0805cb70 | 1;
+ObjectEventSetHeldMovement = 0x08063ca4 | 1;
+ObjectEventCheckHeldMovementStatus = 0x08063d68 | 1;
+FieldEffectActiveListContains = 0x0808382c | 1;
+ObjectEventSetGraphicsId = 0x0805f060 | 1;
+GetJumpSpecialMovementAction = 0x080641c0 | 1;
+SetSurfBlob_BobState = 0x080dc44c | 1;
+UnfreezeObjectEvents = 0x08068a5c | 1;
+
+gFieldEffectObjectTemplatePointers = 0x083a0010;
+gPlayerAvatar = 0x02037078;
+gObjectEvents = 0x02036e38;
+
+

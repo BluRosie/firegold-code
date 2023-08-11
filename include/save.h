@@ -1,6 +1,7 @@
 #ifndef SAVE_H
 #define SAVE_H
 
+#include "pokemon.h"
 #include "sprite.h"
 
 // constant defines

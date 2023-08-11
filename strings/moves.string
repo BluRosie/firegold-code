@@ -6,3 +6,12 @@ Climb up rocky walls.
 
 #org @gText_WhirlpoolDesc
 Cross whirlpools.
+
+#org @Text_WantToRockClimb
+The cliff is steep.\nWould you like to use Rock Climb?
+
+#org @Text_MonUsedRockClimb
+[BUFFER1] used Rock Climb!
+
+#org @Text_CantRockClimb
+The cliff is steep.\nA Pok\emon may be able to climb it.

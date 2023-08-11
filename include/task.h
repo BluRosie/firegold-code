@@ -21,5 +21,6 @@ void ResetTasks(void);
 u8 CreateTask(TaskFunc func, u8 priority);
 void DestroyTask(u8 taskId);
 void RunTasks(void);
+u32 FindTaskIdByFunc(TaskFunc func);
 
 #endif // GUARD_TASK_H

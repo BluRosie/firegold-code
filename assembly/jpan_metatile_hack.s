@@ -17,6 +17,8 @@
 .thumb
 .thumb_func
 
+.include "event.inc"
+
 @ this assembly routine is a modded version of jpan's behavior byte hack that decreases space required for the table while slightly increasing what's needed for the code
 onpress_a_get_script_tile:
 	lsl r1, r1, #0x18
@@ -80,3 +82,44 @@ behavior_table: @ for the playerfacing behaviors
 	.word 0x081C549C @ timer
 @ now, i personally added headbutt_script here, but it can go in any one of the zeros above.  just make sure that you note the entry correctly!
 	.word 0x08CFBAC8 @ headbutt tree behavior byte (0xA4)
+	.word EventScript_UseRockClimb @0xA5
+
+
+.data
+
+.global EventScript_UseRockClimb
+EventScript_UseRockClimb:
+	lockall
+	checkpartymove 0x188
+	compare_var_to_value 0x800D, 6
+	goto_if_eq EventScript_CantRockClimb
+	bufferpartymonnick 0, 0x800D
+	setfieldeffectargument 0, 0x800D
+	msgbox Text_WantToRockClimb, MSGBOX_YESNO
+	compare_var_to_value 0x800D, NO
+	goto_if_eq EventScript_EndRockClimb
+	msgbox Text_MonUsedRockClimb, MSGBOX_DEFAULT
+	closemessage
+	dofieldeffect 70 @FLDEFF_USE_ROCK_CLIMB
+	waitstate
+	goto EventScript_EndRockClimb
+	
+EventScript_CantRockClimb:
+	msgbox Text_CantRockClimb, MSGBOX_DEFAULT
+	
+EventScript_EndRockClimb:
+	releaseall
+	end
+
+@Text_WantToRockClimb:
+@    .string "The cliff is steep.\n"
+@    .string "Would you like to use Rock Climb?$"
+@    
+@Text_MonUsedRockClimb:
+@    .string "{STR_VAR_1} used Rock Climb!$"
+@    
+@Text_CantRockClimb:
+@    .string "The cliff is steep.\n"
+@    .string "A Pokémon may be able to climb it.$"
+
+

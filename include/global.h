@@ -7,6 +7,7 @@
 #define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
 #define T1_READ_32(ptr) ((ptr)[0] | ((ptr)[1] << 8) | ((ptr)[2] << 16) | ((ptr)[3] << 24))
 #define T1_READ_PTR(ptr) (u8*) T1_READ_32(ptr)
+#define WORD_U8_ARRAY(word) (word & 0xFF), ((word >> 8) & 0xFF), ((word >> 16) & 0xFF), ((word >> 24) & 0xFF)
 
 struct MapPosition
 {
