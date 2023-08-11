@@ -429,9 +429,9 @@ struct
     [FIELD_MOVE_MILK_DRINK]   = {0x080e5685,                PARTY_MSG_NOT_ENOUGH_HP},
     [FIELD_MOVE_SOFT_BOILED]  = {0x080e5685,                PARTY_MSG_NOT_ENOUGH_HP},
     [FIELD_MOVE_SWEET_SCENT]  = {SetUpFieldMove_SweetScent, PARTY_MSG_CANT_USE_HERE},
-    //[FIELD_MOVE_HEADBUTT]     = {SetUpFieldMove_Headbutt,  PARTY_MSG_CANT_USE_HERE},
-    //[FIELD_MOVE_ROCK_CLIMB]   = {SetUpFieldMove_RockClimb, PARTY_MSG_CANT_USE_HERE},
-    //[FIELD_MOVE_WHIRLPOOL]    = {SetUpFieldMove_Whirlpool, PARTY_MSG_CANT_USE_HERE},
+    [FIELD_MOVE_HEADBUTT]     = {SetUpFieldMove_Headbutt,  PARTY_MSG_CANT_USE_HERE},
+    [FIELD_MOVE_ROCK_CLIMB]   = {SetUpFieldMove_RockClimb, PARTY_MSG_CANT_USE_HERE},
+    [FIELD_MOVE_WHIRLPOOL]    = {SetUpFieldMove_Whirlpool, PARTY_MSG_CANT_USE_HERE},
 };
 
 
@@ -646,3 +646,65 @@ void FieldCallback_Dig(void)
     }
     gFieldEffectArguments[0] = GetCursorSelectionMonId();
 }
+
+
+/////////////////////////////////////
+//            HEADBUTT             //
+/////////////////////////////////////
+
+
+u8 HeadbuttScript[] =
+{
+    0x6A,                                       // lock
+    0x9D, 0x00, 0x0D, 0x80,                     // setanimation 0x0 LASTRESULT
+    0x7F, 0x00, 0x0D, 0x80,                     // bufferpartypokemon 0x0 LASTRESULT
+    0x82, 0x01, 0x1D, 0x00,                     // bufferattack 0x1 MOVE_HEADBUTT
+    0x05, 0xFE, 0xBA, 0xCF, 0x08,               // goto 0x08CFBAFE
+};
+
+
+void FieldCallback_Headbutt(void)
+{
+    VarSet(0x800D, GetCursorSelectionMonId()); // set mon animation slot
+    ScriptContext_SetupScript(HeadbuttScript); // global headbutt script wrapper that we use
+}
+
+bool8 SetUpFieldMove_Headbutt(void)
+{
+    struct MapPosition position;
+    GetInFrontOfPlayerPosition(&position);
+    
+    if (MapGridGetMetatileAttributeAt(position.x, position.y) == 0xA4) // headbutt tree
+    {
+        gFieldCallback2 = 0x081248b1;
+        gPostMenuFieldCallback = FieldCallback_Headbutt;
+        return TRUE;
+    }
+    
+    return FALSE;
+}
+
+
+/////////////////////////////////////
+//           WHIRLPOOL             //
+/////////////////////////////////////
+
+
+bool8 SetUpFieldMove_Whirlpool(void)
+{
+    return FALSE;
+}
+
+
+/////////////////////////////////////
+//           ROCK CLIMB            //
+/////////////////////////////////////
+
+
+bool8 SetUpFieldMove_RockClimb(void)
+{
+    return FALSE;
+}
+
+
+

@@ -1919,3 +1919,8 @@ SetUsedFieldMoveQuestLogEvent = 0x08124bb0 | 1;
 CanUseEscapeRopeOnCurrMap = 0x080a1b8c | 1;
 Overworld_ResetStateAfterDigEscRope = 0x08054d70 | 1;
 GetPlayerFacingDirection = 0x0805c6c4 | 1;
+
+RunScriptImmediately = 0x08069b48 | 1;
+ScriptContext_SetupScript = 0x08069ae4 | 1;
+GetInFrontOfPlayerPosition = 0x0806ce38 | 1;
+MapGridGetMetatileAttributeAt = 0x08058f48 | 1;
