@@ -126,7 +126,8 @@
 
 #define START_OF_NEW_FLD_EFF FLDEFF_USE_ROCK_CLIMB
 
-#define FLDEFF_PAL_TAG_DUST_CLOUD         0x1012
+#define FLDEFF_PAL_TAG_DUST_CLOUD         0x1010
+#define FLDEFF_PAL_TAG_ROCK_CLIMB_BLOB    0x1011
 
 
 
@@ -312,6 +313,16 @@
 
 extern const struct SpriteTemplate *const gFieldEffectObjectTemplatePointers[];
 //extern const struct SpriteTemplate *const gNewFieldEffectObjectTemplatePointers[];
+
+
+enum {
+    PLAYER_AVATAR_GFX_NORMAL,
+    PLAYER_AVATAR_GFX_BIKE,
+    PLAYER_AVATAR_GFX_RIDE,
+    PLAYER_AVATAR_GFX_FIELD_MOVE,
+    PLAYER_AVATAR_GFX_FISH,
+    PLAYER_AVATAR_GFX_VSSEEKER,
+};
 
 
 enum {

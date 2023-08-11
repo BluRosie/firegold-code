@@ -748,7 +748,7 @@ const struct SpriteTemplate *const gNewFieldEffectObjectTemplatePointers[] = {
 
 u8 CreateRockClimbBlob(void)
 {
-    u8 spriteId;
+    u8 spriteId = MAX_SPRITES;
     struct Sprite *sprite;
 
     SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
@@ -757,7 +757,7 @@ u8 CreateRockClimbBlob(void)
     {
         sprite = &gSprites[spriteId];
         sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.paletteNum = 0;
+        //sprite->oam.paletteNum = 0;
         sprite->data[2] = gFieldEffectArguments[2];
         sprite->data[3] = -1;
         sprite->data[6] = -1;
@@ -844,7 +844,7 @@ bool8 RockClimb_JumpOnRockClimbBlob(struct Task *task, struct ObjectEvent *objec
 {
     if (!FieldEffectActiveListContains(FLDEFF_FIELD_MOVE_SHOW_MON))
     {
-        ObjectEventSetGraphicsId(objectEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_STATE_SURFING));
+        ObjectEventSetGraphicsId(objectEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_RIDE));
         ObjectEventClearHeldMovementIfFinished(objectEvent);
         ObjectEventSetHeldMovement(objectEvent, GetJumpSpecialMovementAction(objectEvent->movementDirection));
         gFieldEffectArguments[0] = task->tDestX;
@@ -971,7 +971,7 @@ bool8 RockClimb_WaitStopRockClimb(struct Task *task, struct ObjectEvent *objectE
         gPlayerAvatar.preventStep = FALSE;
         UnfreezeObjectEvents();
         ScriptContext2_Disable();
-        DestroySprite(&gSprites[objectEvent->fieldEffectSpriteId]);
+        DestroySprite(&gSprites[objectEvent->fieldEffectSpriteId]); // this seems to destroy the palette too
         FieldEffectActiveListRemove(FLDEFF_USE_ROCK_CLIMB);
         objectEvent->triggerGroundEffectsOnMove = TRUE; // e.g. if dismount on grass
         DestroyTask(FindTaskIdByFunc(Task_UseRockClimb));

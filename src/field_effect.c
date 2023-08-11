@@ -19,6 +19,38 @@ extern void Task_UseRockClimb(u8 taskId);
 bool8 FldEff_UseRockClimb(void);
 u32 FldEff_RockClimbDust(void);
 
+static const union AnimCmd sSurfBlobAnim_FaceSouth[] =
+{
+    ANIMCMD_FRAME(0, 1),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd sSurfBlobAnim_FaceNorth[] =
+{
+    ANIMCMD_FRAME(1, 1),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd sSurfBlobAnim_FaceWest[] =
+{
+    ANIMCMD_FRAME(2, 1),
+    ANIMCMD_JUMP(0),
+};
+
+static const union AnimCmd sSurfBlobAnim_FaceEast[] =
+{
+    ANIMCMD_FRAME(2, 1, .hFlip = TRUE),
+    ANIMCMD_JUMP(0),
+};
+
+const union AnimCmd *const sAnimTable_SurfBlob[] =
+{
+    sSurfBlobAnim_FaceSouth,
+    sSurfBlobAnim_FaceNorth,
+    sSurfBlobAnim_FaceWest,
+    sSurfBlobAnim_FaceEast,
+};
+
 
 const struct SpriteFrameImage sPicTable_RockClimbBlob[] = {
     overworld_frame(0x09DA50A0, 4, 4, 1), // gFieldEffectObjectPic_RockClimbBlob
@@ -28,9 +60,9 @@ const struct SpriteFrameImage sPicTable_RockClimbBlob[] = {
 
 const struct SpriteTemplate gFieldEffectObjectTemplate_RockClimbBlob = {
     .tileTag = 0xFFFF,
-    .paletteTag = 0xFFFF,
+    .paletteTag = FLDEFF_PAL_TAG_ROCK_CLIMB_BLOB,
     .oam = 0x083a3718, // gObjectEventBaseOam_32x32
-    .anims = 0x083a555c, // sAnimTable_SurfBlob
+    .anims = sAnimTable_SurfBlob,
     .images = sPicTable_RockClimbBlob,
     .affineAnims = gDummySpriteAffineAnimTable,
     .callback = 0x080dc4f9,
@@ -65,6 +97,8 @@ const struct SpriteTemplate gFieldEffectObjectTemplate_RockClimbDust = {
 
 const struct SpritePalette gSpritePalette_BigDust = {0x9DA5080, /*gFieldEffectPal_DustCloudgFieldEffectPal_DustCloud,*/ 
                                                      FLDEFF_PAL_TAG_DUST_CLOUD};
+
+const struct SpritePalette gSpritePalette_RockClimbBlob = {0x9DA5060, FLDEFF_PAL_TAG_ROCK_CLIMB_BLOB};
 
 
 

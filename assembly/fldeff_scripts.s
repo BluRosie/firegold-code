@@ -21,7 +21,8 @@
 
 .global gFieldEffectScript_UseRockClimb
 gFieldEffectScript_UseRockClimb:
-	field_eff_callnative FldEff_UseRockClimb
+	//field_eff_callnative FldEff_UseRockClimb
+	field_eff_loadfadedpal_callnative gSpritePalette_RockClimbBlob, FldEff_UseRockClimb
 	field_eff_end
 
 .global gFieldEffectScript_RockClimbDust
