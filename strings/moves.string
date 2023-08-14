@@ -15,3 +15,12 @@ The cliff is steep.\nWould you like to use Rock Climb?
 
 #org @Text_CantRockClimb
 The cliff is steep.\nA Pok\emon may be able to climb it.
+
+#org @Text_WantToWhirlpool
+A whirlpool is in the way.\nWould you like to use Whirlpool?
+    
+#org @Text_MonUsedWhirlpool
+[BUFFER1] used Whirlpool!
+
+#org @Text_CantWhirlpool
+A whirlpool is in the way.\nA Pok\emon may be able to cross it.

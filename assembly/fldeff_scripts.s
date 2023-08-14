@@ -30,8 +30,17 @@ gFieldEffectScript_RockClimbDust:
 	field_eff_loadfadedpal_callnative gSpritePalette_BigDust, FldEff_RockClimbDust
 	field_eff_end
 
+.global gFieldEffectScript_WhirlpoolDisappear
+gFieldEffectScript_WhirlpoolDisappear:
+	field_eff_loadfadedpal_callnative gSpritePalette_WhirlpoolDisappear, FldEff_WhirlpoolDisappear
+	field_eff_end
+
+
+.align 2
+
 
 .global gNewFieldEffectScriptPointers
 gNewFieldEffectScriptPointers:
 .word gFieldEffectScript_UseRockClimb
 .word gFieldEffectScript_RockClimbDust
+.word gFieldEffectScript_WhirlpoolDisappear

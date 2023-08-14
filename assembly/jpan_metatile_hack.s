@@ -83,6 +83,7 @@ behavior_table: @ for the playerfacing behaviors
 @ now, i personally added headbutt_script here, but it can go in any one of the zeros above.  just make sure that you note the entry correctly!
 	.word 0x08CFBAC8 @ headbutt tree behavior byte (0xA4)
 	.word EventScript_UseRockClimb @0xA5
+	.word EventScript_UseWhirlpool @0xA6
 
 
 .data
@@ -122,4 +123,26 @@ EventScript_EndRockClimb:
 @    .string "The cliff is steep.\n"
 @    .string "A Pokémon may be able to climb it.$"
 
-
+.global EventScript_UseWhirlpool
+EventScript_UseWhirlpool:
+	lockall
+	checkpartymove 0xfa
+	compare_var_to_value 0x800D, 6
+	goto_if_eq EventScript_CantWhirlpool
+	bufferpartymonnick 0, 0x800D
+	setfieldeffectargument 0, 0x800D
+	msgbox Text_WantToWhirlpool, MSGBOX_YESNO
+	compare_var_to_value 0x800D, NO
+	goto_if_eq EventScript_EndWhirlpool
+	msgbox Text_MonUsedWhirlpool, MSGBOX_DEFAULT
+	closemessage
+	dofieldeffect 72 @FLDEFF_WHIRLPOOL_DISAPPEAR
+	waitstate
+	goto EventScript_EndWhirlpool
+	
+EventScript_CantWhirlpool:
+	msgbox Text_CantWhirlpool, MSGBOX_DEFAULT
+	
+EventScript_EndWhirlpool:
+	releaseall
+	end

@@ -689,10 +689,83 @@ bool8 SetUpFieldMove_Headbutt(void)
 //           WHIRLPOOL             //
 /////////////////////////////////////
 
+struct RockClimbRide
+{
+    u8 action;
+    s8 dx;
+    s8 dy;
+    u8 jumpDir;
+};
+
+extern const struct SpriteTemplate gFieldEffectObjectTemplate_RockClimbBlob;
+extern const struct SpriteTemplate gFieldEffectObjectTemplate_RockClimbDust;
+extern const struct SpriteTemplate gFieldEffectObjectTemplate_Whirlpool;
+const struct RockClimbRide sRockClimbMovement[];
+
+
+const struct SpriteTemplate *const gNewFieldEffectObjectTemplatePointers[] = {
+    [FLDEFFOBJ_ROCK_CLIMB_BLOB - FLDEFFOBJ_NEW_TEMPLATES] = &gFieldEffectObjectTemplate_RockClimbBlob,
+    [FLDEFFOBJ_ROCK_CLIMB_DUST - FLDEFFOBJ_NEW_TEMPLATES] = &gFieldEffectObjectTemplate_RockClimbDust,
+    [FLDEFFOBJ_WHIRLPOOL_DISAPPEAR - FLDEFFOBJ_NEW_TEMPLATES] = &gFieldEffectObjectTemplate_Whirlpool,
+};
+
+
+
+void FieldCallback_Whirlpool(void)
+{
+    gFieldEffectArguments[0] = GetCursorSelectionMonId();
+    FieldEffectStart(FLDEFF_WHIRLPOOL_DISAPPEAR);
+}
+
 
 bool8 SetUpFieldMove_Whirlpool(void)
 {
+    s16 x, y;
+
+    GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
+    if (MapGridGetMetatileBehaviorAt(x, y) == 0xA6)
+    {
+        gFieldCallback2 = 0x081248b1;
+        gPostMenuFieldCallback = FieldCallback_Whirlpool;
+        return TRUE;
+    }
+
     return FALSE;
+}
+
+u32 FldEff_WhirlpoolDisappear(void)
+{
+    u8 spriteId;
+    struct Sprite *sprite;
+    struct ObjectEvent *objectEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    s8 dx = sRockClimbMovement[objectEvent->movementDirection].dx;
+    s8 dy = sRockClimbMovement[objectEvent->movementDirection].dy;
+    s16 x, y;
+
+    GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
+    MapGridSetMetatileIdAt(x, y, 0x12B);
+    DrawWholeMapView();
+
+    gFieldEffectArguments[0] = objectEvent->currentCoords.x - dx;
+    gFieldEffectArguments[1] = objectEvent->currentCoords.y - dy;
+    gFieldEffectArguments[2] = objectEvent->previousElevation;
+
+
+
+    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
+    spriteId = CreateSpriteAtEnd(gNewFieldEffectObjectTemplatePointers[FLDEFFOBJ_WHIRLPOOL_DISAPPEAR - FLDEFFOBJ_NEW_TEMPLATES], gFieldEffectArguments[0], gFieldEffectArguments[1], 0);
+
+    if (spriteId != MAX_SPRITES)
+    {
+        sprite = &gSprites[spriteId];
+        sprite->coordOffsetEnabled = TRUE;
+        sprite->oam.priority = gFieldEffectArguments[3];
+        sprite->data[0] = gFieldEffectArguments[2];
+        sprite->data[1] = FLDEFF_WHIRLPOOL_DISAPPEAR;
+    }
+    
+    ScriptContext2_Disable();
+    return 0;
 }
 
 
@@ -727,16 +800,6 @@ enum RockClimbState
     STATE_ROCK_CLIMB_CONTINUE_RIDE,
     STATE_ROCK_CLIMB_STOP_INIT,
     STATE_ROCK_CLIMB_WAIT_STOP
-};
-
-
-extern const struct SpriteTemplate gFieldEffectObjectTemplate_RockClimbBlob;
-extern const struct SpriteTemplate gFieldEffectObjectTemplate_RockClimbDust;
-
-
-const struct SpriteTemplate *const gNewFieldEffectObjectTemplatePointers[] = {
-    [FLDEFFOBJ_ROCK_CLIMB_BLOB - FLDEFFOBJ_NEW_TEMPLATES] = &gFieldEffectObjectTemplate_RockClimbBlob,
-    [FLDEFFOBJ_ROCK_CLIMB_DUST - FLDEFFOBJ_NEW_TEMPLATES] = &gFieldEffectObjectTemplate_RockClimbDust,
 };
 
 
@@ -886,13 +949,6 @@ bool8 RockClimb_WaitJumpOnRockClimbBlob(struct Task *task, struct ObjectEvent *o
     return FALSE;
 }
 
-struct RockClimbRide
-{
-    u8 action;
-    s8 dx;
-    s8 dy;
-    u8 jumpDir;
-};
 const struct RockClimbRide sRockClimbMovement[] = 
 {
     [DIR_NONE] = {MOVEMENT_ACTION_WALK_FAST_DOWN, 0, 0, DIR_NONE},

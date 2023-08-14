@@ -108,6 +108,57 @@ const struct SpritePalette gSpritePalette_RockClimbBlob = {0x9DA5060, FLDEFF_PAL
 
 
 
+const union AnimCmd sAnim_Whirlpool[] =
+{
+    ANIMCMD_FRAME(0, 12),
+    ANIMCMD_FRAME(1, 12),
+    ANIMCMD_FRAME(2, 12),
+    ANIMCMD_FRAME(3, 12),
+    ANIMCMD_FRAME(4, 12),
+    ANIMCMD_FRAME(5, 12),
+    ANIMCMD_FRAME(6, 12),
+    ANIMCMD_FRAME(7, 12),
+    ANIMCMD_FRAME(8, 12),
+    ANIMCMD_FRAME(9, 12),
+    ANIMCMD_END,
+};
+const union AnimCmd *const sAnimTable_Whirlpool[] =
+{
+    sAnim_Whirlpool,
+};
+const struct SpriteFrameImage sPicTable_Whirlpool[] = {
+    overworld_frame(0x09DA84F0, 2, 2, 0),
+    overworld_frame(0x09DA84F0, 2, 2, 1),
+    overworld_frame(0x09DA84F0, 2, 2, 2),
+    overworld_frame(0x09DA84F0, 2, 2, 3),
+    overworld_frame(0x09DA84F0, 2, 2, 4),
+    overworld_frame(0x09DA84F0, 2, 2, 5),
+    overworld_frame(0x09DA84F0, 2, 2, 6),
+    overworld_frame(0x09DA84F0, 2, 2, 7),
+    overworld_frame(0x09DA84F0, 2, 2, 8),
+    overworld_frame(0x09DA84F0, 2, 2, 9),
+};
+const struct SpriteTemplate gFieldEffectObjectTemplate_Whirlpool = {
+    .tileTag = 0xFFFF,
+    .paletteTag = FLDEFF_PAL_TAG_WHIRLPOOL_DISAPPEAR,
+    .oam = 0x083a36f0,// &gObjectEventBaseOam_32x32,
+    .anims = sAnimTable_Whirlpool,
+    .images = sPicTable_Whirlpool,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = 0x080dcce1, // UpdateJumpImpactEffect,
+};
+
+
+const struct SpritePalette gSpritePalette_WhirlpoolDisappear = {0x9DA84D0, FLDEFF_PAL_TAG_WHIRLPOOL_DISAPPEAR};
+
+
+
+
+
+
+
+
+
 extern const u8 *const gFieldEffectScript_UseRockClimb;
 extern const u8 *const gFieldEffectScript_RockClimbDust;
 extern const u8 *const gNewFieldEffectScriptPointers[];
