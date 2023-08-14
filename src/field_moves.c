@@ -689,6 +689,15 @@ bool8 SetUpFieldMove_Headbutt(void)
 //           WHIRLPOOL             //
 /////////////////////////////////////
 
+
+
+#define tState       data[0]
+#define tDestX       data[1]
+#define tDestY       data[2]
+#define tCounter     data[7]
+#define tBlobId      data[8]
+#define tMonId       data[15]
+
 struct RockClimbRide
 {
     u8 action;
@@ -702,13 +711,21 @@ extern const struct SpriteTemplate gFieldEffectObjectTemplate_RockClimbDust;
 extern const struct SpriteTemplate gFieldEffectObjectTemplate_Whirlpool;
 const struct RockClimbRide sRockClimbMovement[];
 
+// WHIRLPOOL
+enum WhirlpoolState
+{
+    STATE_WHIRLPOOL_INIT,
+    STATE_WHIRLPOOL_POSE,
+    STATE_WHIRLPOOL_SHOW_MON,
+    STATE_WHIRLPOOL_SPAWN,
+    STATE_WHIRLPOOL_WAIT,
+};
 
 const struct SpriteTemplate *const gNewFieldEffectObjectTemplatePointers[] = {
     [FLDEFFOBJ_ROCK_CLIMB_BLOB - FLDEFFOBJ_NEW_TEMPLATES] = &gFieldEffectObjectTemplate_RockClimbBlob,
     [FLDEFFOBJ_ROCK_CLIMB_DUST - FLDEFFOBJ_NEW_TEMPLATES] = &gFieldEffectObjectTemplate_RockClimbDust,
     [FLDEFFOBJ_WHIRLPOOL_DISAPPEAR - FLDEFFOBJ_NEW_TEMPLATES] = &gFieldEffectObjectTemplate_Whirlpool,
 };
-
 
 
 void FieldCallback_Whirlpool(void)
@@ -733,7 +750,40 @@ bool8 SetUpFieldMove_Whirlpool(void)
     return FALSE;
 }
 
-u32 FldEff_WhirlpoolDisappear(void)
+bool8 Whirlpool_Init(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 Whirlpool_FieldMovePose(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 Whirlpool_ShowMon(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 Whirlpool_StartAnimation(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 Whirlpool_WaitForAnimEnd(struct Task *task, struct ObjectEvent *objectEvent);
+
+bool8 (*const sWhirlpoolFieldEffectFuncs[])(struct Task *, struct ObjectEvent *) =
+{
+    [STATE_WHIRLPOOL_INIT]          = Whirlpool_Init,
+    [STATE_WHIRLPOOL_POSE]          = Whirlpool_FieldMovePose,
+    [STATE_WHIRLPOOL_SHOW_MON]      = Whirlpool_ShowMon,
+    [STATE_WHIRLPOOL_SPAWN]         = Whirlpool_StartAnimation,
+    [STATE_WHIRLPOOL_WAIT]          = Whirlpool_WaitForAnimEnd,
+};
+
+void Task_UseWhirlpool(u8 taskId)
+{
+    while (sWhirlpoolFieldEffectFuncs[gTasks[taskId].tState](&gTasks[taskId], &gObjectEvents[gPlayerAvatar.objectEventId]))
+        ;
+}
+
+bool8 FldEff_WhirlpoolDisappear(void)
+{
+    u8 taskId;
+    taskId = CreateTask(Task_UseWhirlpool, 0xff);
+    gTasks[taskId].tMonId = gFieldEffectArguments[0];
+    gTasks[taskId].tState = 0;
+    gTasks[taskId].tCounter = 0;
+    Task_UseWhirlpool(taskId);
+    return FALSE;
+}
+
+
+u8 CreateWhirlpoolDisappear(void)
 {
     u8 spriteId;
     struct Sprite *sprite;
@@ -764,9 +814,105 @@ u32 FldEff_WhirlpoolDisappear(void)
         sprite->data[1] = FLDEFF_WHIRLPOOL_DISAPPEAR;
     }
     
-    ScriptContext2_Disable();
-    return 0;
+    //ScriptContext2_Disable();
+    return spriteId;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+bool8 Whirlpool_Init(struct Task *task, struct ObjectEvent *objectEvent)
+{
+    ScriptContext2_Enable();
+    FreezeObjectEvents();
+    gPlayerAvatar.preventStep = TRUE;
+    task->tBlobId = objectEvent->fieldEffectSpriteId;
+    //SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_SURFING);
+    //PlayerGetDestCoords(&task->tDestX, &task->tDestY);
+    //MoveCoords(gObjectEvents[gPlayerAvatar.objectEventId].movementDirection, &task->tDestX, &task->tDestY);
+    task->tState++;
+    return FALSE;
+}
+
+bool8 Whirlpool_FieldMovePose(struct Task *task, struct ObjectEvent *objectEvent)
+{
+    if (!ObjectEventIsMovementOverridden(objectEvent) || ObjectEventClearHeldMovementIfFinished(objectEvent))
+    {
+        StartPlayerAvatarSummonMonForFieldMoveAnim();
+        ObjectEventSetHeldMovement(objectEvent, 0x45); // MOVEMENT_ACTION_START_ANIM_IN_DIRECTION
+        task->tState++;
+    }
+    return FALSE;
+}
+
+bool8 Whirlpool_ShowMon(struct Task *task, struct ObjectEvent *objectEvent)
+{
+    if (ObjectEventCheckHeldMovementStatus(objectEvent))
+    {
+        gFieldEffectArguments[0] = task->tMonId | 0x80000000;
+        FieldEffectStart(FLDEFF_FIELD_MOVE_SHOW_MON_INIT);
+        task->tState++;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+bool8 Whirlpool_StartAnimation(struct Task *task, struct ObjectEvent *objectEvent)
+{
+    if (!FieldEffectActiveListContains(FLDEFF_FIELD_MOVE_SHOW_MON))
+    {
+        //ObjectEventSetGraphicsId(objectEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_RIDE));
+        ObjectEventClearHeldMovementIfFinished(objectEvent);
+        //ObjectEventSetHeldMovement(objectEvent, GetJumpSpecialMovementAction(objectEvent->movementDirection));
+        gFieldEffectArguments[0] = task->tDestX;
+        gFieldEffectArguments[1] = task->tDestY;
+        gFieldEffectArguments[2] = gPlayerAvatar.objectEventId;
+        objectEvent->fieldEffectSpriteId = CreateWhirlpoolDisappear();
+        task->tState++;
+    }
+
+    return FALSE;
+}
+
+bool8 Whirlpool_WaitForAnimEnd(struct Task *task, struct ObjectEvent *objectEvent)
+{
+    task->tCounter++;
+    if (ObjectEventClearHeldMovementIfFinished(objectEvent) && task->tCounter > 120)
+    {
+        ObjectEventSetGraphicsId(objectEvent, GetPlayerAvatarGraphicsIdByStateId(PLAYER_AVATAR_GFX_RIDE));
+        //SetPlayerAvatarStateMask(PLAYER_AVATAR_FLAG_SURFING);
+        ObjectEventSetHeldMovement(objectEvent, GetFaceDirectionMovementAction(objectEvent->facingDirection));
+        gPlayerAvatar.preventStep = FALSE;
+        UnfreezeObjectEvents();
+        ScriptContext2_Disable();
+        //DestroySprite(&gSprites[objectEvent->fieldEffectSpriteId]); // this seems to destroy the palette too
+        FieldEffectActiveListRemove(FLDEFF_WHIRLPOOL_DISAPPEAR);
+        objectEvent->triggerGroundEffectsOnMove = TRUE; // e.g. if dismount on grass
+        objectEvent->fieldEffectSpriteId = task->tBlobId;
+        DestroyTask(FindTaskIdByFunc(Task_UseWhirlpool));
+    }
+
+    return FALSE;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 /////////////////////////////////////
@@ -776,16 +922,16 @@ u32 FldEff_WhirlpoolDisappear(void)
 extern bool8 MetatileBehavior_IsRockClimbable(u8 metatileBehavior);
 
 
-static bool8 RockClimb_Init(struct Task *task, struct ObjectEvent *objectEvent);
-static bool8 RockClimb_FieldMovePose(struct Task *task, struct ObjectEvent *objectEvent);
-static bool8 RockClimb_ShowMon(struct Task *task, struct ObjectEvent *objectEvent);
-static bool8 RockClimb_JumpOnRockClimbBlob(struct Task *task, struct ObjectEvent *objectEvent);
-static bool8 RockClimb_WaitJumpOnRockClimbBlob(struct Task *task, struct ObjectEvent *objectEvent);
-static void RockClimbDust(struct ObjectEvent *objectEvent, u8 direction);
-static bool8 RockClimb_Ride(struct Task *task, struct ObjectEvent *objectEvent);
-static bool8 RockClimb_ContinueRideOrEnd(struct Task *task, struct ObjectEvent *objectEvent);
-static bool8 RockClimb_StopRockClimbInit(struct Task *task, struct ObjectEvent *objectEvent);
-static bool8 RockClimb_WaitStopRockClimb(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 RockClimb_Init(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 RockClimb_FieldMovePose(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 RockClimb_ShowMon(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 RockClimb_JumpOnRockClimbBlob(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 RockClimb_WaitJumpOnRockClimbBlob(struct Task *task, struct ObjectEvent *objectEvent);
+void RockClimbDust(struct ObjectEvent *objectEvent, u8 direction);
+bool8 RockClimb_Ride(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 RockClimb_ContinueRideOrEnd(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 RockClimb_StopRockClimbInit(struct Task *task, struct ObjectEvent *objectEvent);
+bool8 RockClimb_WaitStopRockClimb(struct Task *task, struct ObjectEvent *objectEvent);
 
 
 // ROCK CLIMB
@@ -801,13 +947,6 @@ enum RockClimbState
     STATE_ROCK_CLIMB_STOP_INIT,
     STATE_ROCK_CLIMB_WAIT_STOP
 };
-
-
-
-#define tState       data[0]
-#define tDestX       data[1]
-#define tDestY       data[2]
-#define tMonId       data[15]
 
 u8 CreateRockClimbBlob(void)
 {
