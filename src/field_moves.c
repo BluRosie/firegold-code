@@ -709,6 +709,7 @@ struct RockClimbRide
 extern const struct SpriteTemplate gFieldEffectObjectTemplate_RockClimbBlob;
 extern const struct SpriteTemplate gFieldEffectObjectTemplate_RockClimbDust;
 extern const struct SpriteTemplate gFieldEffectObjectTemplate_Whirlpool;
+extern const struct SpriteTemplate gFieldEffectObjectTemplate_SnowyTallGrass;
 const struct RockClimbRide sRockClimbMovement[];
 
 // WHIRLPOOL
@@ -725,6 +726,7 @@ const struct SpriteTemplate *const gNewFieldEffectObjectTemplatePointers[] = {
     [FLDEFFOBJ_ROCK_CLIMB_BLOB - FLDEFFOBJ_NEW_TEMPLATES] = &gFieldEffectObjectTemplate_RockClimbBlob,
     [FLDEFFOBJ_ROCK_CLIMB_DUST - FLDEFFOBJ_NEW_TEMPLATES] = &gFieldEffectObjectTemplate_RockClimbDust,
     [FLDEFFOBJ_WHIRLPOOL_DISAPPEAR - FLDEFFOBJ_NEW_TEMPLATES] = &gFieldEffectObjectTemplate_Whirlpool,
+    [FLDEFFOBJ_SNOWY_TALL_GRASS - FLDEFFOBJ_NEW_TEMPLATES] = &gFieldEffectObjectTemplate_SnowyTallGrass,
 };
 
 

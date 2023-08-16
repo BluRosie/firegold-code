@@ -195,7 +195,15 @@ u32 FieldEffectStart(u8 fldeff)
 {
     const u8 *script;
     u32 result;
+    s16 x, y;
     FieldEffectActiveListAdd(fldeff);
+
+    PlayerGetDestCoords(&x, &y);
+    if (fldeff == FLDEFF_TALL_GRASS && MapGridGetMetatileIdAt(x, y) == 0x283) // snowy grass tile
+    {
+        fldeff = FLDEFF_SNOWY_TALL_GRASS;
+    }
+
     if (fldeff < START_OF_NEW_FLD_EFF)
     {
         script = gFieldEffectScriptPointers[fldeff];
@@ -228,3 +236,86 @@ bool8 FldEff_UseRockClimb(void)
 #undef tDestX
 #undef tDestY
 #undef tMonId
+
+
+
+
+
+
+
+// snowy tall grass
+
+const struct SpriteFrameImage sPicTable_SnowyTallGrass[] =
+{
+    overworld_frame(0x9D5E260, 2, 2, 0),
+    overworld_frame(0x9D5E260, 2, 2, 1),
+    overworld_frame(0x9D5E260, 2, 2, 2),
+    overworld_frame(0x9D5E260, 2, 2, 3),
+    overworld_frame(0x9D5E260, 2, 2, 4),
+};
+
+const union AnimCmd sAnim_SnowyTallGrass[] =
+{
+    ANIMCMD_FRAME(1, 10),
+    ANIMCMD_FRAME(2, 10),
+    ANIMCMD_FRAME(3, 10),
+    ANIMCMD_FRAME(4, 10),
+    ANIMCMD_FRAME(0, 10),
+    ANIMCMD_END,
+};
+
+const union AnimCmd *const sAnimTable_SnowyTallGrass[] =
+{
+    sAnim_SnowyTallGrass,
+};
+
+const struct SpriteTemplate gFieldEffectObjectTemplate_SnowyTallGrass =
+{
+    .tileTag = 0xFFFF,
+    .paletteTag = FLDEFF_PAL_TAG_SNOWY_TALL_GRASS,
+    .oam = 0x083a36f0,
+    .anims = sAnimTable_SnowyTallGrass,
+    .images = sPicTable_SnowyTallGrass,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = 0x080db3ed,
+};
+
+const struct SpritePalette gSpritePalette_SnowyTallGrass = {0x9D5E4F0, FLDEFF_PAL_TAG_SNOWY_TALL_GRASS};
+
+
+extern const struct SpriteTemplate *const gNewFieldEffectObjectTemplatePointers[];
+
+
+u32 FldEff_SnowyTallGrass(void)
+{
+    s16 x;
+    s16 y;
+    u8 spriteId;
+    struct Sprite *sprite;
+
+    x = gFieldEffectArguments[0];
+    y = gFieldEffectArguments[1];
+    SetSpritePosToOffsetMapCoords(&x, &y, 8, 8);
+    //spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[FLDEFFOBJ_TALL_GRASS], x, y, 0);
+    spriteId = CreateSpriteAtEnd(gNewFieldEffectObjectTemplatePointers[FLDEFFOBJ_SNOWY_TALL_GRASS - FLDEFFOBJ_NEW_TEMPLATES], x, y, 0);
+    if (spriteId != MAX_SPRITES)
+    {
+        sprite = &gSprites[spriteId];
+        sprite->coordOffsetEnabled = TRUE;
+        sprite->oam.priority = gFieldEffectArguments[3];
+        sprite->data[0] = gFieldEffectArguments[2];
+        sprite->data[1] = gFieldEffectArguments[0];
+        sprite->data[2] = gFieldEffectArguments[1];
+        sprite->data[3] = gFieldEffectArguments[4];
+        sprite->data[4] = gFieldEffectArguments[5];
+        sprite->data[5] = gFieldEffectArguments[6];
+        if (gFieldEffectArguments[7])
+        {
+            SeekSpriteAnim(sprite, 4);
+        }
+    }
+    return 0;
+}
+
+
+
