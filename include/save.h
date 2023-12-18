@@ -283,12 +283,12 @@ struct BackupMapLayout
     u16 *map;
 };
 
-struct ObjectEvent gObjectEvents[OBJECT_EVENTS_COUNT];
-struct SaveBlock1 *gSaveBlock1;
-struct SaveBlock2 *gSaveBlock2;
-struct PlayerAvatar gPlayerAvatar;
-const union AnimCmd *const sAnimTable_Inanimate[];
+extern struct ObjectEvent gObjectEvents[OBJECT_EVENTS_COUNT];
+extern struct SaveBlock1 *gSaveBlock1;
+extern struct SaveBlock2 *gSaveBlock2;
+extern struct PlayerAvatar gPlayerAvatar;
+extern const union AnimCmd *const sAnimTable_Inanimate[];
 
-struct MapHeader gMapHeader;
+extern struct MapHeader gMapHeader;
 
 #endif
