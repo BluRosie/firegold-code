@@ -650,4 +650,6 @@ u32 CountAliveMonsInBattle(u32 arg0);
 u8 ItemId_GetHoldEffect(u16 itemId);
 u8 ItemId_GetHoldEffectParam(u16 itemId);
 
+extern u8 gMoveNames[][13];
+
 #endif // GUARD_BATTLE_H

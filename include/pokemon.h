@@ -2,7 +2,9 @@
 #define GUARD_POKEMON_H
 
 #include "constants/global.h"
+#include "main.h"
 #include "sprite.h"
+#include "task.h"
 
 #define MON_DATA_PERSONALITY        0
 #define MON_DATA_OT_ID              1
@@ -211,8 +213,78 @@ struct Pokemon
     u16 spDefense;
 };
 
+struct BaseStats
+{
+ /* 0x00 */ u8 baseHP;
+ /* 0x01 */ u8 baseAttack;
+ /* 0x02 */ u8 baseDefense;
+ /* 0x03 */ u8 baseSpeed;
+ /* 0x04 */ u8 baseSpAttack;
+ /* 0x05 */ u8 baseSpDefense;
+ /* 0x06 */ u8 type1;
+ /* 0x07 */ u8 type2;
+ /* 0x08 */ u8 catchRate;
+ /* 0x09 */ u8 expYield;
+ /* 0x0A */ u16 evYield_HP:2;
+ /* 0x0A */ u16 evYield_Attack:2;
+ /* 0x0A */ u16 evYield_Defense:2;
+ /* 0x0A */ u16 evYield_Speed:2;
+ /* 0x0B */ u16 evYield_SpAttack:2;
+ /* 0x0B */ u16 evYield_SpDefense:2;
+ /* 0x0C */ u16 item1;
+ /* 0x0E */ u16 item2;
+ /* 0x10 */ u8 genderRatio;
+ /* 0x11 */ u8 eggCycles;
+ /* 0x12 */ u8 friendship;
+ /* 0x13 */ u8 growthRate;
+ /* 0x14 */ u8 eggGroup1;
+ /* 0x15 */ u8 eggGroup2;
+ /* 0x16 */ u8 abilities[2];
+ /* 0x18 */ u8 safariZoneFleeRate;
+ /* 0x19 */ u8 bodyColor : 7;
+            u8 noFlip : 1;
+};
+
+struct PartyMenu
+{
+    MainCallback exitCallback;
+    TaskFunc task;
+    u8 menuType:4;
+    u8 layout:2;
+    u8 chooseMonsBattleType:2;
+    s8 slotId;
+    s8 slotId2;
+    u8 action;
+    u16 bagItem;
+    s16 data[2];
+};
+
+struct PartyMenuInternal
+{
+    TaskFunc task;
+    MainCallback exitCallback;
+    u32 chooseMultiple:1;
+    u32 lastSelectedSlot:3;  // Used to return to same slot when going left/right bewtween columns
+    u32 spriteIdConfirmPokeball:7;
+    u32 spriteIdCancelPokeball:7;
+    u32 messageId:14;
+    u8 windowId[3];
+    u8 actions[8];
+    u8 numActions;
+    u16 palBuffer[BG_PLTT_SIZE / sizeof(u16)];
+    s16 data[16];
+};
+
 extern struct Pokemon gPlayerParty[PARTY_SIZE];
 extern struct Pokemon gEnemyParty[PARTY_SIZE];
+extern const struct BaseStats gBaseStats[];
+extern const u32 gExperienceTables[8][101];
+
+extern struct PartyMenu gPartyMenu;
+
+extern struct PartyMenuInternal *sPartyMenuInternal;
+
+extern u8 gPlayerPartyCount;
 
 // These are full type signatures for GetMonData() and GetBoxMonData(),
 // but they are not used since some code erroneously omits the third arg.
@@ -225,5 +297,6 @@ u32 SetBoxMonData();
 
 u16 SpeciesToNationalPokedexNum(u16 species);
 void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality);
+void CalculateMonStats(struct Pokemon *mon);
 
 #endif // GUARD_POKEMON_H

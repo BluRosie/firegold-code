@@ -38,7 +38,7 @@ struct Main
     /*0x439*/ u8 inBattle:1;
     /*0x439*/ u8 field_439_x4:1;
 };
-struct Main gMain;
+extern struct Main gMain;
 void SetMainCallback2(MainCallback callback);
 void SetVBlankCallback(IntrCallback callback);
 

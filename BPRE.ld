@@ -363,6 +363,7 @@ gPokedexEntries = 0x844E850;
 gUnknown_08459FFC = 0x8459FFC;
 MonHoverShadowPal = 0x8D11B84;
 MonHoverShadowSprite = 0x8E7BAD4;
+gExperienceTables = 0x08253ae4;
 
 /* Pokemon Function */
 EmitSetMonData = 0x800DFF0 | 1;
