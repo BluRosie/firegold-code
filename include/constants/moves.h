@@ -427,7 +427,7 @@
 #define MOVE_WILDCHARGE 0x1a7
 #define MOVE_POISONJAB 0x1a8
 #define MOVE_ACIDSPRAY 0x1a9
-#define MOVE_MOVE_X1AA 0x1aa
+#define MOVE_GYROBALL 0x1aa
 #define MOVE_CLEARSMOG 0x1ab
 #define MOVE_LEAFSTORM 0x1ac
 #define MOVE_STONEEDGE 0x1ad
