@@ -328,9 +328,9 @@ u16 ALIGN4 sFieldMoves[] =
 
 
 
-u8 gText_HeadbuttDesc[];
-u8 gText_RockClimbDesc[];
-u8 gText_WhirlpoolDesc[];
+extern u8 gText_HeadbuttDesc[];
+extern u8 gText_RockClimbDesc[];
+extern u8 gText_WhirlpoolDesc[];
 
 u8 *sFieldMoveDescriptionTable[] =
 {
@@ -879,6 +879,7 @@ bool8 Whirlpool_StartAnimation(struct Task *task, struct ObjectEvent *objectEven
         gFieldEffectArguments[2] = gPlayerAvatar.objectEventId;
         objectEvent->fieldEffectSpriteId = CreateWhirlpoolDisappear();
         task->tState++;
+        PlaySE(0xD);
     }
 
     return FALSE;
