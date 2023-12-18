@@ -1,6 +1,7 @@
 #include "../include/global.h"
 #include "../include/battle.h"
 #include "../include/constants/flags.h"
+#include "../include/constants/moves.h"
 #include "../include/constants/species.h"
 
 #define ITEM_CHOICE_BAND 0xBA
@@ -77,13 +78,13 @@ s32 CalculateBaseDamage(struct BattlePokemon *attacker, struct BattlePokemon *de
 
     switch (move)
     {
-    case MOVE_GYRO_BALL:
+    case MOVE_GYROBALL:
         if (GetBattlerSpeed(battlerIdAtk) == 0)
             gBattleMovePower = 1;
         else
             gBattleMovePower = 25 * GetBattlerSpeed(battlerIdDef) / GetBattlerSpeed(battlerIdAtk);
         break;
-    case MOVE_SHELL_SIDE_ARM:
+    case MOVE_SHELLSIDEARM:
     {
         u32 damageAtk = 0, damageSpAtk = 0;
 
