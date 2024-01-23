@@ -40,12 +40,12 @@ const struct SpriteFrameImage gFieldEffectObjectPicTable_BallLight[] = {
 //};
 
 const struct SpriteTemplate gFieldEffectObjectTemplate_BallLight = {
-    .tileTag = 0xFFFF, 
-    .paletteTag = OBJ_EVENT_PAL_TAG_LIGHT, 
-    .oam = &gObjectEventBaseOam_32x32, 
+    .tileTag = 0xFFFF,
+    .paletteTag = OBJ_EVENT_PAL_TAG_LIGHT,
+    .oam = &gObjectEventBaseOam_32x32,
     .anims = sAnimTable_Inanimate, // fuck
     .images = gFieldEffectObjectPicTable_BallLight, // fuck
-    .affineAnims = gDummySpriteAffineAnimTable, 
+    .affineAnims = gDummySpriteAffineAnimTable,
     .callback = UpdateLightSprite,
 };
 
@@ -187,7 +187,7 @@ u8 AddPalTag(u16 PalTag)
 u32 GrabLightSpritePaletteNum(void)
 {
     u32 paletteNum = FindPalRef(PalTypeAnimation, OBJ_EVENT_PAL_TAG_LIGHT);
-    
+
     if (paletteNum == 0xFF)
     {
         AddPalRef(PalTypeAnimation, OBJ_EVENT_PAL_TAG_LIGHT);
@@ -270,7 +270,9 @@ void TrySpawnObjectEvents(s16 cameraX, s16 cameraY)
 
             if (top <= npcY && bottom >= npcY && left <= npcX && right >= npcX
                 && !FlagGet(template->flagId))
+            {
                 TrySpawnObjectEventTemplate(template, gSaveBlock1->location.mapNum, gSaveBlock1->location.mapGroup, cameraX, cameraY);
+            }
         }
     }
     // new:  try and spawn light sprites
@@ -336,7 +338,7 @@ void SpawnLightSprite(s16 x, s16 y, s16 cameraX, s16 cameraY)
     sprite = &gSprites[CreateSprite(template, 0, 0, 0)];
 
     sprite->oam.paletteNum = GrabLightSpritePaletteNum();
-    
+
     GetMapCoordsFromSpritePos(x + cameraX, y + cameraY, &sprite->pos1.x, &sprite->pos1.y);
     sprite->data[5] = lightType;
     sprite->data[6] = x;
@@ -366,7 +368,7 @@ void TrySpawnLightSprites(s16 cameraX, s16 cameraY)
     if (gTimeOfDay != 0 && gTimeOfDay != 5) { // if it is not currently night time
         return;
     }
-        
+
     for (i = 0; gLightMetatiles[i].x > 0; i++)
     {
         x = gLightMetatiles[i].x;
@@ -389,9 +391,9 @@ void CacheLightMetatiles(void)
     s32 x, y;
 
     // rewriting to do from map header
-    
+
     objectEventCount = gMapHeader.events->objectEventCount;
-    
+
     gLightMetatiles[0].x = 0;
     gLightMetatiles[0].y = 0;
 
@@ -417,7 +419,7 @@ void CacheLightMetatiles(void)
             }
         }
     }*/
-    
+
     for (; j < 16; j++)
     {
         gLightMetatiles[j].x = -1;

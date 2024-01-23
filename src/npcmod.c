@@ -8,10 +8,11 @@
 #define BG_PaletteMem2          ((u16*)0x020375F8) // Background Palette(256/16
 #define OBJ_PaletteMem2        ((u16*)0x020377F8) // Sprite Palette(256/16 colors)
 
-#define pal        ((u16*)offset) // Sprite Palette(256/16 colors)
-#define timeByte	((unsigned char*)0x0203C000)
-#define bwFilter	((unsigned char*)0x02036E28)
-#define mapType (*(u8*)(0x02036E13))
+#define pal             ((u16*)offset) // Sprite Palette(256/16 colors)
+#define timeByte	    ((unsigned char*)0x0203C000)
+#define bwFilter	    ((unsigned char*)0x02036E28)
+#define mapType         (*(u8*)(0x02036E13))
+#define mapWeather      (*(u8*)(0x02036E12))
 #define customColor		(*(unsigned int*)0x0203C010)
 const unsigned int colors_npc[144];
 const unsigned int nonList_npc[4];
@@ -77,7 +78,7 @@ void filter_npc(unsigned int derp, unsigned int offset)
 		if(((mC & 0xFF000000) >> (24)) == 0)
 			break;
 		u16 color = pal[i];
-        
+
         int j = 0;
         while (replace_colors_blend[j][0] != 0xFFFF)
         {
@@ -126,6 +127,9 @@ void filter_npc(unsigned int derp, unsigned int offset)
 
 	for(int i = 0; i < 0x200; i++)
 		BG_PaletteMem2[i] = BG_PaletteMem[i];
+
+	if (mapWeather == 3 || mapWeather == 5 || mapWeather == 11 || mapWeather == 13)
+		WeatherShiftGammaIfPalStateIdle(3); // thunder
 
 	if (*(char*)(0x20385F4 + 6) == 1 && *(char*)(0x20385F4 + 10)) cpuset(0x20385F4 + 4, 0x20375f8, 0x200 | 1 << 24);
 }

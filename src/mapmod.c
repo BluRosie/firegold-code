@@ -1,6 +1,6 @@
-#define u8 unsigned char
-#define u16 unsigned short
-#define u32 unsigned int
+#include "../include/global.h"
+#include "../include/bg.h"
+#include "../include/palette.h"
 
 
 #define OBJ_PaletteMem        ((u16*)0x020373F8) // Sprite Palette(256/16 colors) (adjusted for FR callback)
@@ -17,6 +17,7 @@
 #define bwFilter         ((unsigned char*)0x02036E28)
 #define blockset0Pal     (*(u32*)((*(u32*)((*(u32*)(0x02036DFC))+16))+8))
 #define mapType          (*(u8*)(0x02036E13))
+#define mapWeather       (*(u8*)(0x02036E12))
 const unsigned int colors[144];
 const unsigned int maskLut[4];
 const unsigned int nonList[4];
@@ -28,13 +29,14 @@ extern const u16 replace_colors_blend[][2];
 //Null out bytes 08059A28-08059A2F
 //Null out bytes 08059A12-08059A13
 
+
 void doMasking_map(int palette, int type, int offset, int amount)
 {
 	int tehTimeByte = timeByte[0];
 	if(timeByte[0] != 2 && palMaskStart == 0x8F8F) //We don't mask during the day, or if the map doesn't have masking
 	{
 		offset = 0x020371F8+(type==0x70?0xE0:0);
-			
+
 		for(int i = 0; i < (amount) * 0x10; i++)
 		{
 			if(palMask[i] != 0x8F8F)
@@ -124,7 +126,7 @@ void filter_map(unsigned int palette, unsigned int dest, unsigned int mode)
 
         int j = 0;
         u32 grabUnblended = 0;
-        
+
         if(timeByte[0] == 0 || timeByte[0] == 5)
         {
             while (replace_colors_blend[j][0] != 0xFFFF)
@@ -175,13 +177,13 @@ void filter_map(unsigned int palette, unsigned int dest, unsigned int mode)
 
         short r1 = div((r*rem + mR*mA), 0x1F);
         short g1 = div((g*rem + mG*mA), 0x1F);
-        short b1 = div((b*rem + mB*mA), 0x1F); 
+        short b1 = div((b*rem + mB*mA), 0x1F);
 
         color = ((unsigned char)(r1 & 0x1F) + ((unsigned char)(g1 & 0x1F) << 5) + ((unsigned char)(b1 & 0x1F) << 10));
-        
+
         pal[i] = grabUnblended ? replace_colors_blend[j][1] : color;
 	}
-	
+
 	doMasking_map(palette, type, offset, amount);
 	if(bwFilter[0] > 0 && bwFilter[0] < 4)
 	{
@@ -196,4 +198,3 @@ const unsigned int colors[144] __attribute__((aligned(4)))={ 0x502A00A8, 0x502A0
 
 const unsigned int nonList[4] ={ 0x4, 0x8, 0x9, 0xFF };
 const unsigned int maskLut[4] __attribute__((aligned(4)))={ 0x600, 0x200, 0x0, 0x400 };
-
