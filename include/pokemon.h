@@ -1,11 +1,100 @@
 #ifndef GUARD_POKEMON_H
 #define GUARD_POKEMON_H
 
+#include "constants/global.h"
+#include "main.h"
 #include "sprite.h"
+#include "task.h"
 
 #define MON_DATA_PERSONALITY        0
+#define MON_DATA_OT_ID              1
+#define MON_DATA_NICKNAME           2
+#define MON_DATA_LANGUAGE           3
+#define MON_DATA_SANITY_IS_BAD_EGG  4
+#define MON_DATA_SANITY_HAS_SPECIES 5
+#define MON_DATA_SANITY_IS_EGG      6
+#define MON_DATA_OT_NAME            7
+#define MON_DATA_MARKINGS           8
+#define MON_DATA_CHECKSUM           9
+#define MON_DATA_ENCRYPT_SEPARATOR 10
 #define MON_DATA_SPECIES           11
+#define MON_DATA_HELD_ITEM         12
+#define MON_DATA_MOVE1             13
+#define MON_DATA_MOVE2             14
+#define MON_DATA_MOVE3             15
+#define MON_DATA_MOVE4             16
+#define MON_DATA_PP1               17
+#define MON_DATA_PP2               18
+#define MON_DATA_PP3               19
+#define MON_DATA_PP4               20
+#define MON_DATA_PP_BONUSES        21
+#define MON_DATA_COOL              22
+#define MON_DATA_BEAUTY            23
+#define MON_DATA_CUTE              24
+#define MON_DATA_EXP               25
+#define MON_DATA_HP_EV             26
+#define MON_DATA_ATK_EV            27
+#define MON_DATA_DEF_EV            28
+#define MON_DATA_SPEED_EV          29
+#define MON_DATA_SPATK_EV          30
+#define MON_DATA_SPDEF_EV          31
+#define MON_DATA_FRIENDSHIP        32
+#define MON_DATA_SMART             33
+#define MON_DATA_POKERUS           34
+#define MON_DATA_MET_LOCATION      35
+#define MON_DATA_MET_LEVEL         36
+#define MON_DATA_MET_GAME          37
+#define MON_DATA_POKEBALL          38
+#define MON_DATA_HP_IV             39
+#define MON_DATA_ATK_IV            40
+#define MON_DATA_DEF_IV            41
+#define MON_DATA_SPEED_IV          42
+#define MON_DATA_SPATK_IV          43
+#define MON_DATA_SPDEF_IV          44
 #define MON_DATA_IS_EGG            45
+#define MON_DATA_ABILITY_NUM       46
+#define MON_DATA_TOUGH             47
+#define MON_DATA_SHEEN             48
+#define MON_DATA_OT_GENDER         49
+#define MON_DATA_COOL_RIBBON       50
+#define MON_DATA_BEAUTY_RIBBON     51
+#define MON_DATA_CUTE_RIBBON       52
+#define MON_DATA_SMART_RIBBON      53
+#define MON_DATA_TOUGH_RIBBON      54
+#define MON_DATA_STATUS            55
+#define MON_DATA_LEVEL             56
+#define MON_DATA_HP                57
+#define MON_DATA_MAX_HP            58
+#define MON_DATA_ATK               59
+#define MON_DATA_DEF               60
+#define MON_DATA_SPEED             61
+#define MON_DATA_SPATK             62
+#define MON_DATA_SPDEF             63
+#define MON_DATA_MAIL              64
+#define MON_DATA_SPECIES2          65
+#define MON_DATA_IVS               66
+#define MON_DATA_CHAMPION_RIBBON   67
+#define MON_DATA_WINNING_RIBBON    68
+#define MON_DATA_VICTORY_RIBBON    69
+#define MON_DATA_ARTIST_RIBBON     70
+#define MON_DATA_EFFORT_RIBBON     71
+#define MON_DATA_MARINE_RIBBON     72
+#define MON_DATA_LAND_RIBBON       73
+#define MON_DATA_SKY_RIBBON        74
+#define MON_DATA_COUNTRY_RIBBON    75
+#define MON_DATA_NATIONAL_RIBBON   76
+#define MON_DATA_EARTH_RIBBON      77
+#define MON_DATA_WORLD_RIBBON      78
+#define MON_DATA_UNUSED_RIBBONS    79
+#define MON_DATA_EVENT_LEGAL       80
+#define MON_DATA_KNOWN_MOVES       81
+#define MON_DATA_RIBBON_COUNT      82
+#define MON_DATA_RIBBONS           83
+#define MON_DATA_ATK2              84
+#define MON_DATA_DEF2              85
+#define MON_DATA_SPEED2            86
+#define MON_DATA_SPATK2            87
+#define MON_DATA_SPDEF2            88
 
 struct PokemonSubstruct0
 {
@@ -124,8 +213,78 @@ struct Pokemon
     u16 spDefense;
 };
 
+struct BaseStats
+{
+ /* 0x00 */ u8 baseHP;
+ /* 0x01 */ u8 baseAttack;
+ /* 0x02 */ u8 baseDefense;
+ /* 0x03 */ u8 baseSpeed;
+ /* 0x04 */ u8 baseSpAttack;
+ /* 0x05 */ u8 baseSpDefense;
+ /* 0x06 */ u8 type1;
+ /* 0x07 */ u8 type2;
+ /* 0x08 */ u8 catchRate;
+ /* 0x09 */ u8 expYield;
+ /* 0x0A */ u16 evYield_HP:2;
+ /* 0x0A */ u16 evYield_Attack:2;
+ /* 0x0A */ u16 evYield_Defense:2;
+ /* 0x0A */ u16 evYield_Speed:2;
+ /* 0x0B */ u16 evYield_SpAttack:2;
+ /* 0x0B */ u16 evYield_SpDefense:2;
+ /* 0x0C */ u16 item1;
+ /* 0x0E */ u16 item2;
+ /* 0x10 */ u8 genderRatio;
+ /* 0x11 */ u8 eggCycles;
+ /* 0x12 */ u8 friendship;
+ /* 0x13 */ u8 growthRate;
+ /* 0x14 */ u8 eggGroup1;
+ /* 0x15 */ u8 eggGroup2;
+ /* 0x16 */ u8 abilities[2];
+ /* 0x18 */ u8 safariZoneFleeRate;
+ /* 0x19 */ u8 bodyColor : 7;
+            u8 noFlip : 1;
+};
+
+struct PartyMenu
+{
+    MainCallback exitCallback;
+    TaskFunc task;
+    u8 menuType:4;
+    u8 layout:2;
+    u8 chooseMonsBattleType:2;
+    s8 slotId;
+    s8 slotId2;
+    u8 action;
+    u16 bagItem;
+    s16 data[2];
+};
+
+struct PartyMenuInternal
+{
+    TaskFunc task;
+    MainCallback exitCallback;
+    u32 chooseMultiple:1;
+    u32 lastSelectedSlot:3;  // Used to return to same slot when going left/right bewtween columns
+    u32 spriteIdConfirmPokeball:7;
+    u32 spriteIdCancelPokeball:7;
+    u32 messageId:14;
+    u8 windowId[3];
+    u8 actions[8];
+    u8 numActions;
+    u16 palBuffer[BG_PLTT_SIZE / sizeof(u16)];
+    s16 data[16];
+};
+
 extern struct Pokemon gPlayerParty[PARTY_SIZE];
 extern struct Pokemon gEnemyParty[PARTY_SIZE];
+extern const struct BaseStats gBaseStats[];
+extern const u32 gExperienceTables[8][101];
+
+extern struct PartyMenu gPartyMenu;
+
+extern struct PartyMenuInternal *sPartyMenuInternal;
+
+extern u8 gPlayerPartyCount;
 
 // These are full type signatures for GetMonData() and GetBoxMonData(),
 // but they are not used since some code erroneously omits the third arg.
@@ -133,8 +292,11 @@ extern struct Pokemon gEnemyParty[PARTY_SIZE];
 // u32 GetBoxMonData(struct BoxPokemon *boxMon, s32 field, u8 *data);
 u32 GetMonData();
 u32 GetBoxMonData();
+u32 SetMonData();
+u32 SetBoxMonData();
 
 u16 SpeciesToNationalPokedexNum(u16 species);
 void HandleSetPokedexFlag(u16 nationalNum, u8 caseId, u32 personality);
+void CalculateMonStats(struct Pokemon *mon);
 
 #endif // GUARD_POKEMON_H

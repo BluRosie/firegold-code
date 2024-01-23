@@ -363,6 +363,7 @@ gPokedexEntries = 0x844E850;
 gUnknown_08459FFC = 0x8459FFC;
 MonHoverShadowPal = 0x8D11B84;
 MonHoverShadowSprite = 0x8E7BAD4;
+gExperienceTables = 0x08253ae4;
 
 /* Pokemon Function */
 EmitSetMonData = 0x800DFF0 | 1;
@@ -1883,6 +1884,7 @@ AddScrollIndicatorArrowPairParameterized = 0x08133B40|1;
 RemoveScrollIndicatorArrowPair = 0x08133C30|1;
 AddTextPrinterParameterized3 = 0x0812E51C|1;
 AddTextPrinterParameterized4 = 0x0812E5A4|1;
+LoadStdWindowFrameGfx = 0x080f6e9c|1;
 
 GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;

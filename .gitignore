@@ -27,3 +27,5 @@ Cover Art.png
 
 # pycache files
 *.pyc
+*.cheats
+*.toml
