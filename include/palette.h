@@ -30,4 +30,6 @@ u8 UpdatePaletteFade(void);
 void ResetPaletteFade(void);
 bool8 BeginNormalPaletteFade(u32, s8, u8, u8, u16);
 
+#define RGB(r, g, b)  ((r) | ((g) << 5) | ((b) << 10))
+
 #endif // GUARD_PALETTE_H
