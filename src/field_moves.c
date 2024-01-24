@@ -803,7 +803,6 @@ u8 CreateWhirlpoolDisappear(void)
     gFieldEffectArguments[2] = objectEvent->previousElevation;
 
 
-
     SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 8);
     spriteId = CreateSpriteAtEnd(gNewFieldEffectObjectTemplatePointers[FLDEFFOBJ_WHIRLPOOL_DISAPPEAR - FLDEFFOBJ_NEW_TEMPLATES], gFieldEffectArguments[0], gFieldEffectArguments[1], 0);
 
@@ -811,7 +810,7 @@ u8 CreateWhirlpoolDisappear(void)
     {
         sprite = &gSprites[spriteId];
         sprite->coordOffsetEnabled = TRUE;
-        sprite->oam.priority = gFieldEffectArguments[3];
+        sprite->oam.priority = 3;
         sprite->data[0] = gFieldEffectArguments[2];
         sprite->data[1] = FLDEFF_WHIRLPOOL_DISAPPEAR;
     }
