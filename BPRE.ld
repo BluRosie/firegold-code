@@ -397,12 +397,12 @@ PokemonItemUseNoEffect = 0x8042414 | 1;
 GetItemEffectParamOffset = 0x8042C08 | 1;
 GetNature = 0x8042E9C | 1;
 GetNatureFromPersonality = 0x8042EB4 | 1;
-NationalPokedexNumToSpecies = 0x8043200 | 1; 
+NationalPokedexNumToSpecies = 0x8043200 | 1;
 SpeciesToNationalPokedexNum = 0x8043298 | 1;
 ModifyStatByNature = 0x8043698 | 1;
 //MonGainEVs = 0x8043890 | 1;
 GetMonEVCount = 0x8043A40 | 1;
-CheckPartyPokerus = 0x8043A70 | 1; 
+CheckPartyPokerus = 0x8043A70 | 1;
 CheckPartyHasHadPokerus = 0x8043AD8 | 1;
 TryIncrementMonLevel = 0x8043B90 | 1;
 GetMonSpritePalFromSpeciesAndPersonality = 0x80440F4 | 1;
@@ -831,7 +831,7 @@ PrintNotTheTimeToUseThat = 0x80A1110 | 1;
 PrepareOverworldReturn = 0x80A1184 | 1;
 SetUpItemUseCallback = 0x80A16D0 | 1;
 RemoveUsedItem = 0x80A1A44 | 1;
-ListMenuInit = 0x8106FF8 | 1; 
+ListMenuInit = 0x8106FF8 | 1;
 ListMenu_ProcessInput = 0x8107078 | 1;
 DestroyListMenuTask = 0x810713C | 1;
 ListMenuGetScrollAndRow = 0x81072D4 | 1;
@@ -991,7 +991,7 @@ PartyHasMonWithSurfOriginal = 0x805C83C | 1;
 IsPlayerSurfingNorth = 0x805C88C | 1;
 IsPlayerFacingSurfableFishableWater = 0x805C8B0 | 1;
 ClearPlayerAvatarInfo = 0x805C95C | 1;
-SetPlayerAvatarStateMask = 0x805C970 | 1; 
+SetPlayerAvatarStateMask = 0x805C970 | 1;
 GetCollisionAtCoords = 0x80636AC | 1;
 MoveCoords = 0x8063A20 | 1;
 GetFaceDirectionMovementAction = 0x8063EB8 | 1;
@@ -1890,10 +1890,39 @@ GenerateUnownPersonalityByLetter = 0x08082A88|1;
 Random = 0x08044EC8|1;
 CreateMon = 0x0803DA54|1;
 
+
+/* lord help me, we be overhauling */
+
+gObjectEvents = 0x02036e38;
+ReloadMapObjectWithOffset = 0x0805ee3c | 1;
+CreateReflectionEffectSprites = 0x0805de8c | 1;
+FieldEffectFreeTilesIfUnused = 0x080836f0 | 1;
+FieldEffectFreePaletteIfUnused = 0x08083754 | 1;
+Weather_SetBlendCoeffs = 0x0807adb0 | 1;
+gPlayerAvatar = 0x02037078;
+
+replace_colors_blend = 0x09CB1370;
+
+gObjectEventBaseOam_32x32 = 0x083a3718;
+sAnimTable_Inanimate = 0x083a3314;
+gFieldEffectObjectPic_BallLight = 0x09CB1400;
+gFieldEffectObjectPic_BallLightPal = 0x09CB1610;
+FindObjectEventPaletteIndexByTag = 0x0805f5a0 | 1;
+UpdateSpritePaletteWithWeather = 0x0807aa8c | 1;
+sObjectEventSpritePalettes = 0x087B4E70;
+GetMapCoordsFromSpritePos = 0x08063ad4 | 1;
+gBackupMapLayout = 0x03005040;
+InitMapLayoutData = 0x08058a00 | 1;
+RunOnLoadMapScript = 0x08069c38 | 1;
+LoadSavedMapView = 0x080591c4 | 1;
+TrySpawnObjectEventTemplate = 0x0805e72c | 1;
+sSpritePaletteTags = 0x03000de8;
+DoLoadSpritePalette = 0x080089a0 | 1;
+MarkFogSpritePalToLighten = 0x0807a714 | 1;
+WeatherShiftGammaIfPalStateIdle = 0x0807a790 | 1;
+
 gBattleMoves = 0x08900000;
 sHoldEffectToType = 0x0825decc;
 gStatStageRatios = 0x0825dead;
 
 CountAliveMonsInBattle = 0x0803f5b4 |1;
-
-
