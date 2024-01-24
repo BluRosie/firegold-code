@@ -24,7 +24,7 @@ u8 GetFieldMoveMonAbility(void)
 {
     u32 species = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_SPECIES, 0);
     u32 abilityNum = GetMonData(&gPlayerParty[gPartyMenu.slotId], MON_DATA_ABILITY_NUM, 0);
-    
+
     if (abilityNum && gBaseStats[species].abilities[1] != 0)
         return gBaseStats[species].abilities[1];
     return gBaseStats[species].abilities[0];
@@ -196,11 +196,11 @@ bool8 SetUpFieldMove_Cut(void)
         gPostMenuFieldCallback = 0x080979d1;
         return TRUE;
     }
-    
+
     else
     {
         PlayerGetDestCoords(&gPlayerFacingPosition.x, &gPlayerFacingPosition.y);
-    
+
         for (i = 0; i < cut_side; i++)
         {
             y = gPlayerFacingPosition.y - cut_side/2 + i;
@@ -253,7 +253,7 @@ bool8 SetUpFieldMove_Cut(void)
 #define PARTY_MSG_CHOOSE_MON                0
 #define PARTY_MSG_CHOOSE_MON_OR_CANCEL      1
 #define PARTY_MSG_CHOOSE_MON_AND_CONFIRM    2
-#define PARTY_MSG_MOVE_TO_WHERE             3 
+#define PARTY_MSG_MOVE_TO_WHERE             3
 #define PARTY_MSG_TEACH_WHICH_MON           4
 #define PARTY_MSG_USE_ON_WHICH_MON          5
 #define PARTY_MSG_GIVE_TO_WHICH_MON         6
@@ -673,14 +673,14 @@ bool8 SetUpFieldMove_Headbutt(void)
 {
     struct MapPosition position;
     GetInFrontOfPlayerPosition(&position);
-    
+
     if (MapGridGetMetatileAttributeAt(position.x, position.y) == 0xA4) // headbutt tree
     {
         gFieldCallback2 = 0x081248b1;
         gPostMenuFieldCallback = FieldCallback_Headbutt;
         return TRUE;
     }
-    
+
     return FALSE;
 }
 
@@ -815,7 +815,7 @@ u8 CreateWhirlpoolDisappear(void)
         sprite->data[0] = gFieldEffectArguments[2];
         sprite->data[1] = FLDEFF_WHIRLPOOL_DISAPPEAR;
     }
-    
+
     //ScriptContext2_Disable();
     return spriteId;
 }
@@ -1067,23 +1067,23 @@ bool8 RockClimb_WaitJumpOnRockClimbBlob(struct Task *task, struct ObjectEvent *o
     if (ObjectEventClearHeldMovementIfFinished(objectEvent))
     {
         SetSurfBlob_BobState(objectEvent->fieldEffectSpriteId, BOB_PLAYER_AND_MON);
-        //switch (objectEvent->facingDirection)
-        //{
-        //case DIR_EAST:
-        //    //check southeast then northeast
-        //    if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX + 1, task->tDestY + 1)))
-        //        objectEvent->movementDirection = DIR_SOUTHEAST;
-        //    else if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX + 1, task->tDestY - 1)))
-        //        objectEvent->movementDirection = DIR_NORTHEAST;
-        //    break;
-        //case DIR_WEST:
-        //    //check northwest then southwest
-        //    if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX - 1, task->tDestY - 1)))
-        //        objectEvent->movementDirection = DIR_NORTHWEST;
-        //    else if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX - 1, task->tDestY + 1)))
-        //        objectEvent->movementDirection = DIR_SOUTHWEST;
-        //    break;
-        //}
+        switch (objectEvent->facingDirection)
+        {
+        case DIR_EAST:
+            //check southeast then northeast
+            if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX + 1, task->tDestY + 1)))
+                objectEvent->movementDirection = DIR_SOUTHEAST;
+            else if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX + 1, task->tDestY - 1)))
+                objectEvent->movementDirection = DIR_NORTHEAST;
+            break;
+        case DIR_WEST:
+            //check northwest then southwest
+            if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX - 1, task->tDestY - 1)))
+                objectEvent->movementDirection = DIR_NORTHWEST;
+            else if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX - 1, task->tDestY + 1)))
+                objectEvent->movementDirection = DIR_SOUTHWEST;
+            break;
+        }
 
         task->tState = STATE_ROCK_CLIMB_CONTINUE_RIDE;
     }
@@ -1091,17 +1091,17 @@ bool8 RockClimb_WaitJumpOnRockClimbBlob(struct Task *task, struct ObjectEvent *o
     return FALSE;
 }
 
-const struct RockClimbRide sRockClimbMovement[] = 
+const struct RockClimbRide sRockClimbMovement[] =
 {
     [DIR_NONE] = {MOVEMENT_ACTION_WALK_FAST_DOWN, 0, 0, DIR_NONE},
     [DIR_SOUTH] = {MOVEMENT_ACTION_WALK_FAST_DOWN, 0, -1, DIR_SOUTH},
     [DIR_NORTH] = {MOVEMENT_ACTION_WALK_FAST_UP, 0, 1, DIR_NORTH},
     [DIR_WEST] = {MOVEMENT_ACTION_WALK_FAST_LEFT, 1, 1, DIR_WEST},
     [DIR_EAST] = {MOVEMENT_ACTION_WALK_FAST_RIGHT, -1, -1, DIR_EAST},
-    //[DIR_SOUTHWEST] = {MOVEMENT_ACTION_WALK_FAST_DIAGONAL_DOWN_LEFT, 1, -1, DIR_WEST},
-    //[DIR_SOUTHEAST] = {MOVEMENT_ACTION_WALK_FAST_DIAGONAL_DOWN_RIGHT, -1, -1, DIR_EAST},
-    //[DIR_NORTHWEST] = {MOVEMENT_ACTION_WALK_FAST_DIAGONAL_UP_LEFT, 1, 1, DIR_WEST},
-    //[DIR_NORTHEAST] = {MOVEMENT_ACTION_WALK_FAST_DIAGONAL_UP_RIGHT, -1, 1, DIR_EAST},
+    [DIR_SOUTHWEST] = {MOVEMENT_ACTION_WALK_FAST_DIAGONAL_DOWN_LEFT, 1, -1, DIR_WEST},
+    [DIR_SOUTHEAST] = {MOVEMENT_ACTION_WALK_FAST_DIAGONAL_DOWN_RIGHT, -1, -1, DIR_EAST},
+    [DIR_NORTHWEST] = {MOVEMENT_ACTION_WALK_FAST_DIAGONAL_UP_LEFT, 1, 1, DIR_WEST},
+    [DIR_NORTHEAST] = {MOVEMENT_ACTION_WALK_FAST_DIAGONAL_UP_RIGHT, -1, 1, DIR_EAST},
 };
 
 void RockClimbDust(struct ObjectEvent *objectEvent, u8 direction)
@@ -1117,7 +1117,7 @@ void RockClimbDust(struct ObjectEvent *objectEvent, u8 direction)
 }
 
 bool8 RockClimb_Ride(struct Task *task, struct ObjectEvent *objectEvent)
-{    
+{
     ObjectEventSetHeldMovement(objectEvent, sRockClimbMovement[objectEvent->movementDirection].action);
     PlaySE(124); // m_rock_throw
     RockClimbDust(objectEvent, objectEvent->movementDirection);
@@ -1130,10 +1130,28 @@ bool8 RockClimb_ContinueRideOrEnd(struct Task *task, struct ObjectEvent *objectE
     if (!ObjectEventClearHeldMovementIfFinished(objectEvent))
         return FALSE;
 
+    switch (objectEvent->facingDirection)
+    {
+    case DIR_EAST:
+        //check southeast then northeast
+        if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX + 1, task->tDestY + 1)))
+            objectEvent->movementDirection = DIR_SOUTHEAST;
+        else if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX + 1, task->tDestY - 1)))
+            objectEvent->movementDirection = DIR_NORTHEAST;
+        break;
+    case DIR_WEST:
+        //check northwest then southwest
+        if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX - 1, task->tDestY - 1)))
+            objectEvent->movementDirection = DIR_NORTHWEST;
+        else if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX - 1, task->tDestY + 1)))
+            objectEvent->movementDirection = DIR_SOUTHWEST;
+        break;
+    }
+
     PlayerGetDestCoords(&task->tDestX, &task->tDestY);
     MoveCoords(objectEvent->movementDirection, &task->tDestX, &task->tDestY);
     if (MetatileBehavior_IsRockClimbable(MapGridGetMetatileBehaviorAt(task->tDestX, task->tDestY)))
-    {        
+    {
         task->tState = STATE_ROCK_CLIMB_RIDE;
         return TRUE;
     }
@@ -1141,7 +1159,7 @@ bool8 RockClimb_ContinueRideOrEnd(struct Task *task, struct ObjectEvent *objectE
     ScriptContext2_Enable();
     gPlayerAvatar.flags &= ~PLAYER_AVATAR_FLAG_SURFING;
     gPlayerAvatar.flags |= PLAYER_AVATAR_FLAG_ON_FOOT;
-    task->tState++;
+    task->tState = STATE_ROCK_CLIMB_STOP_INIT;
     return FALSE;
 }
 
