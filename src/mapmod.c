@@ -190,6 +190,8 @@ void filter_map(unsigned int palette, unsigned int dest, unsigned int mode)
 		doBW_map(bwFilter[0], thing, thing2, offset, amount * 0x10);
 		return;
 	}
+	if (mapWeather == 3 || mapWeather == 5 || mapWeather == 11 || mapWeather == 13)
+		WeatherShiftGammaIfPalStateIdle(3); // thunder
 }
 
 //Format is ARGB
