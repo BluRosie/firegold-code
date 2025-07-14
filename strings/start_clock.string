@@ -1,0 +1,43 @@
+#org @gText_AM
+AM
+
+#org @gText_PM
+PM
+
+#org @gText_Morning
+Morning
+
+#org @gText_Day
+Day
+
+#org @gText_Evening
+Evening
+
+#org @gText_Night
+Night
+
+#org @gText_ContinueMenuTime
+Time
+
+#org @gText_Sun
+[GRAY][DARK_SHADOW]Sun.
+
+#org @gText_Mon
+[LIGHT_GREEN][DARK_SHADOW]Mon.
+
+#org @gText_Tue
+[RED]Tue.
+
+#org @gText_Wed
+[BLUE]Wed.
+
+#org @gText_Thu
+[GREEN]Thu.
+
+#org @gText_Fri
+[LIGHT_BLUE][DARK_SHADOW]Fri.
+
+#org @gText_Sat
+[ORANGE][DARK_SHADOW]Sat.
+
+

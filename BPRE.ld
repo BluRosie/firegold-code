@@ -1431,7 +1431,7 @@ IsUpdateLinkStateCBActive = 0x805642C | 1;
 AppendToStartMenuItems = 0x806ED94 | 1;
 SetUpStartMenu_Link = 0x806EE34 | 1;
 SetUpStartMenu_UnionRoom = 0x806EE58 | 1;
-DestroySafariZoneStatsWindow = 0x806EF18 | 1;
+/*DestroySafariZoneStatsWindow = 0x806EF18 | 1;*/
 PrintStartMenuItems = 0x806EF44 | 1;
 DrawStartMenuInOneGo = 0x806F14C | 1;
 task50_startmenu = 0x806F168 | 1;
@@ -1924,3 +1924,8 @@ WeatherShiftGammaIfPalStateIdle = 0x0807a790 | 1;
 GiveMonToPlayer = 0x08040b14 | 1;
 gBugContestMon = 0x0203FEC0;
 gBCCSwapScreen = 0x0203FEC4;
+
+DrawSafariZoneStatsWindow = 0x0806ee7c |1;
+sStartMenuDescPointers = 0x083a7394 |1;
+SetUpStartMenu = 0x0806ed54|1;
+
