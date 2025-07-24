@@ -61,7 +61,7 @@ void SpawnIconsForBCC(void)
 #ifdef SPAWN_BCC_SCREEN_ON_NULL
         if (gBCCSwapScreen == NULL)
         {
-            gBCCSwapScreen = Alloc(sizeof(struct BugCatchingContestSwapScreen));
+            gBCCSwapScreen = AllocZeroed(sizeof(struct BugCatchingContestSwapScreen));
         }
 #endif
 #ifdef SPAWN_BCC_MON_ON_NULL
@@ -88,7 +88,7 @@ void SpawnIconsForBCC(void)
     u32 pid = GetMonData(gBugContestMon, MON_DATA_PERSONALITY, NULL);
     u32 spriteId;
 
-    spriteId = CreateMonIcon(species, 0x0809718d, 40+16, 76+16, 0, pid, 0);
+    spriteId = CreateMonIcon(species, 0x0809718d, X_POS_MON_TO_SWAP, Y_POS_MON_TO_SWAP, 0, pid, 0);
     gSprites[spriteId].oam.priority = 0;
     gSprites[spriteId].invisible = 0;
     gSprites[spriteId].pos1.x = 0;
@@ -99,7 +99,7 @@ void SpawnIconsForBCC(void)
     gBCCSwapScreen->spriteIds[0] = spriteId;
 
     // then cut it out of the textbox
-    spriteId = CreateMonIcon(species, 0x0809718d, 40+16, 76+16, 0, pid, 0);
+    spriteId = CreateMonIcon(species, 0x0809718d, X_POS_MON_TO_SWAP, Y_POS_MON_TO_SWAP, 0, pid, 0);
     gSprites[spriteId].oam.priority = 0;
     gSprites[spriteId].invisible = 0;
     gSprites[spriteId].pos1.x = 0;
@@ -153,6 +153,71 @@ void bcc_DeleteSpriteAfterASecond(u8 taskId)
 // hp relative to max as percentage
 // rarity factor -- caterpie metapod weedle kakuna wurmple silcoon cascoon kricketot are all at 60, scyther pinsir are at 100, 80 everything else
 // scyther/pinsir with perfect iv's and no damage dealt is all that can get 400
+
+u16 CommonBCCMons[] =
+{
+    SPECIES_CATERPIE,
+    SPECIES_METAPOD,
+    SPECIES_WEEDLE,
+    SPECIES_KAKUNA,
+    SPECIES_WURMPLE,
+    SPECIES_SILCOON,
+    SPECIES_CASCOON,
+    SPECIES_KRICKETOT
+};
+
+u16 RareBCCMons[] =
+{
+    SPECIES_SCYTHER,
+    SPECIES_PINSIR
+};
+
+u32 ScoreCaughtBCCMon(void)
+{
+    u32 species = GetMonData(gBugContestMon, MON_DATA_SPECIES, NULL);
+    u32 totalScore = 0;
+    u32 level = GetMonData(gBugContestMon, MON_DATA_LEVEL, NULL);
+    u32 hp = GetMonData(gBugContestMon, MON_DATA_HP, NULL);
+    u32 maxHp = GetMonData(gBugContestMon, MON_DATA_MAX_HP, NULL);
+    int i = 0;
+    u32 totalIvs = 0;
+
+    // rarity factor
+    for (i = 0; i < NELEMS(CommonBCCMons; i++))
+    {
+        if (species == CommonBCCMons[i])
+        {
+            totalScore = 60;
+            break;
+        }
+    }
+    if (totalScore == 0)
+    {
+        for (i = 0; i < NELEMS(RareBCCMons; i++))
+        {
+            if (species == RareBCCMons[i])
+            {
+                totalScore = 100;
+                break;
+            }
+        }
+    }
+    if (totalScore == 0)
+        totalScore = 80;
+
+    // iv's relative to max
+    for (i = MON_DATA_HP_IV; i < MON_DATA_SPDEF_IV; i++)
+    {
+        totalIvs += GetMonData(gBugContestMon, i, NULL);
+    }
+    totalScore += totalIvs * 100 / (31*6);
+
+    // hp relative to max
+    totalScore += hp * 100 / maxHp;
+
+    // level compared to max
+    // this one is a little tougher.  i might just hardcode it.
+}
 
 
 // functions to handle storing bug catching contest mon direct from party as well as giving the player the bug catching contest mon
