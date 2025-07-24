@@ -755,6 +755,7 @@ ShouldShowBoxWasFullMessage = 0x80CC7B4 | 1;
 
 /* Pokemon Icons */
 CreateMonIcon = 0x8096E18 | 1;
+DestroyMonIcon = 0x08097070 | 1;
 GetIconSpecies = 0x8096F5C | 1;
 GetMonIconTiles = 0x8097028 | 1;
 LoadPartyIconTiles = 0x8097054 | 1;

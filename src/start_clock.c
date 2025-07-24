@@ -1,3 +1,5 @@
+#ifdef COMPILE_START_MENU
+
 #include "../include/gba/defines.h"
 #include "../include/gba/io_reg.h"
 #include "../include/gba/types.h"
@@ -171,3 +173,5 @@ void DoDrawStartMenu_Case3(void)
         ShowTimeWindow();
     }
 }
+
+#endif // COMPILE_START_MENU

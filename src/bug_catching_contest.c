@@ -10,6 +10,7 @@
 #include "../include/sprite.h"
 #include "../include/string_util.h"
 #include "../include/task.h"
+#include "../include/window.h"
 
 #define SPAWN_BCC_SCREEN_ON_NULL
 #define SPAWN_BCC_MON_ON_NULL
@@ -20,15 +21,26 @@
 #define SECONDS_IN_CONTEST (20 * 60) // 20 minute total time
 #define gMonIconPalettes ((u16 *)(0x083d3740))
 
+#define X_POS_MON_TO_SWAP 56
+#define Y_POS_MON_TO_SWAP 92
+
 struct BugCatchingContestSwapScreen
 {
     //struct Sprite *monIconSprites[2];
     u8 spriteIds[2]; // index of gSprites
+    u8 windowId;
     u8 cursorPos;
+    u8 timer; // temporary
 };
 
 extern struct Pokemon *gBugContestMon;
 extern struct BugCatchingContestSwapScreen *gBCCSwapScreen;
+
+static const struct WindowTemplate sMonWindowTemplate = {0, X_POS_MON_TO_SWAP/8-2, Y_POS_MON_TO_SWAP/8-1, 4, 4, 0xF, 8};
+
+u32 StoreCaughtBCCMon(void);
+u32 FreeCaughtBCCMonAndDeposit(void);
+void bcc_DeleteSpriteAfterASecond(u8 taskId);
 
 // change start menu behavior:
 // get rid of save, add script to quit out
@@ -81,8 +93,8 @@ void SpawnIconsForBCC(void)
     gSprites[spriteId].invisible = 0;
     gSprites[spriteId].pos1.x = 0;
     gSprites[spriteId].pos1.y = 0;
-    gSprites[spriteId].pos2.x = 56;
-    gSprites[spriteId].pos2.y = 92;
+    gSprites[spriteId].pos2.x = X_POS_MON_TO_SWAP;
+    gSprites[spriteId].pos2.y = Y_POS_MON_TO_SWAP;
 
     gBCCSwapScreen->spriteIds[0] = spriteId;
 
@@ -92,12 +104,46 @@ void SpawnIconsForBCC(void)
     gSprites[spriteId].invisible = 0;
     gSprites[spriteId].pos1.x = 0;
     gSprites[spriteId].pos1.y = 0;
-    gSprites[spriteId].pos2.x = 56;
-    gSprites[spriteId].pos2.y = 92;
+    gSprites[spriteId].pos2.x = X_POS_MON_TO_SWAP;
+    gSprites[spriteId].pos2.y = Y_POS_MON_TO_SWAP;
     gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
 
     gBCCSwapScreen->spriteIds[1] = spriteId;
-    // let's see if what we have so far works
+
+    // now print window
+    LoadStdWindowFrameGfx();
+    gBCCSwapScreen->windowId = AddWindow(&sMonWindowTemplate);
+    FillWindowPixelBuffer(gBCCSwapScreen->windowId, 0x11);
+    PutWindowTilemap(gBCCSwapScreen->windowId);
+    DrawStdWindowFrame(gBCCSwapScreen->windowId, 0);
+    CopyWindowToVram(gBCCSwapScreen->windowId, COPYWIN_FULL);
+
+    CreateTask(bcc_DeleteSpriteAfterASecond, 0);
+}
+
+void bcc_DeleteSprites(u8 taskId)
+{
+    DestroyMonIcon(&gSprites[gBCCSwapScreen->spriteIds[0]]);
+    DestroyMonIcon(&gSprites[gBCCSwapScreen->spriteIds[1]]);
+
+    // now also destroy window
+    ClearStdWindowAndFrameToTransparent(gBCCSwapScreen->windowId, FALSE);
+    CopyWindowToVram(gBCCSwapScreen->windowId, COPYWIN_FULL);
+    RemoveWindow(gBCCSwapScreen->windowId);
+}
+
+void bcc_DeleteSpriteAfterASecond(u8 taskId)
+{
+    if (gBCCSwapScreen->timer++ == 240)
+    {
+        gBCCSwapScreen->timer = 0;
+        bcc_DeleteSprites(taskId);
+        Free(gBCCSwapScreen);
+        Free(gBugContestMon);
+        gBCCSwapScreen = NULL;
+        gBugContestMon = NULL;
+        DestroyTask(taskId);
+    }
 }
 
 // score caught mon in gBugContestMon
