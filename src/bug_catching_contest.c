@@ -22,13 +22,16 @@
 #define gMonIconPalettes ((u16 *)(0x083d3740))
 
 #define X_POS_MON_TO_SWAP 56
-#define Y_POS_MON_TO_SWAP 92
+#define Y_POS_MON_TO_SWAP 84
+
+#define X_POS_MON_SWAPPING (240-56)
+#define Y_POS_MON_SWAPPING (84)
 
 struct BugCatchingContestSwapScreen
 {
     //struct Sprite *monIconSprites[2];
-    u8 spriteIds[2]; // index of gSprites
-    u8 windowId;
+    u8 spriteIds[4]; // index of gSprites
+    u8 windowIds[2];
     u8 cursorPos;
     u8 timer; // temporary
 };
@@ -62,13 +65,6 @@ void SpawnIconsForBCC(void)
         if (gBCCSwapScreen == NULL)
         {
             gBCCSwapScreen = AllocZeroed(sizeof(struct BugCatchingContestSwapScreen));
-        }
-#endif
-#ifdef SPAWN_BCC_MON_ON_NULL
-        if (gBugContestMon == NULL)
-        {
-            gBugContestMon = AllocZeroed(sizeof(struct Pokemon));
-            CreateMon(gBugContestMon, SPECIES_SCYTHER, 20, 32, 0, 0, 0, 0);
         }
 #else
         return;
@@ -112,11 +108,11 @@ void SpawnIconsForBCC(void)
 
     // now print window
     LoadStdWindowFrameGfx();
-    gBCCSwapScreen->windowId = AddWindow(&sMonWindowTemplate);
-    FillWindowPixelBuffer(gBCCSwapScreen->windowId, 0x11);
-    PutWindowTilemap(gBCCSwapScreen->windowId);
-    DrawStdWindowFrame(gBCCSwapScreen->windowId, 0);
-    CopyWindowToVram(gBCCSwapScreen->windowId, COPYWIN_FULL);
+    gBCCSwapScreen->windowIds[0] = AddWindow(&sMonWindowTemplate);
+    FillWindowPixelBuffer(gBCCSwapScreen->windowIds[0], 0x11);
+    PutWindowTilemap(gBCCSwapScreen->windowIds[0]);
+    DrawStdWindowFrame(gBCCSwapScreen->windowIds[0], 0);
+    CopyWindowToVram(gBCCSwapScreen->windowIds[0], COPYWIN_FULL);
 
     CreateTask(bcc_DeleteSpriteAfterASecond, 0);
 }
@@ -127,9 +123,9 @@ void bcc_DeleteSprites(u8 taskId)
     DestroyMonIcon(&gSprites[gBCCSwapScreen->spriteIds[1]]);
 
     // now also destroy window
-    ClearStdWindowAndFrameToTransparent(gBCCSwapScreen->windowId, FALSE);
-    CopyWindowToVram(gBCCSwapScreen->windowId, COPYWIN_FULL);
-    RemoveWindow(gBCCSwapScreen->windowId);
+    ClearStdWindowAndFrameToTransparent(gBCCSwapScreen->windowIds[0], FALSE);
+    CopyWindowToVram(gBCCSwapScreen->windowIds[0], COPYWIN_FULL);
+    RemoveWindow(gBCCSwapScreen->windowIds[0]);
 }
 
 void bcc_DeleteSpriteAfterASecond(u8 taskId)
@@ -139,10 +135,11 @@ void bcc_DeleteSpriteAfterASecond(u8 taskId)
         gBCCSwapScreen->timer = 0;
         bcc_DeleteSprites(taskId);
         Free(gBCCSwapScreen);
+        DestroyTask(taskId);
+
         Free(gBugContestMon);
         gBCCSwapScreen = NULL;
         gBugContestMon = NULL;
-        DestroyTask(taskId);
     }
 }
 
@@ -257,6 +254,8 @@ u32 StoreCaughtBCCMon(void)
             gBugContestMon = AllocZeroed(sizeof(struct Pokemon));
         memcpy(gBugContestMon, &gPlayerParty[1], sizeof(struct Pokemon));
         memset(&gPlayerParty[1], 0, sizeof(struct Pokemon));
+        memcpy(&gPlayerParty[1], &gPlayerParty[2], 4 * sizeof(struct Pokemon));
+        memset(&gPlayerParty[5], 0, sizeof(struct Pokemon));
         ret = TRUE;
     }
     return ret;
@@ -267,8 +266,8 @@ u32 FreeCaughtBCCMonAndDeposit(void)
     u32 ret = GiveMonToPlayer(gBugContestMon);
     if (ret != 2) // can't give to player
     {
-        Free(gBugContestMon);
-        gBugContestMon = NULL;
+        //Free(gBugContestMon);
+        //gBugContestMon = NULL;
     }
     return ret;
 }

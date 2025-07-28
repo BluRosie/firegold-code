@@ -5,5 +5,7 @@
 
 .global test_script
 test_script:
+callnative StoreCaughtBCCMon
 callnative SpawnIconsForBCC
+callnative FreeCaughtBCCMonAndDeposit
 end
