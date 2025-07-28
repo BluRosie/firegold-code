@@ -55,7 +55,7 @@ void SpawnIconsForBCC(void)
     // need to print a textbox to the screen and also print the mon icons to the screen such that they go through the box
     // animate the one that is selected
 
-    // sanity check - if data is not initialized, do nothing.  maybe 
+    // sanity check - if data is not initialized, do nothing.  maybe
     if (gBCCSwapScreen == NULL || gBugContestMon == NULL)
     {
 #ifdef SPAWN_BCC_SCREEN_ON_NULL
@@ -160,10 +160,10 @@ u16 CommonBCCMons[] =
     SPECIES_METAPOD,
     SPECIES_WEEDLE,
     SPECIES_KAKUNA,
-    SPECIES_WURMPLE,
-    SPECIES_SILCOON,
-    SPECIES_CASCOON,
-    SPECIES_KRICKETOT
+    //SPECIES_WURMPLE,
+    //SPECIES_SILCOON,
+    //SPECIES_CASCOON,
+    //SPECIES_KRICKETOT
 };
 
 u16 RareBCCMons[] =
@@ -181,9 +181,10 @@ u32 ScoreCaughtBCCMon(void)
     u32 maxHp = GetMonData(gBugContestMon, MON_DATA_MAX_HP, NULL);
     int i = 0;
     u32 totalIvs = 0;
+    u32 maxLevel = 0;
 
     // rarity factor
-    for (i = 0; i < NELEMS(CommonBCCMons; i++))
+    for (i = 0; i < ARRAY_COUNT(CommonBCCMons); i++)
     {
         if (species == CommonBCCMons[i])
         {
@@ -193,7 +194,7 @@ u32 ScoreCaughtBCCMon(void)
     }
     if (totalScore == 0)
     {
-        for (i = 0; i < NELEMS(RareBCCMons; i++))
+        for (i = 0; i < ARRAY_COUNT(RareBCCMons); i++)
         {
             if (species == RareBCCMons[i])
             {
@@ -217,6 +218,32 @@ u32 ScoreCaughtBCCMon(void)
 
     // level compared to max
     // this one is a little tougher.  i might just hardcode it.
+    switch (species)
+    {
+    case SPECIES_CATERPIE:
+    case SPECIES_METAPOD:
+    case SPECIES_WEEDLE:
+    case SPECIES_KAKUNA:
+        maxLevel = 18;
+        break;
+    case SPECIES_PARAS:
+        maxLevel = 17;
+        break;
+    case SPECIES_VENONAT:
+        maxLevel = 16;
+        break;
+    case SPECIES_BUTTERFREE:
+    case SPECIES_BEEDRILL:
+        maxLevel = 15;
+        break;
+    case SPECIES_SCYTHER:
+    case SPECIES_PINSIR:
+        maxLevel = 14;
+        break;
+    }
+    totalScore += level * 100 / maxLevel;
+
+    return totalScore;
 }
 
 
@@ -227,7 +254,7 @@ u32 StoreCaughtBCCMon(void)
     if (gPlayerPartyCount > 1)
     {
         if (gBugContestMon == NULL)
-            gBugContestMon = Alloc(sizeof(struct Pokemon));
+            gBugContestMon = AllocZeroed(sizeof(struct Pokemon));
         memcpy(gBugContestMon, &gPlayerParty[1], sizeof(struct Pokemon));
         memset(&gPlayerParty[1], 0, sizeof(struct Pokemon));
         ret = TRUE;
