@@ -5,7 +5,12 @@
 
 .global test_script
 test_script:
-callnative StoreCaughtBCCMon
-callnative SpawnIconsForBCC
-callnative FreeCaughtBCCMonAndDeposit
+callnative bcc_StoreCaughtMon
+callnative bcc_SpawnIconsAndWindows
+callnative bcc_DepositAndFreeMon
 end
+
+.global bcc_ContestIsOver
+bcc_ContestIsOver:
+lockall
+msgbox gText_bcc_ContestIsOver

@@ -291,4 +291,6 @@ extern const union AnimCmd *const sAnimTable_Inanimate[];
 
 extern struct MapHeader gMapHeader;
 
+extern u16 Var800D;
+
 #endif

@@ -19,6 +19,7 @@
 #define IS_IN_BUG_CATCHING_CONTEST (FlagGet(FLAG_BUG_CATCHING_CONTEST))
 #define gRemainingParkBalls (*(u8 *)0x0203FEC8)
 #define SECONDS_IN_CONTEST (20 * 60) // 20 minute total time
+#define FRAMES_IN_CONTEST (SECONDS_IN_CONTEST * 60) // 60 frames per second
 #define gMonIconPalettes ((u16 *)(0x083d3740))
 
 #define X_POS_MON_TO_SWAP 56
@@ -27,44 +28,71 @@
 #define X_POS_MON_SWAPPING (240-56)
 #define Y_POS_MON_SWAPPING (84)
 
-struct BugCatchingContestSwapScreen
+struct BugCatchingContestGlobalStruct
 {
     //struct Sprite *monIconSprites[2];
+    u32 timer;
+    struct Pokemon *caughtMon;
     u8 spriteIds[4]; // index of gSprites
     u8 windowIds[2];
     u8 cursorPos;
-    u8 timer; // temporary
 };
 
-extern struct Pokemon *gBugContestMon;
-extern struct BugCatchingContestSwapScreen *gBCCSwapScreen;
+extern struct Pokemon *gBccGlobalStruct->caughtMon;
+extern struct BugCatchingContestGlobalStruct *gBccGlobalStruct;
 
 static const struct WindowTemplate sMonWindowTemplate = {0, X_POS_MON_TO_SWAP/8-2, Y_POS_MON_TO_SWAP/8-1, 4, 4, 0xF, 8};
+static const struct WindowTemplate sCurrentMonWindowTemplate = {0, X_POS_MON_SWAPPING/8-2, Y_POS_MON_SWAPPING/8-1, 4, 4, 0xF, 8};
 
-u32 StoreCaughtBCCMon(void);
-u32 FreeCaughtBCCMonAndDeposit(void);
+u32 bcc_StoreCaughtMon(void);
+u32 bcc_DepositAndFreeMon(void);
 void bcc_DeleteSpriteAfterASecond(u8 taskId);
 
 // change start menu behavior:
 // get rid of save, add script to quit out
-
+// i might handle this instead in start_clock.c
 
 // timer for bug catching contest
+// every frame, increment a timer.  once it hits the limit, the bcc has ended
+void bcc_TimerCallback(u8 taskId)
+{
+    if (gBccGlobalStruct->timer >= FRAMES_IN_CONTEST)
+    {
+        // trigger a script to run as soon as possible, destroy the task
+        if (ScriptContext2_IsEnabled())
+        {
+            DestroyTask(taskId);
+            ScriptContext1_SetupScript();
+        }
+    } else {
+        gBccGlobalStruct->timer++;
+    }
+}
 
+// timer setting also allocates the gBccGlobalStruct
+void bcc_SetTimer(void)
+{
+    if (gBccGlobalStruct == NULL)
+    {
+        gBccGlobalStruct = AllocZeroed(sizeof(struct BugCatchingContestGlobalStruct));
+    }
+    // create a task that just counts down
+    CreateTask(bcc_TimerCallback, 0);
+}
 
 // functions to spawn the icons in their own textboxes
-void SpawnIconsForBCC(void)
+void bcc_SpawnIconsAndWindows(void)
 {
     // need to print a textbox to the screen and also print the mon icons to the screen such that they go through the box
     // animate the one that is selected
 
     // sanity check - if data is not initialized, do nothing.  maybe
-    if (gBCCSwapScreen == NULL || gBugContestMon == NULL)
+    if (gBccGlobalStruct == NULL)
     {
 #ifdef SPAWN_BCC_SCREEN_ON_NULL
-        if (gBCCSwapScreen == NULL)
+        if (gBccGlobalStruct == NULL)
         {
-            gBCCSwapScreen = AllocZeroed(sizeof(struct BugCatchingContestSwapScreen));
+            gBccGlobalStruct = AllocZeroed(sizeof(struct BugCatchingContestGlobalStruct));
         }
 #else
         return;
@@ -79,10 +107,11 @@ void SpawnIconsForBCC(void)
     SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
     SetGpuRegBits(REG_OFFSET_WININ, WININ_WIN0_OBJ);
 
-    // print icon of gBugContestMon -- first the actual icon
-    u32 species = GetMonData(gBugContestMon, MON_DATA_SPECIES, NULL);
-    u32 pid = GetMonData(gBugContestMon, MON_DATA_PERSONALITY, NULL);
-    u32 spriteId;
+
+    // print icon of gBccGlobalStruct->caughtMon -- first the actual icon
+    u32 species = GetMonData(gBccGlobalStruct->caughtMon, MON_DATA_SPECIES, NULL);
+    u32 pid = GetMonData(gBccGlobalStruct->caughtMon, MON_DATA_PERSONALITY, NULL);
+    u32 spriteId, windowId;
 
     spriteId = CreateMonIcon(species, 0x0809718d, X_POS_MON_TO_SWAP, Y_POS_MON_TO_SWAP, 0, pid, 0);
     gSprites[spriteId].oam.priority = 0;
@@ -92,7 +121,7 @@ void SpawnIconsForBCC(void)
     gSprites[spriteId].pos2.x = X_POS_MON_TO_SWAP;
     gSprites[spriteId].pos2.y = Y_POS_MON_TO_SWAP;
 
-    gBCCSwapScreen->spriteIds[0] = spriteId;
+    gBccGlobalStruct->spriteIds[0] = spriteId;
 
     // then cut it out of the textbox
     spriteId = CreateMonIcon(species, 0x0809718d, X_POS_MON_TO_SWAP, Y_POS_MON_TO_SWAP, 0, pid, 0);
@@ -104,46 +133,89 @@ void SpawnIconsForBCC(void)
     gSprites[spriteId].pos2.y = Y_POS_MON_TO_SWAP;
     gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
 
-    gBCCSwapScreen->spriteIds[1] = spriteId;
+    gBccGlobalStruct->spriteIds[1] = spriteId;
+
+
+    species = GetMonData(&gPlayerParty[1], MON_DATA_SPECIES, NULL);
+    pid = GetMonData(&gPlayerParty[1], MON_DATA_PERSONALITY, NULL);
+
+    spriteId = CreateMonIcon(species, 0x0809718d, X_POS_MON_SWAPPING, Y_POS_MON_SWAPPING, 0, pid, 0);
+    gSprites[spriteId].oam.priority = 0;
+    gSprites[spriteId].invisible = 0;
+    gSprites[spriteId].pos1.x = 0;
+    gSprites[spriteId].pos1.y = 0;
+    gSprites[spriteId].pos2.x = X_POS_MON_SWAPPING;
+    gSprites[spriteId].pos2.y = Y_POS_MON_SWAPPING;
+
+    gBccGlobalStruct->spriteIds[2] = spriteId;
+
+    // then cut it out of the textbox
+    spriteId = CreateMonIcon(species, 0x0809718d, X_POS_MON_SWAPPING, Y_POS_MON_SWAPPING, 0, pid, 0);
+    gSprites[spriteId].oam.priority = 0;
+    gSprites[spriteId].invisible = 0;
+    gSprites[spriteId].pos1.x = 0;
+    gSprites[spriteId].pos1.y = 0;
+    gSprites[spriteId].pos2.x = X_POS_MON_SWAPPING;
+    gSprites[spriteId].pos2.y = Y_POS_MON_SWAPPING;
+    gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+
+    gBccGlobalStruct->spriteIds[3] = spriteId;
 
     // now print window
     LoadStdWindowFrameGfx();
-    gBCCSwapScreen->windowIds[0] = AddWindow(&sMonWindowTemplate);
-    FillWindowPixelBuffer(gBCCSwapScreen->windowIds[0], 0x11);
-    PutWindowTilemap(gBCCSwapScreen->windowIds[0]);
-    DrawStdWindowFrame(gBCCSwapScreen->windowIds[0], 0);
-    CopyWindowToVram(gBCCSwapScreen->windowIds[0], COPYWIN_FULL);
+    windowId = AddWindow(&sMonWindowTemplate);
+    FillWindowPixelBuffer(windowId, 0x11);
+    PutWindowTilemap(windowId);
+    DrawStdWindowFrame(windowId, 0);
+    CopyWindowToVram(windowId, COPYWIN_FULL);
+
+    gBccGlobalStruct->windowIds[0] = windowId;
+
+    LoadStdWindowFrameGfx();
+    windowId = AddWindow(&sCurrentMonWindowTemplate);
+    FillWindowPixelBuffer(windowId, 0x11);
+    PutWindowTilemap(windowId);
+    DrawStdWindowFrame(windowId, 0);
+    CopyWindowToVram(windowId, COPYWIN_FULL);
+
+    gBccGlobalStruct->windowIds[1] = windowId;
 
     CreateTask(bcc_DeleteSpriteAfterASecond, 0);
 }
 
 void bcc_DeleteSprites(u8 taskId)
 {
-    DestroyMonIcon(&gSprites[gBCCSwapScreen->spriteIds[0]]);
-    DestroyMonIcon(&gSprites[gBCCSwapScreen->spriteIds[1]]);
+    DestroyMonIcon(&gSprites[gBccGlobalStruct->spriteIds[0]]);
+    DestroyMonIcon(&gSprites[gBccGlobalStruct->spriteIds[1]]);
+    DestroyMonIcon(&gSprites[gBccGlobalStruct->spriteIds[2]]);
+    DestroyMonIcon(&gSprites[gBccGlobalStruct->spriteIds[3]]);
 
     // now also destroy window
-    ClearStdWindowAndFrameToTransparent(gBCCSwapScreen->windowIds[0], FALSE);
-    CopyWindowToVram(gBCCSwapScreen->windowIds[0], COPYWIN_FULL);
-    RemoveWindow(gBCCSwapScreen->windowIds[0]);
+    ClearStdWindowAndFrameToTransparent(gBccGlobalStruct->windowIds[0], FALSE);
+    CopyWindowToVram(gBccGlobalStruct->windowIds[0], COPYWIN_FULL);
+    RemoveWindow(gBccGlobalStruct->windowIds[0]);
+
+    ClearStdWindowAndFrameToTransparent(gBccGlobalStruct->windowIds[1], FALSE);
+    CopyWindowToVram(gBccGlobalStruct->windowIds[1], COPYWIN_FULL);
+    RemoveWindow(gBccGlobalStruct->windowIds[1]);
 }
 
 void bcc_DeleteSpriteAfterASecond(u8 taskId)
 {
-    if (gBCCSwapScreen->timer++ == 240)
+    if (gBccGlobalStruct->timer++ == 240)
     {
-        gBCCSwapScreen->timer = 0;
+        gBccGlobalStruct->timer = 0;
         bcc_DeleteSprites(taskId);
-        Free(gBCCSwapScreen);
         DestroyTask(taskId);
+        Free(gBccGlobalStruct->caughtMon);
+        Free(gBccGlobalStruct);
 
-        Free(gBugContestMon);
-        gBCCSwapScreen = NULL;
-        gBugContestMon = NULL;
+        gBccGlobalStruct->caughtMon = NULL;
+        gBccGlobalStruct = NULL;
     }
 }
 
-// score caught mon in gBugContestMon
+// score caught mon in gBccGlobalStruct->caughtMon
 // max score is 400:
 // level as percentage of max that can be found
 // iv's relative to max as percentage (186)
@@ -169,13 +241,13 @@ u16 RareBCCMons[] =
     SPECIES_PINSIR
 };
 
-u32 ScoreCaughtBCCMon(void)
+u32 bcc_ScoreCaughtMon(void)
 {
-    u32 species = GetMonData(gBugContestMon, MON_DATA_SPECIES, NULL);
+    u32 species = GetMonData(gBccGlobalStruct->caughtMon, MON_DATA_SPECIES, NULL);
     u32 totalScore = 0;
-    u32 level = GetMonData(gBugContestMon, MON_DATA_LEVEL, NULL);
-    u32 hp = GetMonData(gBugContestMon, MON_DATA_HP, NULL);
-    u32 maxHp = GetMonData(gBugContestMon, MON_DATA_MAX_HP, NULL);
+    u32 level = GetMonData(gBccGlobalStruct->caughtMon, MON_DATA_LEVEL, NULL);
+    u32 hp = GetMonData(gBccGlobalStruct->caughtMon, MON_DATA_HP, NULL);
+    u32 maxHp = GetMonData(gBccGlobalStruct->caughtMon, MON_DATA_MAX_HP, NULL);
     int i = 0;
     u32 totalIvs = 0;
     u32 maxLevel = 0;
@@ -206,7 +278,7 @@ u32 ScoreCaughtBCCMon(void)
     // iv's relative to max
     for (i = MON_DATA_HP_IV; i < MON_DATA_SPDEF_IV; i++)
     {
-        totalIvs += GetMonData(gBugContestMon, i, NULL);
+        totalIvs += GetMonData(gBccGlobalStruct->caughtMon, i, NULL);
     }
     totalScore += totalIvs * 100 / (31*6);
 
@@ -240,19 +312,21 @@ u32 ScoreCaughtBCCMon(void)
     }
     totalScore += level * 100 / maxLevel;
 
+    VarSet(0x800D, totalScore);
+
     return totalScore;
 }
 
 
 // functions to handle storing bug catching contest mon direct from party as well as giving the player the bug catching contest mon
-u32 StoreCaughtBCCMon(void)
+u32 bcc_StoreCaughtMon(void)
 {
     u32 ret = FALSE;
     if (gPlayerPartyCount > 1)
     {
-        if (gBugContestMon == NULL)
-            gBugContestMon = AllocZeroed(sizeof(struct Pokemon));
-        memcpy(gBugContestMon, &gPlayerParty[1], sizeof(struct Pokemon));
+        if (gBccGlobalStruct->caughtMon == NULL)
+            gBccGlobalStruct->caughtMon = AllocZeroed(sizeof(struct Pokemon));
+        memcpy(gBccGlobalStruct->caughtMon, &gPlayerParty[1], sizeof(struct Pokemon));
         memset(&gPlayerParty[1], 0, sizeof(struct Pokemon));
         memcpy(&gPlayerParty[1], &gPlayerParty[2], 4 * sizeof(struct Pokemon));
         memset(&gPlayerParty[5], 0, sizeof(struct Pokemon));
@@ -261,13 +335,13 @@ u32 StoreCaughtBCCMon(void)
     return ret;
 }
 
-u32 FreeCaughtBCCMonAndDeposit(void)
+u32 bcc_DepositAndFreeMon(void)
 {
-    u32 ret = GiveMonToPlayer(gBugContestMon);
+    u32 ret = GiveMonToPlayer(gBccGlobalStruct->caughtMon);
     if (ret != 2) // can't give to player
     {
-        //Free(gBugContestMon);
-        //gBugContestMon = NULL;
+        //Free(gBccGlobalStruct->caughtMon);
+        //gBccGlobalStruct->caughtMon = NULL;
     }
     return ret;
 }
