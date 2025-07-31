@@ -14,3 +14,6 @@ end
 bcc_ContestIsOver:
 lockall
 msgbox gText_bcc_ContestIsOver
+warp 
+waitstate
+end

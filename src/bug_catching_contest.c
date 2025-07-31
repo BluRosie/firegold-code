@@ -41,6 +41,8 @@ struct BugCatchingContestGlobalStruct
 extern struct Pokemon *gBccGlobalStruct->caughtMon;
 extern struct BugCatchingContestGlobalStruct *gBccGlobalStruct;
 
+extern const u8 *bcc_ContestIsOver;
+
 static const struct WindowTemplate sMonWindowTemplate = {0, X_POS_MON_TO_SWAP/8-2, Y_POS_MON_TO_SWAP/8-1, 4, 4, 0xF, 8};
 static const struct WindowTemplate sCurrentMonWindowTemplate = {0, X_POS_MON_SWAPPING/8-2, Y_POS_MON_SWAPPING/8-1, 4, 4, 0xF, 8};
 
@@ -59,12 +61,14 @@ void bcc_TimerCallback(u8 taskId)
     if (gBccGlobalStruct->timer >= FRAMES_IN_CONTEST)
     {
         // trigger a script to run as soon as possible, destroy the task
-        if (ScriptContext2_IsEnabled())
+        if (!ScriptContext2_IsEnabled()) // ScriptContext2_IsEnabled is now actually ArePlayerFieldControlsLocked
         {
             DestroyTask(taskId);
             ScriptContext1_SetupScript();
         }
-    } else {
+    }
+    else
+    {
         gBccGlobalStruct->timer++;
     }
 }
