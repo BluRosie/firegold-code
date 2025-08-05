@@ -5,10 +5,37 @@
 
 .global test_script
 test_script:
-callnative bcc_SetTimer
-@callnative bcc_StoreCaughtMon
-@callnative bcc_SpawnIconsAndWindows
-@callnative bcc_DepositAndFreeMon
+@callnative bcc_SetTimer
+compare 0x8004, 0
+goto_if_eq _stepOne
+compare 0x8004, 1
+goto_if_eq _stepTwo
+goto _stepOne
+
+@ DEBUG!  get this reset later
+_stepOne:
+callnative bcc_Init
+callnative bcc_StoreCaughtMon
+setvar 0x8004, 1
+end
+
+_stepTwo:
+@ real script
+callnative bcc_SpawnIconsAndWindows
+msgbox gText_bcc_SwapThisMon, MSGBOX_YESNO
+closemessage
+@ yes
+compare 0x800D, 1
+goto_if_eq acceptsMon
+goto postAcceptMon
+
+acceptsMon:
+callnative bcc_DepositBCCMon
+callnative bcc_DeleteBCCMon
+setvar 0x8004, 0
+
+postAcceptMon:
+callnative bcc_DeleteSprites
 end
 
 .global bcc_ContestIsOver

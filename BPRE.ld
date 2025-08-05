@@ -1925,7 +1925,8 @@ MarkFogSpritePalToLighten = 0x0807a714 | 1;
 WeatherShiftGammaIfPalStateIdle = 0x0807a790 | 1;
 
 GiveMonToPlayer = 0x08040b14 | 1;
-gBccGlobalStruct = 0x0203FEC0;
+/* this is okay because of the ram map as noted by frag.  shares space with battle tower data */
+gBccGlobalStruct = 0x0203FE80;
 
 DrawSafariZoneStatsWindow = 0x0806ee7c |1;
 sStartMenuDescPointers = 0x083a7394 |1;
