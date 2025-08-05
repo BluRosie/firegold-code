@@ -1068,6 +1068,7 @@ ScriptContext2_IsEnabled = 0x8069958 | 1;
 SetTextboxSignpostDesign = 0x8069A20 | 1;
 ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
+RunScriptImmediately = 0x8069b48 | 1;
 GetVarPointer = 0x806E454 | 1;
 VarGet = 0x806E568 | 1;
 VarSet = 0x806E584 | 1;
@@ -1279,6 +1280,7 @@ IsQuestLogActive = 0x8111C2C | 1;
 GetSafariZoneFlag = 0x80A0E90 | 1;
 SetSafariZoneFlag = 0x80A0EA4 | 1;
 ResetSafariZoneFlag = 0x80A0EB4 | 1;
+SafariZone_EventScript_TimesUp = 0x081bfbc5;
 
 /* Party Menu Functions */
 ZeroPlayerPartyMons = 0x803DA14 | 1;
@@ -1923,10 +1925,8 @@ MarkFogSpritePalToLighten = 0x0807a714 | 1;
 WeatherShiftGammaIfPalStateIdle = 0x0807a790 | 1;
 
 GiveMonToPlayer = 0x08040b14 | 1;
-gBugContestMon = 0x0203FEC0;
-gBCCSwapScreen = 0x0203FEC4;
+gBccGlobalStruct = 0x0203FEC0;
 
 DrawSafariZoneStatsWindow = 0x0806ee7c |1;
 sStartMenuDescPointers = 0x083a7394 |1;
 SetUpStartMenu = 0x0806ed54|1;
-

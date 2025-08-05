@@ -18,7 +18,7 @@
 #define FLAG_BUG_CATCHING_CONTEST (0x2342)
 #define IS_IN_BUG_CATCHING_CONTEST (FlagGet(FLAG_BUG_CATCHING_CONTEST))
 #define gRemainingParkBalls (*(u8 *)0x0203FEC8)
-#define SECONDS_IN_CONTEST (20 * 60) // 20 minute total time
+#define SECONDS_IN_CONTEST 5 // (20 * 60) // 20 minute total time
 #define FRAMES_IN_CONTEST (SECONDS_IN_CONTEST * 60) // 60 frames per second
 #define gMonIconPalettes ((u16 *)(0x083d3740))
 
@@ -38,7 +38,6 @@ struct BugCatchingContestGlobalStruct
     u8 cursorPos;
 };
 
-extern struct Pokemon *gBccGlobalStruct->caughtMon;
 extern struct BugCatchingContestGlobalStruct *gBccGlobalStruct;
 
 extern const u8 *bcc_ContestIsOver;
@@ -56,20 +55,55 @@ void bcc_DeleteSpriteAfterASecond(u8 taskId);
 
 // timer for bug catching contest
 // every frame, increment a timer.  once it hits the limit, the bcc has ended
+
+#define gQuestLogState *(u8 *)(0x0203adfa)
+
+s8 TryRunOnFrameMapScript(void)
+{
+    u8 *ptr;
+
+    if (gQuestLogState == 3)
+        return FALSE;
+
+    ptr = MapHeaderCheckScriptTable(2);
+
+    if (!ptr)
+    {
+        if (gBccGlobalStruct != NULL)
+        {
+            if (gBccGlobalStruct->timer >= FRAMES_IN_CONTEST)
+            {
+                ptr = &bcc_ContestIsOver;
+                //ptr = (u8 *)((u32)ptr & 0xFFFFFFFE);
+                ScriptContext1_SetupScript(ptr);
+                gBccGlobalStruct->timer = 0;
+                return TRUE;
+            }
+        }
+        return FALSE;
+    }
+
+    ScriptContext1_SetupScript(ptr);
+    return TRUE;
+}
+
 void bcc_TimerCallback(u8 taskId)
 {
-    if (gBccGlobalStruct->timer >= FRAMES_IN_CONTEST)
+    if (gBccGlobalStruct != NULL)
     {
-        // trigger a script to run as soon as possible, destroy the task
-        if (!ScriptContext2_IsEnabled()) // ScriptContext2_IsEnabled is now actually ArePlayerFieldControlsLocked
+        if (gBccGlobalStruct->timer >= FRAMES_IN_CONTEST)
         {
-            DestroyTask(taskId);
-            ScriptContext1_SetupScript();
+            // trigger a script to run as soon as possible, destroy the task
+            if (!ScriptContext2_IsEnabled()) // ScriptContext2_IsEnabled is now actually ArePlayerFieldControlsLocked
+            {
+                DestroyTask(taskId);
+                //RunScriptImmediately(bcc_ContestIsOver);
+            }
         }
-    }
-    else
-    {
-        gBccGlobalStruct->timer++;
+        else
+        {
+            gBccGlobalStruct->timer++;
+        }
     }
 }
 
