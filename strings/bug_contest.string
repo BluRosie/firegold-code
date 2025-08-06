@@ -2,4 +2,7 @@
 Ding-ding! Time's up!\nThe Bug-Catching Contest is over.
 
 #org @gText_bcc_SwapThisMon
-Swap the caught Pok\emon?
+Swap the [BUFFER1] for your\n[BUFFER2]?
+
+#org @gText_LevelOfMon
+Lv. 

@@ -2,6 +2,8 @@
 #define GUARD_STRING_UTIL_H
 
 extern u8 gStringVar1[];
+extern u8 gStringVar2[];
+extern u8 gStringVar3[];
 extern u8 gStringVar4[];
 
 enum StringConvertMode
@@ -10,6 +12,8 @@ enum StringConvertMode
     STR_CONV_MODE_RIGHT_ALIGN,
     STR_CONV_MODE_LEADING_ZEROS
 };
+
+extern const u8 gSpeciesNames[][10 + 1];
 
 enum {
     FONT_SMALL,

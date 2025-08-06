@@ -33,23 +33,27 @@ struct BugCatchingContestGlobalStruct
     //struct Sprite *monIconSprites[2];
     //struct Pokemon caughtMon;
     u8 caughtMon[0x64]; // my shit don't line up exact!  oh well
-    u32 timer:30;
+    u32 timer:27;
     u32 cursorPos:1;
     u32 activated:1;
+    u32 initStep:3;
     u8 spriteIds[4]; // index of gSprites
     u8 windowIds[2];
+    u8 palReloadTimer;
 };
 
 extern struct BugCatchingContestGlobalStruct gBccGlobalStruct;
 
-extern const u8 *bcc_ContestIsOver[];
+extern const u8 *bcc_ContestIsOver[]; // script
+extern const u8 gText_LevelOfMon[]; // string
 
 static const struct WindowTemplate sMonWindowTemplate = {0, X_POS_MON_TO_SWAP/8-2, Y_POS_MON_TO_SWAP/8-1, 12, 4, 0xF, 8};
-static const struct WindowTemplate sCurrentMonWindowTemplate = {0, X_POS_MON_SWAPPING/8-2, Y_POS_MON_SWAPPING/8-1, 12, 4, 0xF, 8};
+static const struct WindowTemplate sCurrentMonWindowTemplate = {0, X_POS_MON_SWAPPING/8-2, Y_POS_MON_SWAPPING/8-1, 12, 4, 0xF, 8+48};
 
 u32 bcc_StoreCaughtMon(void);
 void bcc_DeleteBCCMon(void);
 void bcc_DeleteSpriteAfterASecond(u8 taskId);
+void bcc_DeleteSprites(void);
 
 // change start menu behavior:
 // get rid of save, add script to quit out
@@ -99,8 +103,17 @@ void bcc_SetTimer(void)
     CreateTask(bcc_TimerCallback, 0);
 }
 
+enum SPAWN_ICONS_STEP
+{
+    BCC_SWAP_MENU_SPAWN_WINDOW_1,
+    BCC_SWAP_MENU_SPAWN_WINDOW_2,
+    BCC_SWAP_MENU_SPAWN_ICONS,
+    BCC_SWAP_MENU_KEEP_ICON_PALS_LOADED,
+    BCC_SWAP_MENU_DESTROY_TASK,
+};
+
 // functions to spawn the icons in their own textboxes
-void bcc_SpawnIconsAndWindows(void)
+void bcc_SpawnIconsAndWindowsCallback(u8 taskId)
 {
     // need to print a textbox to the screen and also print the mon icons to the screen such that they go through the box
     // animate the one that is selected
@@ -108,12 +121,118 @@ void bcc_SpawnIconsAndWindows(void)
     // sanity check - if data is not initialized, do nothing.  maybe
     if (gBccGlobalStruct.activated == 0)
     {
-#ifdef SPAWN_BCC_SCREEN_ON_NULL
-        //bcc_Init();
-#else
         return;
-#endif
     }
+    u32 species = GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_SPECIES, NULL);
+    u32 pid = GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_PERSONALITY, NULL);
+    u32 spriteId, windowId, level, hp, maxHp;
+    u8 *ptr;
+
+    switch (gBccGlobalStruct.initStep)
+    {
+    case BCC_SWAP_MENU_SPAWN_WINDOW_1:
+        // now print window
+        LoadStdWindowFrameGfx();
+        windowId = AddWindow(&sCurrentMonWindowTemplate);
+        //FillWindowPixelBuffer(windowId, 0x11);
+        DrawStdWindowFrame(windowId, 0);
+
+        level = GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_LEVEL, NULL);
+        hp = GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_HP, NULL);
+        maxHp = GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_MAX_HP, NULL);
+        ptr = StringExpandPlaceholders(gStringVar1, gText_LevelOfMon);
+        ConvertIntToDecimalStringN(ptr, level, STR_CONV_MODE_LEFT_ALIGN, 3);
+        AddTextPrinterParameterized(windowId, 0, gStringVar1, 32, 1, 0xFF, 0);
+        ptr = ConvertIntToDecimalStringN(gStringVar3, hp, STR_CONV_MODE_LEFT_ALIGN, 3);
+        *ptr++ = 0xBA; // /
+        ptr = ConvertIntToDecimalStringN(ptr, maxHp, STR_CONV_MODE_LEFT_ALIGN, 3);
+        *ptr++ = 0x00; // [space]
+        *ptr++ = 0xC2; // H
+        *ptr++ = 0xCA; // P
+        *ptr++ = 0xFF; // end
+        AddTextPrinterParameterized(windowId, 0, gStringVar3, 32, 15, 0xFF, 0);
+        PutWindowTilemap(windowId);
+        CopyWindowToVram(windowId, COPYWIN_FULL);
+
+        gBccGlobalStruct.windowIds[0] = windowId;
+        gBccGlobalStruct.initStep++;
+        break;
+    case BCC_SWAP_MENU_SPAWN_WINDOW_2:
+        windowId = AddWindow(&sMonWindowTemplate);
+        //FillWindowPixelBuffer(windowId, 0x11);
+        DrawStdWindowFrame(windowId, 1);
+
+        level = GetMonData(&gPlayerParty[1], MON_DATA_LEVEL, NULL);
+        hp = GetMonData(&gPlayerParty[1], MON_DATA_HP, NULL);
+        maxHp = GetMonData(&gPlayerParty[1], MON_DATA_MAX_HP, NULL);
+        ptr = StringExpandPlaceholders(gStringVar1, gText_LevelOfMon);
+        ConvertIntToDecimalStringN(ptr, level, STR_CONV_MODE_LEFT_ALIGN, 3);
+        AddTextPrinterParameterized(windowId, 0, gStringVar1, 32, 1, 0xFF, 0);
+        ptr = ConvertIntToDecimalStringN(gStringVar3, hp, STR_CONV_MODE_LEFT_ALIGN, 3);
+        *ptr++ = 0xBA; // /
+        ptr = ConvertIntToDecimalStringN(ptr, maxHp, STR_CONV_MODE_LEFT_ALIGN, 3);
+        *ptr++ = 0x00; // [space]
+        *ptr++ = 0xC2; // H
+        *ptr++ = 0xCA; // P
+        *ptr++ = 0xFF; // end
+        AddTextPrinterParameterized(windowId, 0, gStringVar3, 32, 15, 0xFF, 0);
+        PutWindowTilemap(windowId);
+        CopyWindowToVram(windowId, COPYWIN_FULL);
+
+        gBccGlobalStruct.windowIds[1] = windowId;
+        gBccGlobalStruct.initStep++;
+        break;
+    case BCC_SWAP_MENU_SPAWN_ICONS:
+        bcc_SpawnSprites();
+        gBccGlobalStruct.initStep++;
+        //break;
+    case BCC_SWAP_MENU_KEEP_ICON_PALS_LOADED:
+        // something of a hack to keep the palettes loaded because of that super funny
+        if (gCurrentTimeSeconds == 0)
+        {
+            if (gBccGlobalStruct.palReloadTimer == 50)
+            {
+                bcc_DeleteSprites();
+                bcc_SpawnSprites();
+                gBccGlobalStruct.palReloadTimer = 0;
+            }
+            else
+            {
+                gBccGlobalStruct.palReloadTimer++;
+            }
+        }
+        else
+        {
+            gBccGlobalStruct.palReloadTimer = 0;
+        }
+        break;
+    case BCC_SWAP_MENU_DESTROY_TASK:
+        DestroyTask(taskId);
+        gBccGlobalStruct.initStep = 0;
+        //break;
+    }
+}
+
+void bcc_SpawnIconsAndWindows(void)
+{
+    // create a task that just counts down
+    CreateTask(bcc_SpawnIconsAndWindowsCallback, 0);
+    gBccGlobalStruct.initStep = 0;
+    // see gText_bcc_SwapThisMon
+    StringCopy(gStringVar2, gSpeciesNames[GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_SPECIES, NULL)]);
+    StringCopy(gStringVar1, gSpeciesNames[GetMonData(&gPlayerParty[1], MON_DATA_SPECIES, NULL)]);
+}
+
+void bcc_DeleteBCCMon(void)
+{
+    //Free(gBccGlobalStruct.caughtMon);
+    //gBccGlobalStruct.caughtMon = NULL;
+    memset(&gBccGlobalStruct.caughtMon, 0, sizeof(gBccGlobalStruct.caughtMon));
+}
+
+void bcc_SpawnSprites(void)
+{
+    u32 spriteId, species, pid;
 
     // load icon pals
     LoadMonIconPalettes();
@@ -125,9 +244,8 @@ void bcc_SpawnIconsAndWindows(void)
 
 
     // print icon of gBccGlobalStruct.caughtMon -- first the actual icon
-    u32 species = GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_SPECIES, NULL);
-    u32 pid = GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_PERSONALITY, NULL);
-    u32 spriteId, windowId;
+    species = GetMonData(&gPlayerParty[1], MON_DATA_SPECIES, NULL);
+    pid = GetMonData(&gPlayerParty[1], MON_DATA_PERSONALITY, NULL);
 
     spriteId = CreateMonIcon(species, 0x0809718d, X_POS_MON_TO_SWAP, Y_POS_MON_TO_SWAP, 0, pid, 0);
     gSprites[spriteId].oam.priority = 0;
@@ -151,9 +269,8 @@ void bcc_SpawnIconsAndWindows(void)
 
     gBccGlobalStruct.spriteIds[1] = spriteId;
 
-
-    species = GetMonData(&gPlayerParty[1], MON_DATA_SPECIES, NULL);
-    pid = GetMonData(&gPlayerParty[1], MON_DATA_PERSONALITY, NULL);
+    species = GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_SPECIES, NULL);
+    pid = GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_PERSONALITY, NULL);
 
     spriteId = CreateMonIcon(species, 0x0809718d, X_POS_MON_SWAPPING, Y_POS_MON_SWAPPING, 0, pid, 0);
     gSprites[spriteId].oam.priority = 0;
@@ -176,32 +293,6 @@ void bcc_SpawnIconsAndWindows(void)
     gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
 
     gBccGlobalStruct.spriteIds[3] = spriteId;
-
-    // now print window
-    LoadStdWindowFrameGfx();
-    windowId = AddWindow(&sMonWindowTemplate);
-    FillWindowPixelBuffer(windowId, 0x11);
-    PutWindowTilemap(windowId);
-    DrawStdWindowFrame(windowId, 0);
-    CopyWindowToVram(windowId, COPYWIN_FULL);
-
-    gBccGlobalStruct.windowIds[0] = windowId;
-
-    LoadStdWindowFrameGfx();
-    windowId = AddWindow(&sCurrentMonWindowTemplate);
-    FillWindowPixelBuffer(windowId, 0x11);
-    PutWindowTilemap(windowId);
-    DrawStdWindowFrame(windowId, 0);
-    CopyWindowToVram(windowId, COPYWIN_FULL);
-
-    gBccGlobalStruct.windowIds[1] = windowId;
-}
-
-void bcc_DeleteBCCMon(void)
-{
-    //Free(gBccGlobalStruct.caughtMon);
-    //gBccGlobalStruct.caughtMon = NULL;
-    memset(&gBccGlobalStruct.caughtMon, 0, sizeof(gBccGlobalStruct.caughtMon));
 }
 
 void bcc_DeleteSprites(void)
@@ -214,6 +305,11 @@ void bcc_DeleteSprites(void)
     gBccGlobalStruct.spriteIds[1] = 0;
     gBccGlobalStruct.spriteIds[2] = 0;
     gBccGlobalStruct.spriteIds[3] = 0;
+}
+
+void bcc_DeleteSpritesAndWindow(void)
+{
+    bcc_DeleteSprites();
 
     // now also destroy window
     ClearStdWindowAndFrameToTransparent(gBccGlobalStruct.windowIds[0], FALSE);
@@ -226,6 +322,8 @@ void bcc_DeleteSprites(void)
 
     gBccGlobalStruct.windowIds[0] = 0;
     gBccGlobalStruct.windowIds[1] = 0;
+
+    gBccGlobalStruct.initStep = BCC_SWAP_MENU_DESTROY_TASK;
 }
 
 void bcc_DeleteSpriteAfterASecond(u8 taskId)

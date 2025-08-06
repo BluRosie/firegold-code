@@ -6,9 +6,9 @@
 .global test_script
 test_script:
 @callnative bcc_SetTimer
-compare 0x8004, 0
+compare 0x43E9, 0
 goto_if_eq _stepOne
-compare 0x8004, 1
+compare 0x43E9, 1
 goto_if_eq _stepTwo
 goto _stepOne
 
@@ -16,7 +16,7 @@ goto _stepOne
 _stepOne:
 callnative bcc_Init
 callnative bcc_StoreCaughtMon
-setvar 0x8004, 1
+setvar 0x43E9, 1
 end
 
 _stepTwo:
@@ -32,10 +32,10 @@ goto postAcceptMon
 acceptsMon:
 callnative bcc_DepositBCCMon
 callnative bcc_DeleteBCCMon
-setvar 0x8004, 0
+setvar 0x43E9, 0
 
 postAcceptMon:
-callnative bcc_DeleteSprites
+callnative bcc_DeleteSpritesAndWindow
 end
 
 .global bcc_ContestIsOver
