@@ -52,7 +52,6 @@ static const struct WindowTemplate sCurrentMonWindowTemplate = {0, X_POS_MON_SWA
 
 u32 bcc_StoreCaughtMon(void);
 void bcc_DeleteBCCMon(void);
-void bcc_DeleteSpriteAfterASecond(u8 taskId);
 void bcc_DeleteSprites(void);
 
 // change start menu behavior:
@@ -227,7 +226,7 @@ void bcc_DeleteBCCMon(void)
 {
     //Free(gBccGlobalStruct.caughtMon);
     //gBccGlobalStruct.caughtMon = NULL;
-    memset(&gBccGlobalStruct.caughtMon, 0, sizeof(gBccGlobalStruct.caughtMon));
+    memset(&gBccGlobalStruct.caughtMon, 0, sizeof(BugCatchingContestGlobalStruct));
 }
 
 void bcc_SpawnSprites(void)
@@ -324,19 +323,6 @@ void bcc_DeleteSpritesAndWindow(void)
     gBccGlobalStruct.windowIds[1] = 0;
 
     gBccGlobalStruct.initStep = BCC_SWAP_MENU_DESTROY_TASK;
-}
-
-void bcc_DeleteSpriteAfterASecond(u8 taskId)
-{
-    if (gBccGlobalStruct.timer++ == 240)
-    {
-        gBccGlobalStruct.timer = 0;
-        bcc_DeleteSprites();
-        DestroyTask(taskId);
-        //Free(gBccGlobalStruct);
-        //gBccGlobalStruct = NULL;
-        bcc_DeleteBCCMon();
-    }
 }
 
 // score caught mon in gBccGlobalStruct.caughtMon
