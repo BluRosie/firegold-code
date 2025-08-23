@@ -40,7 +40,7 @@ struct BugCatchingContestGlobalStruct
     u8 spriteIds[4]; // index of gSprites
     u8 windowIds[2];
     u8 palReloadTimer;
-};
+}; // size = 0x74
 
 extern struct BugCatchingContestGlobalStruct gBccGlobalStruct;
 
@@ -66,7 +66,7 @@ void bcc_Init(void)
     //if (gBccGlobalStruct == NULL)
     //    gBccGlobalStruct = AllocZeroed(sizeof(struct BugCatchingContestGlobalStruct));
     if (gBccGlobalStruct.activated == 0)
-        memset(&gBccGlobalStruct.caughtMon, 0, sizeof(struct BugCatchingContestGlobalStruct));
+        memset(&gBccGlobalStruct, 0, sizeof(struct BugCatchingContestGlobalStruct));
     gBccGlobalStruct.activated = 1;
 
     //if (gBccGlobalStruct.caughtMon == NULL)
@@ -226,7 +226,7 @@ void bcc_DeleteBCCMon(void)
 {
     //Free(gBccGlobalStruct.caughtMon);
     //gBccGlobalStruct.caughtMon = NULL;
-    memset(&gBccGlobalStruct.caughtMon, 0, sizeof(BugCatchingContestGlobalStruct));
+    memset(&gBccGlobalStruct.caughtMon, 0, sizeof(gBccGlobalStruct.caughtMon));
 }
 
 void bcc_SpawnSprites(void)
@@ -446,7 +446,7 @@ u32 bcc_StoreCaughtMon(void)
 
 u32 bcc_DepositBCCMon(void)
 {
-    u32 ret = GiveMonToPlayer(&gBccGlobalStruct.caughtMon);
+    u32 ret = GiveMonToPlayer(gBccGlobalStruct.caughtMon);
     if (ret != 2) // can't give to player
     {
         //Free(gBccGlobalStruct.caughtMon);
