@@ -21,6 +21,8 @@
 #define SECONDS_IN_CONTEST 5 // (20 * 60) // 20 minute total time
 #define FRAMES_IN_CONTEST (SECONDS_IN_CONTEST * 60) // 60 frames per second
 #define gMonIconPalettes ((u16 *)(0x083d3740))
+#define INITIAL_BALL_QUANTITY 20
+#define IS_BCC_MON_INVALID (((u32 *)(&gBccGlobalStruct.caughtMon))[0] == 0)
 
 #define X_POS_MON_TO_SWAP 56
 #define Y_POS_MON_TO_SWAP 36
@@ -40,11 +42,13 @@ struct BugCatchingContestGlobalStruct
     u8 spriteIds[4]; // index of gSprites
     u8 windowIds[2];
     u8 palReloadTimer;
+    u8 balls;
 }; // size = 0x74
 
 extern struct BugCatchingContestGlobalStruct gBccGlobalStruct;
 
 extern const u8 *bcc_ContestIsOver[]; // script
+extern const u8 *bcc_SwapMonPrompt[]; // script
 extern const u8 gText_LevelOfMon[]; // string
 
 static const struct WindowTemplate sMonWindowTemplate = {0, X_POS_MON_TO_SWAP/8-2, Y_POS_MON_TO_SWAP/8-1, 12, 4, 0xF, 8};
@@ -53,6 +57,7 @@ static const struct WindowTemplate sCurrentMonWindowTemplate = {0, X_POS_MON_SWA
 u32 bcc_StoreCaughtMon(void);
 void bcc_DeleteBCCMon(void);
 void bcc_DeleteSprites(void);
+void bcc_DeleteBCCStruct(void);
 
 // change start menu behavior:
 // get rid of save, add script to quit out
@@ -68,10 +73,11 @@ void bcc_Init(void)
     if (gBccGlobalStruct.activated == 0)
         memset(&gBccGlobalStruct, 0, sizeof(struct BugCatchingContestGlobalStruct));
     gBccGlobalStruct.activated = 1;
+    gBccGlobalStruct.balls = INITIAL_BALL_QUANTITY;
 
     //if (gBccGlobalStruct.caughtMon == NULL)
     //    gBccGlobalStruct.caughtMon = AllocZeroed(sizeof(gBccGlobalStruct.caughtMon));
-    if (((u32 *)(&gBccGlobalStruct.caughtMon))[0] == 0)
+    if (IS_BCC_MON_INVALID)
         memset(&gBccGlobalStruct.caughtMon, 0, sizeof(gBccGlobalStruct.caughtMon));
 }
 
@@ -79,7 +85,28 @@ void bcc_TimerCallback(u8 taskId)
 {
     if (gBccGlobalStruct.activated)
     {
-        if (gBccGlobalStruct.timer >= FRAMES_IN_CONTEST)
+        u32 currDay = gCurrentTimeDayOfWeek;
+        if (gMapHeader.regionMapSectionId != 0xBC) // not in the national park town map
+        {
+            bcc_DeleteBCCStruct(); // silently delete BCC struct and exit timer task
+            DestroyTask(taskId);
+        }
+        else if (gPlayerPartyCount > 1
+              && IS_BCC_MON_INVALID)
+        {
+            if (!ScriptContext2_IsEnabled()) // ScriptContext2_IsEnabled is now actually ArePlayerFieldControlsLocked
+                bcc_StoreCaughtMon();
+        }
+        else if (gPlayerPartyCount > 1
+              && GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_HP, NULL) != 0) // if the player has caught a mon and already has a BCC mon
+        {
+            if (!ScriptContext2_IsEnabled()) // ScriptContext2_IsEnabled is now actually ArePlayerFieldControlsLocked
+                ScriptContext1_SetupScript(bcc_SwapMonPrompt);
+        }
+        else if (gBccGlobalStruct.timer >= FRAMES_IN_CONTEST      // time is up
+              || gBccGlobalStruct.balls == 0                      // no more balls
+              || AllMonsFainted()                                 // needs to white out
+              || (currDay != 2 && currDay != 4 && currDay != 6))  // current day is not valid for BCC
         {
             // trigger a script to run as soon as possible, destroy the task
             if (!ScriptContext2_IsEnabled()) // ScriptContext2_IsEnabled is now actually ArePlayerFieldControlsLocked
@@ -227,6 +254,13 @@ void bcc_DeleteBCCMon(void)
     //Free(gBccGlobalStruct.caughtMon);
     //gBccGlobalStruct.caughtMon = NULL;
     memset(&gBccGlobalStruct.caughtMon, 0, sizeof(gBccGlobalStruct.caughtMon));
+}
+
+void bcc_DeleteBCCStruct(void)
+{
+    //Free(gBccGlobalStruct.caughtMon);
+    //gBccGlobalStruct.caughtMon = NULL;
+    memset(&gBccGlobalStruct, 0, sizeof(gBccGlobalStruct));
 }
 
 void bcc_SpawnSprites(void)
@@ -433,7 +467,7 @@ u32 bcc_ScoreCaughtMon(void)
 u32 bcc_StoreCaughtMon(void)
 {
     u32 ret = FALSE;
-    if (gPlayerPartyCount > 1 && ((u32 *)&gBccGlobalStruct.caughtMon)[0] == 0) // is an uninitialized PartyPokemon
+    if (gPlayerPartyCount > 1 && IS_BCC_MON_INVALID) // is an uninitialized PartyPokemon
     {
         memcpy(&gBccGlobalStruct.caughtMon, &gPlayerParty[1], sizeof(gBccGlobalStruct.caughtMon));
         memset(&gPlayerParty[1], 0, sizeof(gBccGlobalStruct.caughtMon));

@@ -421,6 +421,7 @@ GetSetPokedexFlag = 0x8088E74 | 1;
 PokedexCount = 0x8088E8C | 1;
 HealPlayerParty = 0x80A0058 | 1;
 ReducePartyToThree = 0x80A03D8 | 1;
+AllMonsFainted = 0x080a0484 | 1;
 SizeMinigame_CalculateMonHeight = 0x80A082C | 1;
 SizeMinigame_GetHeightBonus = 0x80A069C | 1;
 SizeMinigame_CalculateAdjustedHeight = 0x80A0770 | 1;

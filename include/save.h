@@ -12,6 +12,7 @@
 #define MAP_OFFSET_H (MAP_OFFSET * 2)
 
 #define gTimeOfDay *((u8*)0x0203C000)
+#define gCurrentTimeDayOfWeek *((u8*)0x03005541)
 #define gCurrentTimeHours *((u8*)0x03005542)
 #define gCurrentTimeMins *((u8*)0x03005543)
 #define gCurrentTimeSeconds *((u8*)0x03005544)

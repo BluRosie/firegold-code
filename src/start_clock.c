@@ -29,7 +29,6 @@ int GetStringWidthDifference(int fontId, const u8 *str, int totalWidth, int lett
 }
 
 #define GetStringRightAlignXOffset(fontId, str, totalWidth) GetStringWidthDifference(fontId, str, totalWidth, 0)
-#define gCurrentTimeDayOfWeek *((u8*)0x03005541)
 
 void ShowTimeWindow(void)
 {
@@ -167,7 +166,7 @@ void DoDrawStartMenu_Case3(void)
     //    return TRUE;
     //}
     //return FALSE;
-    if (!GetSafariZoneFlag() && gCurrentTimeSeconds == 0) 
+    if (!GetSafariZoneFlag() && gCurrentTimeSeconds == 0)
     {
         DestroySafariZoneStatsWindow();
         ShowTimeWindow();
