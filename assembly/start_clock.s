@@ -29,3 +29,20 @@
 //ldr r1, =0x0806F09C|1
 //bx r1
 
+
+.global bcc_RunSomethingEveryFrame
+bcc_RunSomethingEveryFrame:
+push {lr}
+bl bcc_TimerCallback
+ldr r0, =0x03000E7C
+ldrb r0, [r0]
+cmp r0, #1
+bne _ret_080548C4
+ldr r0, =0x08054876 | 1
+bx r0
+
+_ret_080548C4:
+pop {r0}
+bx r0
+
+.pool

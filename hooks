@@ -7,7 +7,5 @@
 #StartCB_HandleInput_hook 0806F324 2
 #DoDrawStartMenu_hook 0806F090 0
 
-
-#TryRunOnFrameMapScript 08069C74 0
-#bcc_RunFrameMapScript 08069C94 0
-#SafariZoneTakeStep 080a0f0c 0
+# i need something that reliably runs every frame
+bcc_RunSomethingEveryFrame 0805486C 0

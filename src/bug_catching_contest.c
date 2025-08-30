@@ -18,8 +18,8 @@
 #define FLAG_BUG_CATCHING_CONTEST (0x2342)
 #define IS_IN_BUG_CATCHING_CONTEST (FlagGet(FLAG_BUG_CATCHING_CONTEST))
 #define gRemainingParkBalls (*(u8 *)0x0203FEC8)
-#define SECONDS_IN_CONTEST 20 // (20 * 60) // 20 minute total time
-#define FRAMES_IN_CONTEST (SECONDS_IN_CONTEST * 60) // 60 frames per second
+#define SECONDS_IN_CONTEST 120 // (20 * 60) // 20 minute total time
+#define FRAMES_PER_SECOND 60 // 60 frames per second
 #define gMonIconPalettes ((u16 *)(0x083d3740))
 #define INITIAL_BALL_QUANTITY 20
 #define IS_BCC_MON_INVALID (((u32 *)(&gBccGlobalStruct.caughtMon))[0] == 0)
@@ -35,15 +35,16 @@ struct BugCatchingContestGlobalStruct
     //struct Sprite *monIconSprites[2];
     //struct Pokemon caughtMon;
     u8 caughtMon[0x64]; // my shit don't line up exact!  oh well
-    u32 timer:27;
-    u32 cursorPos:1;
-    u32 activated:1;
-    u32 initStep:3;
     u8 spriteIds[4]; // index of gSprites
     u8 windowIds[2];
+    u16 secondTimer;
+    u8 frameTimer;
+    u8 cursorPos;
+    u8 activated;
+    u8 initStep;
     u8 palReloadTimer;
     u8 balls;
-}; // size = 0x74
+}; // size = 0x72
 
 extern struct BugCatchingContestGlobalStruct gBccGlobalStruct;
 
@@ -68,20 +69,16 @@ void bcc_DeleteBCCStruct(void);
 
 void bcc_Init(void)
 {
-    //if (gBccGlobalStruct == NULL)
-    //    gBccGlobalStruct = AllocZeroed(sizeof(struct BugCatchingContestGlobalStruct));
     if (gBccGlobalStruct.activated == 0)
         memset(&gBccGlobalStruct, 0, sizeof(struct BugCatchingContestGlobalStruct));
-    gBccGlobalStruct.activated = 1;
     gBccGlobalStruct.balls = INITIAL_BALL_QUANTITY;
 
-    //if (gBccGlobalStruct.caughtMon == NULL)
-    //    gBccGlobalStruct.caughtMon = AllocZeroed(sizeof(gBccGlobalStruct.caughtMon));
     if (IS_BCC_MON_INVALID)
         memset(&gBccGlobalStruct.caughtMon, 0, sizeof(gBccGlobalStruct.caughtMon));
+    gBccGlobalStruct.activated = 1;
 }
 
-void bcc_TimerCallback(u8 taskId)
+void bcc_TimerCallback(void)
 {
     if (gBccGlobalStruct.activated)
     {
@@ -103,30 +100,28 @@ void bcc_TimerCallback(u8 taskId)
             if (!ScriptContext2_IsEnabled()) // ScriptContext2_IsEnabled is now actually ArePlayerFieldControlsLocked
                 ScriptContext1_SetupScript(bcc_SwapMonPrompt);
         }
-        else if (gBccGlobalStruct.timer >= FRAMES_IN_CONTEST      // time is up
-              || gBccGlobalStruct.balls == 0                      // no more balls
-              || AllMonsFainted()                                 // needs to white out
-              || (currDay != 2 && currDay != 4 && currDay != 6))  // current day is not valid for BCC
+        else if (gBccGlobalStruct.secondTimer >= SECONDS_IN_CONTEST // time is up
+              || gBccGlobalStruct.balls == 0                        // no more balls
+              || AllMonsFainted()                                   // needs to white out
+              || (currDay != 2 && currDay != 4 && currDay != 6))    // current day is not valid for BCC
         {
             // trigger a script to run as soon as possible, destroy the task
             if (!ScriptContext2_IsEnabled()) // ScriptContext2_IsEnabled is now actually ArePlayerFieldControlsLocked
             {
-                DestroyTask(taskId);
+                gBccGlobalStruct.activated = 0;
                 ScriptContext1_SetupScript(bcc_ContestIsOver);
             }
         }
         else
         {
-            gBccGlobalStruct.timer++;
+            gBccGlobalStruct.frameTimer++;
+            if (gBccGlobalStruct.frameTimer == FRAMES_PER_SECOND)
+            {
+                gBccGlobalStruct.secondTimer++;
+                gBccGlobalStruct.frameTimer = 0;
+            }
         }
     }
-}
-
-// timer setting also allocates the gBccGlobalStruct
-void bcc_SetTimer(void)
-{
-    // create a task that just counts down
-    CreateTask(bcc_TimerCallback, 0);
 }
 
 enum SPAWN_ICONS_STEP
@@ -470,18 +465,27 @@ void bcc_StoreSpeciesInLastResult(void)
 }
 
 
+u32 bcc_DeleteCaughtMon(void)
+{
+    if (gPlayerPartyCount > 1) // has an extra mon
+    {
+        memset(&gPlayerParty[1], 0, 5 * sizeof(gBccGlobalStruct.caughtMon));
+    }
+    CalculatePlayerPartyCount();
+}
+
+
 // functions to handle storing bug catching contest mon direct from party as well as giving the player the bug catching contest mon
 u32 bcc_StoreCaughtMon(void)
 {
     u32 ret = FALSE;
-    if (gPlayerPartyCount > 1 && IS_BCC_MON_INVALID) // is an uninitialized PartyPokemon
+    if (gPlayerPartyCount > 1)
     {
         memcpy(&gBccGlobalStruct.caughtMon, &gPlayerParty[1], sizeof(gBccGlobalStruct.caughtMon));
-        memset(&gPlayerParty[1], 0, sizeof(gBccGlobalStruct.caughtMon));
-        memcpy(&gPlayerParty[1], &gPlayerParty[2], 4 * sizeof(gBccGlobalStruct.caughtMon));
-        memset(&gPlayerParty[5], 0, sizeof(gBccGlobalStruct.caughtMon));
+        memset(&gPlayerParty[1], 0, 5 * sizeof(gBccGlobalStruct.caughtMon));
         ret = TRUE;
     }
+    CalculatePlayerPartyCount();
     return ret;
 }
 

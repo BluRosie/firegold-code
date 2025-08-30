@@ -56,12 +56,21 @@ closemessage
 @ yes
 compare 0x800D, 1
 goto_if_eq acceptsMon
+callnative bcc_DeleteCaughtMon
 goto postAcceptMon
 
 acceptsMon:
-callnative bcc_DepositBCCMon
-callnative bcc_DeleteBCCMon
+callnative bcc_StoreCaughtMon
 
 postAcceptMon:
 callnative bcc_DeleteSpritesAndWindow
 end
+
+
+@.global bcc_EventScriptInit
+@bcc_EventScriptInit:
+@@callnative bcc_SetTimer
+@setworldmapflag 0x230A
+@compare 0x43E9, 0x1
+@goto_if_eq 0x08AE41E8
+@end

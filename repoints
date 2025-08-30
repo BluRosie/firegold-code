@@ -2,3 +2,4 @@
 #gMoveDescriptions 080E5440
 
 #test_script 08C07820
+##bcc_EventScriptInit 08BC5431
