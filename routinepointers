@@ -1,2 +1,10 @@
 ##example
 #TagTeamExecutionCompleteHook 802E384
+
+bcc_Init 08AE3D64
+bcc_SetTimer 08AE3D69
+bcc_ScoreCaughtMon 08AE4C8A
+bcc_ScoreCaughtMon 09DE7667
+bcc_StoreSpeciesInLastResult 09DE765E
+bcc_DepositBCCMon 08AE5D6E
+bcc_DeleteBCCStruct 08AE5D73
