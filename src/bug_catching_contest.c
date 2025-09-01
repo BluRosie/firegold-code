@@ -17,8 +17,7 @@
 
 #define FLAG_BUG_CATCHING_CONTEST (0x2342)
 #define IS_IN_BUG_CATCHING_CONTEST (FlagGet(FLAG_BUG_CATCHING_CONTEST))
-#define gRemainingParkBalls (*(u8 *)0x0203FEC8)
-#define SECONDS_IN_CONTEST 120 // (20 * 60) // 20 minute total time
+#define SECONDS_IN_CONTEST (20 * 60) // 20 minute total time
 #define FRAMES_PER_SECOND 60 // 60 frames per second
 #define gMonIconPalettes ((u16 *)(0x083d3740))
 #define INITIAL_BALL_QUANTITY 20
