@@ -1932,3 +1932,5 @@ gBccGlobalStruct = 0x0203FE80;
 DrawSafariZoneStatsWindow = 0x0806ee7c |1;
 sStartMenuDescPointers = 0x083a7394 |1;
 SetUpStartMenu = 0x0806ed54|1;
+
+Overworld_MapTypeAllowsTeleportAndFly = 0x080561fc | 1;

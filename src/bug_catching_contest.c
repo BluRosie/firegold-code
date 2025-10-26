@@ -498,3 +498,13 @@ u32 bcc_DepositBCCMon(void)
     }
     return ret;
 }
+
+bool8 SetUpFieldMove_Fly(void)
+{
+    bool8 ret = TRUE;
+    if (!(Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) == TRUE))
+        ret = FALSE;
+    else if (IS_IN_BUG_CATCHING_CONTEST)
+        ret = FALSE;
+    return ret;
+}
