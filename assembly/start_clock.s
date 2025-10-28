@@ -46,3 +46,47 @@ pop {r0}
 bx r0
 
 .pool
+
+
+.equ battle_tower_flag, 0x2322 // flag for in battle tower disables everything here
+.equ bcc_flag, 0x2342
+.equ skip_whiteout_flag, 0x236f
+
+.global ContinueScriptOverWhiteout
+ContinueScriptOverWhiteout:
+push {r0,r2}
+ldr r0, =battle_tower_flag
+ldr r2, =0x0806E6D1
+bl bx_r2
+cmp r0, #0x1
+beq sub_flag_on
+ldr r0, =bcc_flag
+ldr r2, =0x0806E6D1
+bl bx_r2
+cmp r0, #0x1
+beq sub_flag_on
+beq sub_flag_on
+ldr r0, =skip_whiteout_flag
+ldr r2, =0x0806E6D1
+bl bx_r2
+cmp r0, #0x1
+beq sub_flag_on
+
+
+pop {r0,r2}
+mov r0, #0x1 @Original response
+pop {r1}
+bx r1
+
+sub_flag_on:
+pop {r0, r2}
+mov r0, #0x0 @Hacked response
+pop {r1}
+bx r1
+
+.pool
+
+.align 2
+
+bx_r2:
+	bx r2

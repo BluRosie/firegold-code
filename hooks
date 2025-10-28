@@ -16,3 +16,4 @@ bcc_RunSomethingEveryFrame 0805486C 0
 
 # prevent fly from happening during bug catching contest
 SetUpFieldMove_Fly 08124a8c 0
+SetUpStartMenu 0806ed54 0

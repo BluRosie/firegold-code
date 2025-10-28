@@ -109,6 +109,7 @@ void bcc_TimerCallback(void)
             {
                 gBccGlobalStruct.activated = 0;
                 ScriptContext1_SetupScript(bcc_ContestIsOver);
+                HealPlayerParty(); // heal the party just in case the player whited out
             }
         }
         else
@@ -499,6 +500,8 @@ u32 bcc_DepositBCCMon(void)
     return ret;
 }
 
+// disable fly when in bcc
+
 bool8 SetUpFieldMove_Fly(void)
 {
     bool8 ret = TRUE;
@@ -507,4 +510,50 @@ bool8 SetUpFieldMove_Fly(void)
     else if (IS_IN_BUG_CATCHING_CONTEST)
         ret = FALSE;
     return ret;
+}
+
+// disable start menu save when in bcc
+
+extern u8 sNumStartMenuItems;
+extern u8 sStartMenuOrder[];
+
+enum StartMenuOption
+{
+    STARTMENU_POKEDEX = 0,
+    STARTMENU_POKEMON,
+    STARTMENU_BAG,
+    STARTMENU_PLAYER,
+    STARTMENU_SAVE,
+    STARTMENU_OPTION,
+    STARTMENU_EXIT,
+    STARTMENU_RETIRE,
+    STARTMENU_PLAYER2,
+    MAX_STARTMENU_ITEMS
+};
+
+void SetUpStartMenu_BCC(void)
+{
+    if (FlagGet(0x829) == TRUE) // FLAG_SYS_POKEDEX_GET
+        AppendToStartMenuItems(STARTMENU_POKEDEX);
+    if (FlagGet(0x828) == TRUE) // FLAG_SYS_POKEMON_GET
+        AppendToStartMenuItems(STARTMENU_POKEMON);
+    AppendToStartMenuItems(STARTMENU_BAG);
+    AppendToStartMenuItems(STARTMENU_PLAYER);
+    AppendToStartMenuItems(STARTMENU_OPTION);
+    AppendToStartMenuItems(STARTMENU_EXIT);
+}
+
+void SetUpStartMenu(void)
+{
+    sNumStartMenuItems = 0;
+    if (IsUpdateLinkStateCBActive() == TRUE)
+        SetUpStartMenu_Link();
+    else if (InUnionRoom() == TRUE)
+        SetUpStartMenu_UnionRoom();
+    else if (GetSafariZoneFlag() == TRUE)
+        SetUpStartMenu_SafariZone();
+    else if (IS_IN_BUG_CATCHING_CONTEST)
+        SetUpStartMenu_BCC();
+    else
+        SetUpStartMenu_NormalField();
 }
