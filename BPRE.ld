@@ -1935,3 +1935,7 @@ DrawSafariZoneStatsWindow = 0x0806ee7c |1;
 sStartMenuDescPointers = 0x083a7394 |1;
 
 Overworld_MapTypeAllowsTeleportAndFly = 0x080561fc | 1;
+
+BtlController_EmitBallThrowAnim = 0x0800e194 | 1;
+BtlController_EmitTwoReturnValues = 0x0800e848 | 1;
+MarkBattlerForControllerExec = 0x08017248 | 1;

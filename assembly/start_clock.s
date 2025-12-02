@@ -47,6 +47,20 @@ bx r0
 
 .pool
 
+.global HandleInputChooseAction_editedcase_hook
+HandleInputChooseAction_editedcase_hook:
+bl HandleInputChooseAction_editedcase
+cmp r0, #0
+bne diff_return
+ldr r1, =0x802E616 | 1
+bx r1
+
+diff_return:
+ldr r0, =0x0802E61A | 1;
+bx r0
+
+.pool
+
 
 .equ battle_tower_flag, 0x2322 // flag for in battle tower disables everything here
 .equ bcc_flag, 0x2342

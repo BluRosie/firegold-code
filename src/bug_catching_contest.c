@@ -1,5 +1,6 @@
 #include "../include/global.h"
 #include "../include/alloc.h"
+#include "../include/battle.h"
 #include "../include/constants/species.h"
 #include "../include/event_data.h"
 #include "../include/main.h"
@@ -556,4 +557,67 @@ void SetUpStartMenu(void)
         SetUpStartMenu_BCC();
     else
         SetUpStartMenu_NormalField();
+}
+
+u8 gText_BattleMenuBCC[] =
+{ // Fight Ball Pokémon Run
+    0xFC, 0x05, 0x05,
+    0xFC, 0x04, 0x0D, 0x0E, 0x0F,
+    // Fight
+    0xC0, 0xDD, 0xDB, 0xDC, 0xE8,
+    0xFC, 0x13, 0x38,
+    // Ball
+    0xBC, 0xD5, 0xE0, 0xE0,
+    0xFE,
+    // Pokémon
+    0xCA, 0xE3, 0xDF, 0x1B, 0xE1, 0xE3, 0xE2,
+    0xFC, 0x13, 0x38,
+    // Run
+    0xCC, 0xE9, 0xE2,
+    0xFF
+};
+
+void PlayerHandleChooseAction(void)
+{
+    s32 i;
+
+    gBattlerControllerFuncs[gActiveBattler] = 0x8032B94 | 1; // HandleChooseActionAfterDma3;
+    BattlePutTextOnWindow(0x083fda4c, 0); // B_WIN_MNSG
+    // replace BAG with BALL when in the relevant scenario
+    //if (IS_IN_BUG_CATCHING_CONTEST)
+        BattlePutTextOnWindow(gText_BattleMenuBCC, 2); // B_WIN_ACTION_MENU
+    //else
+    //    BattlePutTextOnWindow(0x083fe725, 2); // B_WIN_ACTION_MENU
+
+    for (i = 0; i < 4; ++i)
+        ActionSelectionDestroyCursorAt(i);
+    ActionSelectionCreateCursorAt(gActionSelectionCursor[gActiveBattler], 0);
+    BattleStringExpandPlaceholdersToDisplayedString(0x083fe6d5);
+    BattlePutTextOnWindow(gDisplayedStringBattle, 1); // B_WIN_ACTION_PROMPT
+}
+
+// ugh throw ball when select ball
+u32 HandleInputChooseAction_editedcase(void)
+{
+    u32 ret = 0;
+    switch (gActionSelectionCursor[gActiveBattler])
+    {
+    case 0:
+        BtlController_EmitTwoReturnValues(1, 0, 0); // use move
+        break;
+    case 1:
+        //BtlController_EmitTwoReturnValues(1, 1, 0); // use item
+        //if (IS_IN_BUG_CATCHING_CONTEST)
+            BtlController_EmitBallThrowAnim(0, 4); // shakes to success for that parameter
+            MarkBattlerForControllerExec(0);
+            ret = 1;
+            break;
+    case 2:
+        BtlController_EmitTwoReturnValues(1, 2, 0); // switch
+        break;
+    case 3:
+        BtlController_EmitTwoReturnValues(1, 3, 0); // run
+        break;
+    }
+    return ret;
 }
