@@ -606,12 +606,16 @@ u32 HandleInputChooseAction_editedcase(void)
         BtlController_EmitTwoReturnValues(1, 0, 0); // use move
         break;
     case 1:
-        //BtlController_EmitTwoReturnValues(1, 1, 0); // use item
         //if (IS_IN_BUG_CATCHING_CONTEST)
-            BtlController_EmitBallThrowAnim(0, 4); // shakes to success for that parameter
-            MarkBattlerForControllerExec(0);
-            ret = 1;
-            break;
+        if (TRUE)
+        {
+            BtlController_EmitTwoReturnValues(1, 5, 0); // use safari ball
+        }
+        else
+        {
+            BtlController_EmitTwoReturnValues(1, 1, 0); // use item
+        }
+        break;
     case 2:
         BtlController_EmitTwoReturnValues(1, 2, 0); // switch
         break;
@@ -620,4 +624,26 @@ u32 HandleInputChooseAction_editedcase(void)
         break;
     }
     return ret;
+}
+
+void HandleAction_SafariZoneBallThrow(void)
+{
+    gBattlerAttacker = gBattlerByTurnOrder[gCurrentTurnActionNumber];
+    gBattle_BG0_X = 0;
+    gBattle_BG0_Y = 0;
+    //if (IS_IN_BUG_CATCHING_CONTEST)
+    //{
+        gUsedBall = 0x17;
+        gLastUsedItem = 0x5C;
+        gBattlescriptCurrInstr = BattleScript_ThrowBall;
+        gBccGlobalStruct.balls--;
+    //}
+    //else
+    //{
+    //    --gNumSafariBalls;
+    //    gUsedBall = 5;
+    //    gLastUsedItem = 5;
+    //    gBattlescriptCurrInstr = gBattlescriptsForBallThrow[5];
+    //}
+    gCurrentActionFuncId = 10; // B_ACTION_EXEC_SCRIPT
 }

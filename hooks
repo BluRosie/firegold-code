@@ -21,3 +21,5 @@ SetUpStartMenu 0806ed54 0
 # print ball over bag when in bcc
 PlayerHandleChooseAction 08032bd4 0
 HandleInputChooseAction_editedcase_hook 0802E480 1
+
+HandleAction_SafariZoneBallThrow 08016ac0 0
