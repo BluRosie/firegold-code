@@ -46,7 +46,7 @@ gBattlersCount = 0x2023BCC;
 gBattlerPartyIndexes = 0x2023BCE;
 gBattlerPositions = 0x2023BD6;
 gActionsByTurnOrder = 0x2023BDA;
-gBanksByTurnOrder = 0x2023BDE;
+gBattlerByTurnOrder = 0x2023BDE;
 gCurrentTurnActionNumber = 0x2023BE2;
 gCurrentActionFuncId = 0x2023BE3;
 gBattlerSpriteIds = 0x2023D44;
@@ -300,7 +300,7 @@ gTrainerBackspriteTable = 0x8239FA4;
 gEnemyMonElevation = 0x823A004;
 //gTrainerClassNames = 0x823E558;
 //gTrainers = 0x823EAC8;
-gPokemonNames = 0x8245EE0;
+gSpeciesNames = 0x8245EE0;
 //gMoveNames = 0x8247094;
 gBattleBackgrounds = 0x824EE34;
 gPokeBattleOam = 0x824F018;
@@ -421,6 +421,7 @@ GetSetPokedexFlag = 0x8088E74 | 1;
 PokedexCount = 0x8088E8C | 1;
 HealPlayerParty = 0x80A0058 | 1;
 ReducePartyToThree = 0x80A03D8 | 1;
+AllMonsFainted = 0x080a0484 | 1;
 SizeMinigame_CalculateMonHeight = 0x80A082C | 1;
 SizeMinigame_GetHeightBonus = 0x80A069C | 1;
 SizeMinigame_CalculateAdjustedHeight = 0x80A0770 | 1;
@@ -755,6 +756,7 @@ ShouldShowBoxWasFullMessage = 0x80CC7B4 | 1;
 
 /* Pokemon Icons */
 CreateMonIcon = 0x8096E18 | 1;
+DestroyMonIcon = 0x08097070 | 1;
 GetIconSpecies = 0x8096F5C | 1;
 GetMonIconTiles = 0x8097028 | 1;
 LoadPartyIconTiles = 0x8097054 | 1;
@@ -1067,6 +1069,7 @@ ScriptContext2_IsEnabled = 0x8069958 | 1;
 SetTextboxSignpostDesign = 0x8069A20 | 1;
 ScriptContext1_SetupScript = 0x8069AE4 | 1;
 ScriptContext1_Stop = 0x8069B28 | 1;
+RunScriptImmediately = 0x8069b48 | 1;
 GetVarPointer = 0x806E454 | 1;
 VarGet = 0x806E568 | 1;
 VarSet = 0x806E584 | 1;
@@ -1278,6 +1281,7 @@ IsQuestLogActive = 0x8111C2C | 1;
 GetSafariZoneFlag = 0x80A0E90 | 1;
 SetSafariZoneFlag = 0x80A0EA4 | 1;
 ResetSafariZoneFlag = 0x80A0EB4 | 1;
+SafariZone_EventScript_TimesUp = 0x081bfbc5;
 
 /* Party Menu Functions */
 ZeroPlayerPartyMons = 0x803DA14 | 1;
@@ -1431,7 +1435,9 @@ IsUpdateLinkStateCBActive = 0x805642C | 1;
 AppendToStartMenuItems = 0x806ED94 | 1;
 SetUpStartMenu_Link = 0x806EE34 | 1;
 SetUpStartMenu_UnionRoom = 0x806EE58 | 1;
-DestroySafariZoneStatsWindow = 0x806EF18 | 1;
+SetUpStartMenu_SafariZone = 0x0806ee04 | 1;
+SetUpStartMenu_NormalField = 0x0806edb0 | 1;
+/*DestroySafariZoneStatsWindow = 0x806EF18 | 1;*/
 PrintStartMenuItems = 0x806EF44 | 1;
 DrawStartMenuInOneGo = 0x806F14C | 1;
 task50_startmenu = 0x806F168 | 1;
@@ -1806,7 +1812,6 @@ DMA0_CNT_H = 0x40000BA;
 gSprites = 0x0202063C;
 gStringVar1 = 0x02021CD0;
 gStringVar4 = 0x02021D18;
-gBattlescriptCurrInstr = 0x02023D74;
 gEnemyParty = 0x0202402C;
 gPlayerParty = 0x02024284;
 gPaletteFade = 0x02037AB8;
@@ -1920,3 +1925,21 @@ sSpritePaletteTags = 0x03000de8;
 DoLoadSpritePalette = 0x080089a0 | 1;
 MarkFogSpritePalToLighten = 0x0807a714 | 1;
 WeatherShiftGammaIfPalStateIdle = 0x0807a790 | 1;
+
+GiveMonToPlayer = 0x08040b14 | 1;
+/* this is okay because of the ram map as noted by frag.  shares space with battle tower data */
+gBccGlobalStruct = 0x0203FE80;
+
+DrawSafariZoneStatsWindow = 0x0806ee7c |1;
+sStartMenuDescPointers = 0x083a7394 |1;
+
+Overworld_MapTypeAllowsTeleportAndFly = 0x080561fc | 1;
+
+BtlController_EmitBallThrowAnim = 0x0800e194 | 1;
+BtlController_EmitTwoReturnValues = 0x0800e848 | 1;
+MarkBattlerForControllerExec = 0x08017248 | 1;
+BattleScript_ThrowBall = 0x081d9a14;
+gBattlescriptsForBallThrow = 0x081d99b0;
+
+gNumSafariBalls = 0x02039994;
+gUsedBall = 0x0203FE00;

@@ -4,4 +4,8 @@
 #define VAR_UNOWNCAUGHT_PT1 0x43b8
 #define VAR_UNOWNCAUGHT_PT2 0x43b9
 
+#define VAR_LASTRESULT 0x800D
+
+#define gSpecialVar_Result *(u16 *)(0x020370d0)
+
 #endif // GUARD_CONSTANTS_VARS_H
