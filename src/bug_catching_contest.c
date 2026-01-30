@@ -1,6 +1,7 @@
 #include "../include/global.h"
 #include "../include/alloc.h"
 #include "../include/battle.h"
+#include "../include/bug_catching_contest.h"
 #include "../include/constants/species.h"
 #include "../include/event_data.h"
 #include "../include/main.h"
@@ -15,38 +16,6 @@
 
 #define SPAWN_BCC_SCREEN_ON_NULL
 #define SPAWN_BCC_MON_ON_NULL
-
-#define FLAG_BUG_CATCHING_CONTEST (0x2342)
-#define IS_IN_BUG_CATCHING_CONTEST (FlagGet(FLAG_BUG_CATCHING_CONTEST))
-#define SECONDS_IN_CONTEST (20 * 60) // 20 minute total time
-#define FRAMES_PER_SECOND 60 // 60 frames per second
-#define gMonIconPalettes ((u16 *)(0x083d3740))
-#define INITIAL_BALL_QUANTITY 20
-#define IS_BCC_MON_INVALID (((u32 *)(&gBccGlobalStruct.caughtMon))[0] == 0)
-
-#define X_POS_MON_TO_SWAP 56
-#define Y_POS_MON_TO_SWAP 36
-
-#define X_POS_MON_SWAPPING (56)
-#define Y_POS_MON_SWAPPING (84)
-
-struct BugCatchingContestGlobalStruct
-{
-    //struct Sprite *monIconSprites[2];
-    //struct Pokemon caughtMon;
-    u8 caughtMon[0x64]; // my shit don't line up exact!  oh well
-    u8 spriteIds[4]; // index of gSprites
-    u8 windowIds[2];
-    u16 secondTimer;
-    u8 frameTimer;
-    u8 cursorPos;
-    u8 activated;
-    u8 initStep;
-    u8 palReloadTimer;
-    u8 balls;
-}; // size = 0x72
-
-extern struct BugCatchingContestGlobalStruct gBccGlobalStruct;
 
 extern const u8 *bcc_ContestIsOver[]; // script
 extern const u8 *bcc_SwapMonPrompt[]; // script
@@ -559,16 +528,23 @@ void SetUpStartMenu(void)
         SetUpStartMenu_NormalField();
 }
 
+#define BCC_BATTLE_MENU_BALLS_TENS_POS 27
+#define BCC_BATTLE_MENU_BALLS_ONES_POS 28
+
 u8 gText_BattleMenuBCC[] =
-{ // Fight Ball Pokémon Run
+{ // Fight Ball xXX Pokémon Run
     0xFC, 0x05, 0x05,
     0xFC, 0x04, 0x0D, 0x0E, 0x0F,
     // Fight
     0xC0, 0xDD, 0xDB, 0xDC, 0xE8,
     0xFC, 0x13, 0x38,
-    // Ball
+    // Ball xXX
     0xBC, 0xD5, 0xE0, 0xE0,
+    0xFC, 0x06, 0x00, // small font?
+    0xFC, 0x13, 0x38+23,
+    0xEC, 0xEC, 0xEC,
     0xFE,
+    0xFC, 0x06, 0x02, // normal font
     // Pokémon
     0xCA, 0xE3, 0xDF, 0x1B, 0xE1, 0xE3, 0xE2,
     0xFC, 0x13, 0x38,
@@ -584,10 +560,22 @@ void PlayerHandleChooseAction(void)
     gBattlerControllerFuncs[gActiveBattler] = 0x8032B94 | 1; // HandleChooseActionAfterDma3;
     BattlePutTextOnWindow(0x083fda4c, 0); // B_WIN_MNSG
     // replace BAG with BALL when in the relevant scenario
-    //if (IS_IN_BUG_CATCHING_CONTEST)
-        BattlePutTextOnWindow(gText_BattleMenuBCC, 2); // B_WIN_ACTION_MENU
-    //else
-    //    BattlePutTextOnWindow(0x083fe725, 2); // B_WIN_ACTION_MENU
+    if (IS_IN_BUG_CATCHING_CONTEST)
+    {
+        u32 balls = gBccGlobalStruct.balls;
+        StringExpandPlaceholders(gStringVar3, gText_BattleMenuBCC);
+        if (balls >= 10)
+        {
+            gStringVar3[BCC_BATTLE_MENU_BALLS_TENS_POS] = balls / 10 + 0xA1;
+            gStringVar3[BCC_BATTLE_MENU_BALLS_ONES_POS] = balls % 10 + 0xA1;
+        } else {
+            gStringVar3[BCC_BATTLE_MENU_BALLS_TENS_POS] = balls + 0xA1;
+            gStringVar3[BCC_BATTLE_MENU_BALLS_ONES_POS] = 0x00; // space
+        }
+        BattlePutTextOnWindow(gStringVar3, 2); // B_WIN_ACTION_MENU
+    }
+    else
+        BattlePutTextOnWindow(0x083fe725, 2); // B_WIN_ACTION_MENU
 
     for (i = 0; i < 4; ++i)
         ActionSelectionDestroyCursorAt(i);
@@ -600,14 +588,19 @@ void PlayerHandleChooseAction(void)
 u32 HandleInputChooseAction_editedcase(void)
 {
     u32 ret = 0;
+    if (IS_IN_BUG_CATCHING_CONTEST && gBccGlobalStruct.balls == 0)
+    {
+        // immediately end the battle upon another selection after ball quantity hits 0
+        gBattleOutcome = 1;
+        return ret;
+    }
     switch (gActionSelectionCursor[gActiveBattler])
     {
     case 0:
         BtlController_EmitTwoReturnValues(1, 0, 0); // use move
         break;
     case 1:
-        //if (IS_IN_BUG_CATCHING_CONTEST)
-        if (TRUE)
+        if (IS_IN_BUG_CATCHING_CONTEST)
         {
             BtlController_EmitTwoReturnValues(1, 5, 0); // use safari ball
         }
@@ -631,19 +624,88 @@ void HandleAction_SafariZoneBallThrow(void)
     gBattlerAttacker = gBattlerByTurnOrder[gCurrentTurnActionNumber];
     gBattle_BG0_X = 0;
     gBattle_BG0_Y = 0;
-    //if (IS_IN_BUG_CATCHING_CONTEST)
-    //{
+    if (IS_IN_BUG_CATCHING_CONTEST)
+    {
         gUsedBall = 0x17;
         gLastUsedItem = 0x5C;
         gBattlescriptCurrInstr = BattleScript_ThrowBall;
-        gBccGlobalStruct.balls--;
-    //}
-    //else
-    //{
-    //    --gNumSafariBalls;
-    //    gUsedBall = 5;
-    //    gLastUsedItem = 5;
-    //    gBattlescriptCurrInstr = gBattlescriptsForBallThrow[5];
-    //}
+        --gBccGlobalStruct.balls;
+    }
+    else
+    {
+        --gNumSafariBalls;
+        gUsedBall = 5;
+        gLastUsedItem = 5;
+        gBattlescriptCurrInstr = gBattlescriptsForBallThrow[5];
+    }
     gCurrentActionFuncId = 10; // B_ACTION_EXEC_SCRIPT
+}
+
+u16 BCC_StartMenuCoords[] =
+{
+    X_POS_MON_PAUSE_MENU, Y_POS_MON_PAUSE_MENU
+};
+
+static const struct WindowTemplate sBugPauseTemplate = {0, X_POS_MON_PAUSE_MENU/8-2, Y_POS_MON_PAUSE_MENU/8-1, 12, 4, 0xF, 8};
+
+void ShowBCCStartWindow(void)
+{
+    struct Pokemon *bccMon = &gBccGlobalStruct.caughtMon;
+
+    if (!IS_BCC_MON_INVALID) // has valid mon, caller already covers the "is in bcc" state
+    {
+        //SetGpuRegBits(REG_OFFSET_DISPCNT, DISPCNT_OBJWIN_ON);
+        //SetGpuRegBits(REG_OFFSET_WINOUT, WINOUT_WINOBJ_OBJ);
+        //SetGpuRegBits(REG_OFFSET_WININ, WININ_WIN0_OBJ);
+
+        u8 *ptr;
+        u32 windowId = AddWindow(&sBugPauseTemplate);
+        DrawStdWindowFrame(windowId, 1);
+        gBccGlobalStruct.windowIds[0] = windowId;
+
+        LoadMonIconPalettes();
+
+        u32 level = GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_LEVEL, NULL);
+        u32 hp = GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_HP, NULL);
+        u32 maxHp = GetMonData(&gBccGlobalStruct.caughtMon, MON_DATA_MAX_HP, NULL);
+        ptr = StringExpandPlaceholders(gStringVar1, gText_LevelOfMon);
+        ConvertIntToDecimalStringN(ptr, level, STR_CONV_MODE_LEFT_ALIGN, 3);
+        AddTextPrinterParameterized(windowId, 0, gStringVar1, 32, 1, 0xFF, 0);
+        ptr = ConvertIntToDecimalStringN(gStringVar3, hp, STR_CONV_MODE_LEFT_ALIGN, 3);
+        *ptr++ = 0xBA; // /
+        ptr = ConvertIntToDecimalStringN(ptr, maxHp, STR_CONV_MODE_LEFT_ALIGN, 3);
+        *ptr++ = 0x00; // [space]
+        *ptr++ = 0xC2; // H
+        *ptr++ = 0xCA; // P
+        *ptr++ = 0xFF; // end
+        *ptr++ = 0xFF; // end
+        *ptr++ = 0xFF; // end
+        AddTextPrinterParameterized(windowId, 0, gStringVar3, 32, 15, 0xFF, 0);
+        PutWindowTilemap(windowId);
+        CopyWindowToVram(windowId, COPYWIN_FULL);
+
+        u32 species = GetMonData(bccMon, MON_DATA_SPECIES, NULL);
+        u32 pid = GetMonData(bccMon, MON_DATA_PERSONALITY, NULL);
+        u8 spriteId = CreateMonIcon(species, 0x0809718d, BCC_StartMenuCoords[0], BCC_StartMenuCoords[1], 0, pid, 0);
+        gSprites[spriteId].oam.priority = 0;
+        gSprites[spriteId].invisible = 0;
+        gSprites[spriteId].pos1.x = 0;
+        gSprites[spriteId].pos1.y = 0;
+        gSprites[spriteId].pos2.x = BCC_StartMenuCoords[0];
+        gSprites[spriteId].pos2.y = BCC_StartMenuCoords[1];
+
+        gBccGlobalStruct.spriteIds[0] = spriteId;
+
+        // then cut it out of the textbox
+        spriteId = CreateMonIcon(species, 0x0809718d, BCC_StartMenuCoords[0], BCC_StartMenuCoords[1], 0, pid, 0);
+        gSprites[spriteId].oam.priority = 0;
+        gSprites[spriteId].invisible = 0;
+        gSprites[spriteId].pos1.x = 0;
+        gSprites[spriteId].pos1.y = 0;
+        gSprites[spriteId].pos2.x = BCC_StartMenuCoords[0];
+        gSprites[spriteId].pos2.y = BCC_StartMenuCoords[1];
+        gSprites[spriteId].oam.objMode = ST_OAM_OBJ_WINDOW;
+
+        gBccGlobalStruct.spriteIds[1] = spriteId;
+    }
 }

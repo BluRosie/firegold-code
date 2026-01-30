@@ -17,6 +17,7 @@ extern u16 gLastUsedItem;
 extern u16 gUsedBall;
 extern u8 gCurrentActionFuncId;
 extern u8 gNumSafariBalls;
+extern u8 gBattleOutcome;
 
 void (*gBattlerControllerFuncs[4])(void);
 

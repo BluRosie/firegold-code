@@ -1,10 +1,8 @@
-#ifdef COMPILE_START_MENU
-
-#include "../include/gba/defines.h"
-#include "../include/gba/io_reg.h"
-#include "../include/gba/types.h"
+#include "../include/global.h"
+#include "../include/bug_catching_contest.h"
 #include "../include/main.h"
 #include "../include/menu.h"
+#include "../include/overworld.h"
 #include "../include/save.h"
 #include "../include/sound.h"
 #include "../include/strings.h"
@@ -12,9 +10,9 @@
 #include "../include/text.h"
 #include "../include/window.h"
 
-#define CLOCK_WINDOW_WIDTH 70
+#define COMPILE_START_MENU
 
-#define sSafariZoneStatsWindowId *((u8*)0x02037101)
+#ifdef COMPILE_START_MENU
 
 static const struct WindowTemplate sClockWindowTemplate = {0, 1, 1, 9, 2, 0xF, 8};
 
@@ -27,8 +25,6 @@ int GetStringWidthDifference(int fontId, const u8 *str, int totalWidth, int lett
     else
         return 0;
 }
-
-#define GetStringRightAlignXOffset(fontId, str, totalWidth) GetStringWidthDifference(fontId, str, totalWidth, 0)
 
 void ShowTimeWindow(void)
 {
@@ -90,7 +86,19 @@ void ShowTimeWindow(void)
 // will also destroy our window.  take out flag check, it's always created
 void DestroySafariZoneStatsWindow(void)
 {
+    if (IS_IN_BUG_CATCHING_CONTEST && !IS_BCC_MON_INVALID)
+    {
+        // destroy our sprites if we printed them
+        DestroyMonIcon(&gSprites[gBccGlobalStruct.spriteIds[0]]);
+        DestroyMonIcon(&gSprites[gBccGlobalStruct.spriteIds[1]]);
+        gBccGlobalStruct.spriteIds[0] = 0;
+        gBccGlobalStruct.spriteIds[1] = 0;
+        ClearStdWindowAndFrameToTransparent(gBccGlobalStruct.windowIds[0], FALSE);
+        CopyWindowToVram(gBccGlobalStruct.windowIds[0], COPYWIN_FULL);
+        RemoveWindow(gBccGlobalStruct.windowIds[0]);
+    }
     //if (GetSafariZoneFlag())
+    else
     {
         ClearStdWindowAndFrameToTransparent(sSafariZoneStatsWindowId, FALSE);
         CopyWindowToVram(sSafariZoneStatsWindowId, COPYWIN_GFX);
@@ -121,7 +129,9 @@ void DoDrawStartMenu_Case3(void)
 //    {
 // ...
 //    case 3:
-        if (GetSafariZoneFlag())
+        if (IS_IN_BUG_CATCHING_CONTEST)
+            ShowBCCStartWindow(); // defined in bug_catching_contest.c
+        else if (GetSafariZoneFlag())
             DrawSafariZoneStatsWindow();
         // new:  draw time clock otherwise
         else
@@ -166,7 +176,7 @@ void DoDrawStartMenu_Case3(void)
     //    return TRUE;
     //}
     //return FALSE;
-    if (!GetSafariZoneFlag() && gCurrentTimeSeconds == 0)
+    if (!GetSafariZoneFlag() && !IS_IN_BUG_CATCHING_CONTEST && gCurrentTimeSeconds == 0)
     {
         DestroySafariZoneStatsWindow();
         ShowTimeWindow();

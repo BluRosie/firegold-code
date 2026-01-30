@@ -39,6 +39,9 @@ struct Window
     u8 *tileData;
 };
 
+#define GetStringRightAlignXOffset(fontId, str, totalWidth) GetStringWidthDifference(fontId, str, totalWidth, 0)
+#define gMonIconPalettes ((u16 *)(0x083d3740))
+
 bool16 InitWindows(const struct WindowTemplate *templates);
 void FreeAllWindowBuffers(void);
 void CopyWindowToVram(u8 windowId, u8 mode);
