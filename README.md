@@ -1,6 +1,6 @@
 ## Template
 
-This template currently builds no code, but has many functions declared and ready to use that aren't very specific to any one application.  Each new branch for code that is inserted into Fire Gold will be based on this branch.
+
 
 ### Build Instructions
 

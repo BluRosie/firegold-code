@@ -1,2 +1,5 @@
 #examples:
 #SetTradedMonPokedexFlags 080507A0 1
+
+costume_overworldHook 0805F0F8 0
+costume_paletteHook 0805F53C 1
