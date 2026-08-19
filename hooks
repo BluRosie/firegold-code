@@ -1,5 +1,21 @@
 #examples:
 #SetTradedMonPokedexFlags 080507A0 1
 
+# overworlds
 costume_overworldHook 0805F0F8 0
 costume_paletteHook 0805F53C 1
+
+# trainer card/hall of fame
+costume_trainerSpriteHook 0810BC2C 0
+costume_trainerPalHook 0810BD64 1
+costume_trainerPalHofHook 0810BCF8 1
+
+# trainer back sprite
+costume_trainerBackHook 0803F890 1
+costume_trainerBackPalHook 08033528 2
+costume_trainerBackPalHook2 08034752 2
+
+# pre-battle mug shots
+costume_mugShotSpriteHook 08083880 3
+
+# fly bird

@@ -1943,3 +1943,6 @@ gBattlescriptsForBallThrow = 0x081d99b0;
 
 gNumSafariBalls = 0x02039994;
 gUsedBall = 0x0203FE00;
+
+gFrontSpriteCostumeTable = 0x09DCD890;
+gBackSpriteCostumeTable = 0x09DDCD10;

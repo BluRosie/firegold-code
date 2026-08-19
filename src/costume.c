@@ -1,4 +1,5 @@
 #include "../include/global.h"
+#include "../include/sprite.h"
 
 enum {
     COSTUME_ORIGINAL,
@@ -155,6 +156,12 @@ u16 sCostumeToPalTag[2][COSTUME_MAX] = {
     },
 };
 
+// male/female/index in each entry...  but we do not care about index.  just need 
+extern u32 gFrontSpriteCostumeTable[COSTUME_MAX][3];
+extern u32 gBackSpriteCostumeTable[COSTUME_MAX][3];
+
+extern struct SpriteTemplate gMultiuseSpriteTemplate;
+
 u32 grabCostumeImagesPtrBasedOnOriginal(u32 address)
 {
     int i;
@@ -173,11 +180,48 @@ u32 grabCostumePalTagBasedOnOriginal(u32 original)
 {
     // if equal to initial entry, grab real entry from the table
     if (original == sCostumeToPalTag[GENDER][0]) {
-        VarSet(VAR_COSTUME, VarGet(VAR_COSTUME) + 1);
-        if (VarGet(VAR_COSTUME) >= COSTUME_MAX) {
-            VarSet(VAR_COSTUME, 0);
+        if ((~(*(u16 *)0x04000130)) & 1) // a button being pressed
+        {
+            VarSet(VAR_COSTUME, VarGet(VAR_COSTUME) + 1);
+            if (VarGet(VAR_COSTUME) >= COSTUME_MAX) {
+                VarSet(VAR_COSTUME, 0);
+            }
         }
         original = sCostumeToPalTag[GENDER][VarGet(VAR_COSTUME)];
     }
     return original;
+}
+
+u32 GrabSpriteCostumePointer(u32 id, u32 isBackSprite, u32 palette)
+{
+    u32 gender = (id == 136); // female if true, male if false
+    u32 costume = VarGet(VAR_COSTUME);
+    if (isBackSprite)
+    {
+        return gBackSpriteCostumeTable[2*costume + gender][palette]; // BackPicTable!  not actual sprites.  but this is perfect
+    }
+    else
+    {
+        if (palette == 0)
+            return (u32)&gFrontSpriteCostumeTable[2*costume + gender][0];
+        else
+            return gFrontSpriteCostumeTable[2*costume + gender][1];
+    }
+}
+
+void AdjustBackspriteTemplateAsNeeded(void)
+{
+    u32 id = 0;
+    if (((u32)gMultiuseSpriteTemplate.images) == 0x08234718) // male
+    {
+        id = 135;
+    }
+    else if (((u32)gMultiuseSpriteTemplate.images) == 0x08234740) // female
+    {
+        id = 136;
+    }
+    if (id != 0)
+    {
+        gMultiuseSpriteTemplate.images = (struct SpriteFrameImage *)GrabSpriteCostumePointer(id, 1, 0);
+    }
 }
